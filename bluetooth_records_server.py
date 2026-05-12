@@ -4,6 +4,8 @@ Bluetooth serial server for water log downloads.
 
 Commands from a Bluetooth serial terminal:
   status    - show file and download mode state
+  summary   - show file count and total record count
+  times     - list all recorded timestamps
   latest    - send latest CSV row
   settime ISO-8601 - set Orange Pi system time, then log a fresh reading
   log       - log one fresh reading using current Orange Pi time
@@ -15,6 +17,7 @@ Commands from a Bluetooth serial terminal:
 from __future__ import annotations
 
 import subprocess
+import csv
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -108,6 +111,36 @@ def read_all_csvs() -> str:
     return "\n\n".join(parts)
 
 
+def read_record_times() -> list[str]:
+    timestamps = []
+    for path in weekly_csv_files():
+        with path.open("r", newline="", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                timestamp = row.get("timestamp")
+                if timestamp:
+                    timestamps.append(timestamp)
+    return timestamps
+
+
+def read_summary() -> str:
+    files = weekly_csv_files()
+    timestamps = read_record_times()
+    latest = timestamps[-1] if timestamps else "none"
+    return (
+        f"Weekly files: {len(files)}\n"
+        f"Total records: {len(timestamps)}\n"
+        f"Latest record: {latest}\n"
+    )
+
+
+def read_times_text() -> str:
+    timestamps = read_record_times()
+    if not timestamps:
+        return "No records found yet.\n"
+    return "\n".join(timestamps) + "\n"
+
+
 def send_text(client, text: str) -> None:
     client.send(text.encode("utf-8"))
 
@@ -137,6 +170,18 @@ def handle_command(client, command: str) -> bool:
         send_text(client, "BEGIN LATEST\n")
         send_text(client, read_latest_row())
         send_text(client, "END LATEST\n")
+        return True
+
+    if command == "summary":
+        send_text(client, "BEGIN SUMMARY\n")
+        send_text(client, read_summary())
+        send_text(client, "END SUMMARY\n")
+        return True
+
+    if command == "times":
+        send_text(client, "BEGIN TIMES\n")
+        send_text(client, read_times_text())
+        send_text(client, "END TIMES\n")
         return True
 
     if command.startswith("settime "):
@@ -180,10 +225,10 @@ def handle_command(client, command: str) -> bool:
         return False
 
     if command in {"help", "?"}:
-        send_text(client, "Commands: status, latest, settime <iso>, log, download, download all, resume\n")
+        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, download, download all, resume\n")
         return True
 
-    send_text(client, "Unknown command. Try: status, latest, settime <iso>, log, download, download all, resume\n")
+    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, download, download all, resume\n")
     return True
 
 
@@ -219,7 +264,7 @@ def main() -> int:
         return 0
 
     print(f"Bluetooth client connected: {address}")
-    send_text(client, "Orange Pi water records ready. Commands: status, latest, settime <iso>, log, download, download all, resume\n")
+    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, download, download all, resume\n")
 
     keep_running = True
     while keep_running:

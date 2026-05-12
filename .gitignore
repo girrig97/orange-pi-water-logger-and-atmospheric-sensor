@@ -13,3 +13,8 @@ records/
 Thumbs.db
 .vscode/
 .idea/
+
+# Android build output.
+android-app/.gradle/
+android-app/app/build/
+android-app/build/

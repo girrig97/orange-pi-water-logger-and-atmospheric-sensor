@@ -567,6 +567,47 @@ That means after a successful Bluetooth `download`, the next Pico wake returns t
 
 ## Download logs from a phone over Bluetooth
 
+You can use the included Android companion app in `android-app/`, or use a generic Bluetooth serial terminal.
+
+### Android companion app
+
+The Android app provides buttons for:
+
+```text
+Connect
+System Status
+Record Count
+List Record Times
+Latest Reading
+Sync Time + Log
+Log Fresh Reading
+Download Latest Week
+Download All Weeks
+Resume Normal Logging
+```
+
+The app connects to the Orange Pi Bluetooth serial service and sends the same commands documented below.
+
+To build the APK:
+
+1. Push the project to GitHub.
+2. Open the repository on GitHub.
+3. Go to `Actions`.
+4. Run `Build Android APK`, or wait for it to run after changes to `android-app/`.
+5. Download the `water-logger-companion-debug-apk` artifact.
+6. Install `app-debug.apk` on your Android phone.
+
+On the phone, you may need to allow:
+
+```text
+Install unknown apps
+Bluetooth permission
+```
+
+Before opening the app, pair your phone with the Orange Pi in Android Bluetooth settings.
+
+### Bluetooth terminal fallback
+
 Use an Android Bluetooth serial terminal app. Search for one of these:
 
 ```text
