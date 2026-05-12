@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.Python
+.venv/
+venv/
+env/
+
+# Runtime data created on the Orange Pi microSD.
+records/
+
+# Local editor/system files.
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

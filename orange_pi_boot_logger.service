@@ -1,0 +1,12 @@
+[Unit]
+Description=Water logger boot job
+After=local-fs.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/orangepi/water-logger
+ExecStart=/usr/bin/python3 /home/orangepi/water-logger/orange_pi_boot_wrapper.py
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
