@@ -18,7 +18,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from water_logger import CSV_FILENAME, DOWNLOAD_MODE_FILENAME, RECORDS_PATH, log_once
+from water_logger import DOWNLOAD_MODE_FILENAME, RECORDS_PATH, log_once
 
 
 def shutdown() -> None:
@@ -27,10 +27,9 @@ def shutdown() -> None:
 
 
 def main() -> int:
-    csv_path = RECORDS_PATH / CSV_FILENAME
     download_mode_path = RECORDS_PATH / DOWNLOAD_MODE_FILENAME
 
-    log_once(csv_path)
+    log_once()
 
     if not download_mode_path.exists():
         shutdown()

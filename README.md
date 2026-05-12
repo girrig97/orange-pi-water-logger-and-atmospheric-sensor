@@ -432,7 +432,7 @@ export PICO_SERIAL_PORT=/dev/ttyS1
 
 ## microSD record path
 
-Records are stored beside the project in a `records` folder.
+Records are stored beside the project in a `records` folder. The logger starts a new CSV file each ISO calendar week to keep files smaller and reduce the impact of any single-file corruption.
 
 If the project is copied to:
 
@@ -440,10 +440,11 @@ If the project is copied to:
 /home/orangepi/water-logger
 ```
 
-the CSV will be created at:
+weekly CSV files will be created like:
 
 ```text
-/home/orangepi/water-logger/records/water_conditions.csv
+/home/orangepi/water-logger/records/water_conditions_2026_week_20.csv
+/home/orangepi/water-logger/records/water_conditions_2026_week_21.csv
 ```
 
 The download-mode marker lives in the same folder:
@@ -458,10 +459,10 @@ The download-mode marker lives in the same folder:
 python3 water_logger.py
 ```
 
-The CSV file will be created as:
+The CSV files will be created as weekly files:
 
 ```text
-water_conditions.csv
+water_conditions_YYYY_week_WW.csv
 ```
 
 on the microSD card.
@@ -551,9 +552,10 @@ Bluetooth commands:
 
 | Command | What it does |
 | --- | --- |
-| `status` | Shows CSV path, file size, and download-mode state |
+| `status` | Shows weekly file count, latest file, total size, and download-mode state |
 | `latest` | Sends the newest CSV row |
-| `download` | Sends the full CSV, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
+| `download` | Sends the newest weekly CSV, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
+| `download all` | Sends all weekly CSV files, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `resume` | Deletes `DOWNLOAD_MODE` and shuts down without downloading |
 
 That means after a successful Bluetooth `download`, the next Pico wake returns to normal 6-hour logging automatically.

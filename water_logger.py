@@ -21,11 +21,11 @@ from pathlib import Path
 
 
 # Store records on the Orange Pi microSD card.
-# If you copy the project to /home/orangepi/water-logger, the CSV will be kept
-# in /home/orangepi/water-logger/records/water_conditions.csv.
+# If you copy the project to /home/orangepi/water-logger, weekly CSV files are
+# kept in /home/orangepi/water-logger/records/.
 PROJECT_PATH = Path(__file__).resolve().parent
 RECORDS_PATH = PROJECT_PATH / "records"
-CSV_FILENAME = "water_conditions.csv"
+CSV_FILENAME_PREFIX = "water_conditions"
 DOWNLOAD_MODE_FILENAME = "DOWNLOAD_MODE"
 NEXT_INTERVAL_FILENAME = "next_interval_seconds.txt"
 
@@ -629,6 +629,13 @@ def append_reading(csv_path: Path, reading: WaterReading) -> None:
         writer.writerow(row)
 
 
+def weekly_csv_path(timestamp: datetime | None = None) -> Path:
+    if timestamp is None:
+        timestamp = datetime.now(timezone.utc)
+    year, week, _ = timestamp.isocalendar()
+    return RECORDS_PATH / f"{CSV_FILENAME_PREFIX}_{year}_week_{week:02d}.csv"
+
+
 def send_next_interval_to_pico(next_interval_seconds: int) -> None:
     """Tell the Pico when to wake the Orange Pi next.
 
@@ -648,8 +655,10 @@ def send_next_interval_to_pico(next_interval_seconds: int) -> None:
         ) from exc
 
 
-def log_once(csv_path: Path) -> None:
+def log_once(csv_path: Path | None = None) -> Path:
     reading = collect_reading()
+    if csv_path is None:
+        csv_path = weekly_csv_path()
     append_reading(csv_path, reading)
     (csv_path.parent / NEXT_INTERVAL_FILENAME).write_text(
         str(reading.next_interval_seconds),
@@ -657,6 +666,7 @@ def log_once(csv_path: Path) -> None:
     )
     send_next_interval_to_pico(reading.next_interval_seconds)
     print(f"Logged water reading to {csv_path}")
+    return csv_path
 
 
 def main() -> None:
@@ -679,11 +689,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    csv_path = RECORDS_PATH / CSV_FILENAME
     download_mode_path = RECORDS_PATH / DOWNLOAD_MODE_FILENAME
 
     if args.once:
-        log_once(csv_path)
+        log_once()
         if args.shutdown_after and not download_mode_path.exists():
             subprocess.run(["sync"], check=False)
             subprocess.run(["shutdown", "-h", "now"], check=False)
@@ -692,7 +701,7 @@ def main() -> None:
         return
 
     while True:
-        log_once(csv_path)
+        log_once()
         time.sleep(args.interval_seconds)
 
 

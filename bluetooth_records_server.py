@@ -5,7 +5,8 @@ Bluetooth serial server for water log downloads.
 Commands from a Bluetooth serial terminal:
   status    - show file and download mode state
   latest    - send latest CSV row
-  download  - send full CSV, remove DOWNLOAD_MODE, sync, and shut down
+  download  - send newest weekly CSV, remove DOWNLOAD_MODE, sync, and shut down
+  download all - send all weekly CSVs, remove DOWNLOAD_MODE, sync, and shut down
   resume    - remove DOWNLOAD_MODE, sync, and shut down without download
 """
 
@@ -14,15 +15,22 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from water_logger import CSV_FILENAME, DOWNLOAD_MODE_FILENAME, RECORDS_PATH
+from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, RECORDS_PATH
 
 
 SERVICE_NAME = "OrangePi Water Records"
 SERVER_TIMEOUT_SECONDS = 60 * 60
 
 
-def csv_path() -> Path:
-    return RECORDS_PATH / CSV_FILENAME
+def weekly_csv_files() -> list[Path]:
+    return sorted(RECORDS_PATH.glob(f"{CSV_FILENAME_PREFIX}_*_week_*.csv"))
+
+
+def latest_csv_path() -> Path | None:
+    files = weekly_csv_files()
+    if not files:
+        return None
+    return files[-1]
 
 
 def download_mode_path() -> Path:
@@ -41,22 +49,32 @@ def shutdown() -> None:
 
 
 def read_latest_row() -> str:
-    path = csv_path()
-    if not path.exists():
+    path = latest_csv_path()
+    if path is None:
         return "No CSV file found yet.\n"
 
     lines = path.read_text(encoding="utf-8").splitlines()
     if len(lines) < 2:
         return "CSV exists, but no readings are recorded yet.\n"
 
-    return lines[0] + "\n" + lines[-1] + "\n"
+    return f"File: {path.name}\n" + lines[0] + "\n" + lines[-1] + "\n"
 
 
-def read_full_csv() -> str:
-    path = csv_path()
-    if not path.exists():
+def read_latest_csv() -> str:
+    path = latest_csv_path()
+    if path is None:
         return "No CSV file found yet.\n"
-    return path.read_text(encoding="utf-8")
+    return f"FILE {path.name}\n" + path.read_text(encoding="utf-8")
+
+
+def read_all_csvs() -> str:
+    files = weekly_csv_files()
+    if not files:
+        return "No CSV files found yet.\n"
+    parts = []
+    for path in files:
+        parts.append(f"FILE {path.name}\n{path.read_text(encoding='utf-8')}")
+    return "\n\n".join(parts)
 
 
 def send_text(client, text: str) -> None:
@@ -67,12 +85,18 @@ def handle_command(client, command: str) -> bool:
     command = command.strip().lower()
 
     if command == "status":
-        path = csv_path()
-        size = path.stat().st_size if path.exists() else 0
+        files = weekly_csv_files()
+        latest = files[-1].name if files else "none"
+        total_size = sum(path.stat().st_size for path in files)
         marker_state = "yes" if download_mode_path().exists() else "no"
         send_text(
             client,
-            f"CSV: {path}\nSize bytes: {size}\nDownload mode: {marker_state}\n",
+            (
+                f"Weekly files: {len(files)}\n"
+                f"Latest file: {latest}\n"
+                f"Total bytes: {total_size}\n"
+                f"Download mode: {marker_state}\n"
+            ),
         )
         return True
 
@@ -84,8 +108,17 @@ def handle_command(client, command: str) -> bool:
 
     if command == "download":
         send_text(client, "BEGIN CSV\n")
-        send_text(client, read_full_csv())
+        send_text(client, read_latest_csv())
         send_text(client, "\nEND CSV\n")
+        send_text(client, "Download complete. Resuming normal timed logging.\n")
+        remove_download_marker()
+        shutdown()
+        return False
+
+    if command == "download all":
+        send_text(client, "BEGIN ALL CSV\n")
+        send_text(client, read_all_csvs())
+        send_text(client, "\nEND ALL CSV\n")
         send_text(client, "Download complete. Resuming normal timed logging.\n")
         remove_download_marker()
         shutdown()
@@ -98,10 +131,10 @@ def handle_command(client, command: str) -> bool:
         return False
 
     if command in {"help", "?"}:
-        send_text(client, "Commands: status, latest, download, resume\n")
+        send_text(client, "Commands: status, latest, download, download all, resume\n")
         return True
 
-    send_text(client, "Unknown command. Try: status, latest, download, resume\n")
+    send_text(client, "Unknown command. Try: status, latest, download, download all, resume\n")
     return True
 
 
@@ -137,7 +170,7 @@ def main() -> int:
         return 0
 
     print(f"Bluetooth client connected: {address}")
-    send_text(client, "Orange Pi water records ready. Commands: status, latest, download, resume\n")
+    send_text(client, "Orange Pi water records ready. Commands: status, latest, download, download all, resume\n")
 
     keep_running = True
     while keep_running:
