@@ -559,6 +559,8 @@ Bluetooth commands:
 | `latest` | Sends the newest CSV row |
 | `settime 2026-05-12T14:30:00+10:00` | Sets Orange Pi time from your phone, then logs a fresh reading |
 | `log` | Logs one fresh reading using the current Orange Pi time |
+| `live` | Streams unsaved live readings every 5 seconds |
+| `stop` | Stops live reading stream |
 | `download` | Sends the newest weekly CSV, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `download all` | Sends all weekly CSV files, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `resume` | Deletes `DOWNLOAD_MODE` and shuts down without downloading |
@@ -579,6 +581,8 @@ System Status
 Record Count
 List Record Times
 Latest Reading
+Start Live Readings
+Stop Live Readings
 Sync Time + Log
 Log Fresh Reading
 Download Latest Week
@@ -675,6 +679,36 @@ If the time is already correct and you only want a fresh row:
 
 ```text
 log
+```
+
+## Live readings
+
+Live readings let you check the sensors without adding rows to the weekly CSV.
+
+In the Android app, press:
+
+```text
+Start Live Readings
+```
+
+The Orange Pi streams one fresh unsaved reading every 5 seconds. Press:
+
+```text
+Stop Live Readings
+```
+
+to stop the stream.
+
+From a Bluetooth terminal, use:
+
+```text
+live
+```
+
+and then:
+
+```text
+stop
 ```
 
 Install Bluetooth serial support:

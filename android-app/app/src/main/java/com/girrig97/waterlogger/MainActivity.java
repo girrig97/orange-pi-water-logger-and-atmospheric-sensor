@@ -48,6 +48,8 @@ public class MainActivity extends Activity {
     private BluetoothSocket socket;
     private BufferedReader reader;
     private OutputStream writer;
+    private volatile boolean liveMode = false;
+    private Thread liveThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,8 @@ public class MainActivity extends Activity {
         Button summary = button("Record Count");
         Button times = button("List Record Times");
         Button latest = button("Latest Reading");
+        Button live = button("Start Live Readings");
+        Button stopLive = button("Stop Live Readings");
         Button syncTime = button("Sync Time + Log");
         Button log = button("Log Fresh Reading");
         Button download = button("Download Latest Week");
@@ -133,6 +137,8 @@ public class MainActivity extends Activity {
         root.addView(summary);
         root.addView(times);
         root.addView(latest);
+        root.addView(live);
+        root.addView(stopLive);
         root.addView(syncTime);
         root.addView(log);
         root.addView(download);
@@ -143,6 +149,8 @@ public class MainActivity extends Activity {
         summary.setOnClickListener(v -> sendCommandToScreen("summary"));
         times.setOnClickListener(v -> sendCommandToScreen("times"));
         latest.setOnClickListener(v -> sendCommandToScreen("latest"));
+        live.setOnClickListener(v -> startLiveReadings());
+        stopLive.setOnClickListener(v -> stopLiveReadings());
         syncTime.setOnClickListener(v -> sendCommandToScreen("settime " + phoneTime()));
         log.setOnClickListener(v -> sendCommandToScreen("log"));
         download.setOnClickListener(v -> downloadCsv("download", "latest-week"));
@@ -232,6 +240,7 @@ public class MainActivity extends Activity {
         socket = null;
         reader = null;
         writer = null;
+        liveMode = false;
         runOnUiThread(() -> {
             connectButton.setEnabled(true);
             disconnectButton.setEnabled(false);
@@ -241,6 +250,10 @@ public class MainActivity extends Activity {
     private void sendCommandToScreen(String command) {
         runInBackground(() -> {
             try {
+                if (liveMode) {
+                    stopLiveReadings();
+                    sleep(300);
+                }
                 String response = sendCommand(command, 2500);
                 runOnUiThread(() -> {
                     statusText.setText("Command: " + command);
@@ -255,6 +268,10 @@ public class MainActivity extends Activity {
     private void downloadCsv(String command, String label) {
         runInBackground(() -> {
             try {
+                if (liveMode) {
+                    stopLiveReadings();
+                    sleep(300);
+                }
                 String response = sendCommand(command, 7000);
                 File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
                 if (directory == null) {
@@ -272,6 +289,55 @@ public class MainActivity extends Activity {
             } catch (IOException e) {
                 show("Download failed: " + e.getMessage());
             }
+        });
+    }
+
+    private void startLiveReadings() {
+        runInBackground(() -> {
+            ensureConnected();
+            if (liveMode) {
+                return;
+            }
+            liveMode = true;
+            writer.write("live\n".getBytes(StandardCharsets.UTF_8));
+            writer.flush();
+            runOnUiThread(() -> statusText.setText("Live readings running"));
+
+            liveThread = new Thread(() -> {
+                StringBuilder latest = new StringBuilder();
+                while (liveMode) {
+                    try {
+                        if (reader != null && reader.ready()) {
+                            String line = reader.readLine();
+                            if (line == null) {
+                                break;
+                            }
+                            if (line.startsWith("LIVE ")) {
+                                latest.setLength(0);
+                                latest.append(line.replace(", ", "\n").replace("LIVE ", ""));
+                                runOnUiThread(() -> recordsText.setText(latest.toString()));
+                            }
+                        } else {
+                            sleep(100);
+                        }
+                    } catch (IOException e) {
+                        show("Live read failed: " + e.getMessage());
+                        break;
+                    }
+                }
+            });
+            liveThread.start();
+        });
+    }
+
+    private void stopLiveReadings() {
+        runInBackground(() -> {
+            liveMode = false;
+            if (writer != null) {
+                writer.write("stop\n".getBytes(StandardCharsets.UTF_8));
+                writer.flush();
+            }
+            runOnUiThread(() -> statusText.setText("Live readings stopped"));
         });
     }
 
