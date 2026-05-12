@@ -66,7 +66,7 @@ Wiring and protection:
 | Assorted | Heat shrink tubing | Strain relief and insulation |
 | Assorted | Cable glands | For waterproof enclosure cable exits |
 | As needed | Voltage divider resistors or level shifters | Required if sensor analog output can exceed 3.3V |
-| 1 | UART link wire from Orange Pi TX to Pico RX | Required so Orange Pi can tell Pico the next wake interval |
+| 2 | UART link wires between Orange Pi and Pico | Required for download button requests and adaptive wake timing |
 | Optional | Small fuse or resettable polyfuse | Protection on 5V power line |
 | Optional | Desiccant pack | Helps reduce moisture in enclosure |
 
@@ -262,7 +262,7 @@ Do not power the Orange Pi directly from a Pico pin. The Pico only controls the 
 | DS3231 RTC | Pico 3.3V | common GND | SDA GP4, SCL GP5 | none |
 | 5V load switch | power bank 5V input | common GND | EN from Pico GP15 | switched 5V to Orange Pi |
 | Download button | none | common GND | Pico GP14 | none |
-| Required UART interval link | Orange Pi 3.3V UART logic | common GND | Orange Pi TX to Pico GP1/RX | adaptive wake timing |
+| Required UART link | Orange Pi 3.3V UART logic | common GND | Orange Pi TX to Pico GP1/RX, Orange Pi RX to Pico GP0/TX | download mode and adaptive wake timing |
 
 ## Orange Pi Zero 3 header wiring
 
@@ -405,7 +405,7 @@ The Orange Pi writes the next interval to:
 /home/orangepi/water-logger/records/next_interval_seconds.txt
 ```
 
-The UART interval link is required. After each reading, the Orange Pi sends the interval directly to the Pico:
+The UART link is required. The Pico uses it to request download mode, and after each reading the Orange Pi sends the next wake interval back to the Pico:
 
 ```text
 NEXT_INTERVAL=3600
@@ -422,6 +422,7 @@ Required UART wiring:
 | Signal | Connect |
 | --- | --- |
 | Orange Pi UART TX | Pico GP1/RX |
+| Orange Pi UART RX | Pico GP0/TX |
 | Orange Pi GND | Pico GND |
 
 The logger will raise an error if this UART link is not available. The code defaults to Orange Pi serial port `/dev/ttyS5`. If your enabled UART appears under another name, set:
@@ -499,6 +500,8 @@ Use `pico_power_controller.py` on a Raspberry Pi Pico or Pico W to switch Orange
 | --- | --- |
 | GP15 | 5V load-switch enable input |
 | GP14 | Download button to GND |
+| GP0/TX | Orange Pi UART RX |
+| GP1/RX | Orange Pi UART TX |
 | GP4 | DS3231 SDA |
 | GP5 | DS3231 SCL |
 | 3V3 | DS3231 VCC |
@@ -516,18 +519,18 @@ Normal mode:
 Download mode:
 
 - Press the Pico button once.
-- Pico powers the Orange Pi and keeps it on.
+- Pico powers the Orange Pi, keeps it on, and sends a UART download-mode request.
 - Download the CSV over Bluetooth or WiFi.
 - Long-press the button for 2 seconds to leave download mode.
 - A 1-hour timeout turns it off as a fallback.
 
-To stop the Orange Pi boot logger from shutting down during download mode, create this empty file on the microSD card:
+The button is the normal way to enter download mode. As a fallback, you can manually create this empty file before boot:
 
 ```text
 DOWNLOAD_MODE
 ```
 
-When `water_logger.py --once --shutdown-after` sees `records/DOWNLOAD_MODE`, it logs once but does not shut down. Delete the marker file when you want normal timed logging again.
+When the boot wrapper sees the Pico request or `records/DOWNLOAD_MODE`, it starts the Bluetooth serial download server instead of doing the normal unattended log-and-shutdown cycle.
 
 ## Boot service for timed power
 
@@ -554,11 +557,84 @@ Bluetooth commands:
 | --- | --- |
 | `status` | Shows weekly file count, latest file, total size, and download-mode state |
 | `latest` | Sends the newest CSV row |
+| `settime 2026-05-12T14:30:00+10:00` | Sets Orange Pi time from your phone, then logs a fresh reading |
+| `log` | Logs one fresh reading using the current Orange Pi time |
 | `download` | Sends the newest weekly CSV, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `download all` | Sends all weekly CSV files, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `resume` | Deletes `DOWNLOAD_MODE` and shuts down without downloading |
 
 That means after a successful Bluetooth `download`, the next Pico wake returns to normal 6-hour logging automatically.
+
+## Download logs from a phone over Bluetooth
+
+Use an Android Bluetooth serial terminal app. Search for one of these:
+
+```text
+Serial Bluetooth Terminal
+Bluetooth Terminal
+RFCOMM Bluetooth terminal
+```
+
+Phone workflow:
+
+1. Press the Pico download-mode button.
+2. Wait for the Orange Pi to boot.
+3. Pair your phone with the Orange Pi through Bluetooth settings.
+4. Open the Bluetooth terminal app and connect to `OrangePi Water Records`.
+5. Send `status` to check the connection.
+6. Send `download` for the newest weekly CSV, or `download all` for every weekly CSV.
+
+After `download` or `download all`, the Orange Pi deletes `DOWNLOAD_MODE`, syncs the microSD, shuts down, and the next Pico wake returns to normal logging.
+
+The button request uses the required UART link from Pico to Orange Pi. As a fallback, you can also manually create this file before boot:
+
+```text
+records/DOWNLOAD_MODE
+```
+
+## Sync time from phone over Bluetooth
+
+In download mode, the Orange Pi starts the Bluetooth command server before taking an extra download-mode reading. This lets your phone set the clock first so the new log row has true time.
+
+Send this from the Bluetooth terminal:
+
+```text
+settime 2026-05-12T14:30:00+10:00
+```
+
+Use your actual phone time and timezone offset. For Brisbane/Australia standard time, the offset is usually:
+
+```text
++10:00
+```
+
+After `settime`, the Orange Pi:
+
+1. Sets its system clock.
+2. Tries to write hardware clock time with `hwclock -w`.
+3. Records one fresh sensor row.
+4. Keeps Bluetooth open so you can send `download`.
+
+Example field sequence:
+
+```text
+status
+settime 2026-05-12T14:30:00+10:00
+latest
+download
+```
+
+If you only want to set time and take a fresh reading without downloading yet, send:
+
+```text
+settime 2026-05-12T14:30:00+10:00
+```
+
+If the time is already correct and you only want a fresh row:
+
+```text
+log
+```
 
 Install Bluetooth serial support:
 

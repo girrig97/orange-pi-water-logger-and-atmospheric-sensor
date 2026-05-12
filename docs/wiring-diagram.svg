@@ -43,6 +43,7 @@
   <text x="430" y="254" class="label">GP14 button</text>
   <text x="430" y="280" class="label">GP4 SDA, GP5 SCL</text>
   <text x="430" y="306" class="label">GP1/RX from OPi TX</text>
+  <text x="430" y="332" class="label">GP0/TX to OPi RX</text>
 
   <rect x="780" y="120" width="250" height="160" class="power"/>
   <text x="810" y="155" class="title">5V Load Switch</text>
@@ -59,6 +60,7 @@
   <text x="700" y="613" class="label">Pin 5: I2C3 SCL</text>
   <text x="700" y="640" class="label">Pin 7 PC9: DS18B20 data</text>
   <text x="700" y="667" class="label">UART TX: Pico interval link</text>
+  <text x="700" y="694" class="label">UART RX: Pico download request</text>
 
   <rect x="1120" y="360" width="280" height="245" class="box"/>
   <text x="1172" y="396" class="title">ADS1115 #1</text>
@@ -136,6 +138,7 @@
   <path d="M670 280 H1090 V232 H1120" class="wire wsda"/>
   <path d="M670 280 H1090 V259 H1120" class="wire wscl"/>
   <path d="M670 306 H620 V667 H660" class="wire wctrl"/>
+  <path d="M670 332 H635 V694 H660" class="wire wctrl"/>
   <path d="M1030 230 H1060 V505 H660" class="wire w5"/>
   <path d="M1030 252 H1075 V532 H660" class="wire wgnd"/>
   <path d="M660 559 H1085 V455 H1120" class="wire w33"/>
@@ -177,6 +180,7 @@
   <g><circle cx="1450" cy="613" r="15" class="num"/><text x="1450" y="613" class="numText">19</text></g>
   <g><circle cx="548" cy="667" r="15" class="num"/><text x="548" y="667" class="numText">22</text></g>
   <g><circle cx="448" cy="785" r="15" class="num"/><text x="448" y="785" class="numText">23</text></g>
+  <g><circle cx="588" cy="694" r="15" class="num"/><text x="588" y="694" class="numText">24</text></g>
 
   <!-- Number 7, 20, 21 are local short connections/spares. -->
   <line x1="1120" y1="178" x2="1088" y2="178" class="wire w33"/>
@@ -197,7 +201,7 @@
   <text x="80" y="1088" class="small">10 Orange Pi 3.3V to ADS1115, DS18B20, BME280      11 Orange Pi SDA to ADS1115/BME280    12 Orange Pi SCL to ADS1115/BME280</text>
   <text x="80" y="1114" class="small">13 Orange Pi pin 7 to DS18B20 DATA                 14 pH AO to ADS1 A0                   15 TDS AO to ADS1 A1</text>
   <text x="80" y="1140" class="small">16 Turbidity AO to ADS1 A2                         17 ORP AO to ADS1 A3                  18 DO AO to ADS2 A0</text>
-  <text x="80" y="1166" class="small">19 NH4 ISE amp AO to ADS2 A1                       20 ADS2 A2 spare                      21 ADS2 A3 spare      22 OPi UART TX to Pico GP1/RX      23 BME280 power/I2C branch</text>
+  <text x="80" y="1166" class="small">19 NH4 ISE amp AO to ADS2 A1       20 ADS2 A2 spare       21 ADS2 A3 spare       22 OPi UART TX to Pico GP1/RX       23 BME280 power/I2C branch       24 Pico GP0/TX to OPi UART RX</text>
 
   <rect x="1260" y="940" width="490" height="220" class="note"/>
   <text x="1290" y="974" class="title">Build Notes</text>

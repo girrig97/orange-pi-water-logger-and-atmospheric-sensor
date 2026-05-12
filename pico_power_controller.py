@@ -116,11 +116,16 @@ def run_download_mode():
     orange_pi_on()
     started_at = now_seconds()
     blink_at = time.ticks_ms()
+    announce_at = time.ticks_ms()
     led_state = True
 
     wait_for_button_release()
 
     while now_seconds() - started_at < DOWNLOAD_TIMEOUT_SECONDS:
+        if time.ticks_diff(time.ticks_ms(), announce_at) > 2000:
+            announce_at = time.ticks_ms()
+            uart.write("DOWNLOAD_MODE=1\n")
+
         if time.ticks_diff(time.ticks_ms(), blink_at) > 500:
             blink_at = time.ticks_ms()
             led_state = not led_state

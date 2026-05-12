@@ -5,6 +5,8 @@ Bluetooth serial server for water log downloads.
 Commands from a Bluetooth serial terminal:
   status    - show file and download mode state
   latest    - send latest CSV row
+  settime ISO-8601 - set Orange Pi system time, then log a fresh reading
+  log       - log one fresh reading using current Orange Pi time
   download  - send newest weekly CSV, remove DOWNLOAD_MODE, sync, and shut down
   download all - send all weekly CSVs, remove DOWNLOAD_MODE, sync, and shut down
   resume    - remove DOWNLOAD_MODE, sync, and shut down without download
@@ -13,9 +15,10 @@ Commands from a Bluetooth serial terminal:
 from __future__ import annotations
 
 import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 
-from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, RECORDS_PATH
+from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, RECORDS_PATH, log_once
 
 
 SERVICE_NAME = "OrangePi Water Records"
@@ -46,6 +49,34 @@ def remove_download_marker() -> None:
 def shutdown() -> None:
     subprocess.run(["sync"], check=False)
     subprocess.run(["shutdown", "-h", "now"], check=False)
+
+
+def current_time_text() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def set_system_time(time_text: str) -> str:
+    normalized = time_text.strip()
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+
+    try:
+        new_time = datetime.fromisoformat(normalized)
+    except ValueError as exc:
+        raise ValueError("Use ISO time like 2026-05-12T14:30:00+10:00") from exc
+
+    if new_time.tzinfo is None:
+        raise ValueError("Include timezone offset, for example +10:00")
+
+    epoch_seconds = int(new_time.timestamp())
+    subprocess.run(["date", "-u", "-s", f"@{epoch_seconds}"], check=True)
+    subprocess.run(["hwclock", "-w"], check=False)
+    return datetime.fromtimestamp(epoch_seconds, timezone.utc).isoformat(timespec="seconds")
+
+
+def log_fresh_reading() -> str:
+    path = log_once()
+    return f"Logged fresh reading to {path.name}\n"
 
 
 def read_latest_row() -> str:
@@ -82,7 +113,8 @@ def send_text(client, text: str) -> None:
 
 
 def handle_command(client, command: str) -> bool:
-    command = command.strip().lower()
+    raw_command = command.strip()
+    command = raw_command.lower()
 
     if command == "status":
         files = weekly_csv_files()
@@ -96,6 +128,7 @@ def handle_command(client, command: str) -> bool:
                 f"Latest file: {latest}\n"
                 f"Total bytes: {total_size}\n"
                 f"Download mode: {marker_state}\n"
+                f"Orange Pi UTC time: {current_time_text()}\n"
             ),
         )
         return True
@@ -104,6 +137,22 @@ def handle_command(client, command: str) -> bool:
         send_text(client, "BEGIN LATEST\n")
         send_text(client, read_latest_row())
         send_text(client, "END LATEST\n")
+        return True
+
+    if command.startswith("settime "):
+        try:
+            utc_time = set_system_time(raw_command.split(" ", 1)[1])
+            send_text(client, f"Time set. Orange Pi UTC time: {utc_time}\n")
+            send_text(client, log_fresh_reading())
+        except Exception as exc:
+            send_text(client, f"Time sync failed: {exc}\n")
+        return True
+
+    if command == "log":
+        try:
+            send_text(client, log_fresh_reading())
+        except Exception as exc:
+            send_text(client, f"Log failed: {exc}\n")
         return True
 
     if command == "download":
@@ -131,10 +180,10 @@ def handle_command(client, command: str) -> bool:
         return False
 
     if command in {"help", "?"}:
-        send_text(client, "Commands: status, latest, download, download all, resume\n")
+        send_text(client, "Commands: status, latest, settime <iso>, log, download, download all, resume\n")
         return True
 
-    send_text(client, "Unknown command. Try: status, latest, download, download all, resume\n")
+    send_text(client, "Unknown command. Try: status, latest, settime <iso>, log, download, download all, resume\n")
     return True
 
 
@@ -170,7 +219,7 @@ def main() -> int:
         return 0
 
     print(f"Bluetooth client connected: {address}")
-    send_text(client, "Orange Pi water records ready. Commands: status, latest, download, download all, resume\n")
+    send_text(client, "Orange Pi water records ready. Commands: status, latest, settime <iso>, log, download, download all, resume\n")
 
     keep_running = True
     while keep_running:
