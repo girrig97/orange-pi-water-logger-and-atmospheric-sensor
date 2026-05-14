@@ -2,7 +2,7 @@
 
 This starter project logs water-condition readings to a CSV file on the Orange Pi microSD card every 6 hours.
 
-Variant branch: this branch also includes notes and helper code for an Orange Pi 5 Max with a Quectel EC25-AU cellular modem. See [docs/orange-pi-5-max-ec25-au.md](docs/orange-pi-5-max-ec25-au.md).
+Variant branch: this branch also includes notes and helper code for an Orange Pi 5 Max with a Quectel EC25-AU cellular modem, SMS alerts, server status updates, and daily status reporting. See [docs/orange-pi-5-max-ec25-au.md](docs/orange-pi-5-max-ec25-au.md).
 
 ## Sensors included
 

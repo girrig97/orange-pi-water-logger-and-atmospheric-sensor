@@ -14,6 +14,7 @@ Use the EC25-AU through USB. On Linux it should appear as several `/dev/ttyUSB*`
 - `PICO_SERIAL_PORT` remains configurable by environment variable.
 - `cellular_uploader.py` can check EC25-AU status with AT commands.
 - `orange_pi_boot_wrapper.py` can optionally upload the newest weekly CSV before shutdown.
+- `alert_manager.py` evaluates freshwater safety alerts, barometric pressure drops, water temperature changes, and daily status messages.
 
 ## Suggested Orange Pi 5 Max setup
 
@@ -79,6 +80,16 @@ AT+COPS?: network/operator
 AT+QNWINFO: radio access technology and band
 ```
 
+For server updates, the Orange Pi also needs an active data connection. One common approach is NetworkManager/ModemManager:
+
+```bash
+sudo mmcli -L
+sudo nmcli c add type gsm ifname "*" con-name ec25 apn your.apn.here
+sudo nmcli c up ec25
+```
+
+Use the APN from your SIM provider. SMS alerts can work over the modem AT port even when no HTTP upload URL is configured.
+
 ## Optional cellular upload
 
 The logger still records to weekly CSV files first. Cellular upload is optional and disabled by default.
@@ -98,6 +109,84 @@ Then the boot wrapper will:
 4. Shut the Orange Pi down.
 
 If no upload URL is set, the uploader exits without blocking normal logging.
+
+## SMS and server status reporting
+
+This branch can send:
+
+- A JSON status update to your server after each reading.
+- A daily SMS status message.
+- SMS alerts when freshwater readings look unsafe.
+- SMS alerts for barometric pressure drops.
+- SMS alerts for water temperature changes compared with the recent average.
+
+Enable reporting:
+
+```bash
+export CELLULAR_REPORTING_ENABLED=1
+export CELLULAR_STATUS_URL=https://your-server.example/water-logger/status
+export ALERT_SMS_NUMBERS=+61400111222,+61400999888
+```
+
+Run manually for testing:
+
+```bash
+python3 cellular_uploader.py --report
+```
+
+The server receives JSON containing:
+
+```text
+generated_at
+latest
+summary
+alerts
+sms_alerts
+daily_status_due
+record_count_window
+```
+
+If `CELLULAR_STATUS_URL` is not set, server updates are skipped. If `ALERT_SMS_NUMBERS` is not set, SMS is skipped.
+
+## Freshwater alert defaults
+
+These are starter alert thresholds, not legal or scientific certification. Tune them for your creek and calibrate every probe.
+
+| Environment variable | Default | Alert meaning |
+| --- | ---: | --- |
+| `ALERT_PH_MIN` | `6.5` | pH below this alerts |
+| `ALERT_PH_MAX` | `9.0` | pH above this alerts |
+| `ALERT_DO_MIN_MG_L` | `5.0` | dissolved oxygen below this alerts |
+| `ALERT_NH3_MAX_MG_L` | `0.05` | toxic ammonia NH3 at/above this alerts |
+| `ALERT_WATER_TEMP_MIN_C` | `5.0` | water temp below this alerts |
+| `ALERT_WATER_TEMP_MAX_C` | `30.0` | water temp above this alerts |
+| `ALERT_TURBIDITY_MAX_NTU` | `50.0` | turbidity above this alerts |
+| `ALERT_TDS_MAX_PPM` | `1000.0` | TDS above this alerts |
+| `ALERT_PRESSURE_DROP_HPA_24H` | `6.0` | pressure drop over recent 24h alerts |
+| `ALERT_TEMP_CHANGE_C_24H` | `2.0` | water temp change versus recent 24h average alerts |
+| `ALERT_COOLDOWN_SECONDS` | `21600` | same alert SMS cooldown, default 6 hours |
+
+Sensor communication failures also generate warning alerts. That means if a sensor is damaged or disconnected, the logger still records what it can and the cellular branch can tell you which sensor failed.
+
+## EC25-AU SMS notes
+
+SMS is sent through AT commands on `EC25_AT_PORT`, usually `/dev/ttyUSB2`.
+
+The helper uses:
+
+```text
+AT
+AT+CMGF=1
+AT+CMGS="+614..."
+```
+
+Make sure the SIM can send SMS, the antenna is attached, and the modem has network signal. Check with:
+
+```bash
+python3 cellular_uploader.py --status
+```
+
+If SMS fails, the logger still keeps the CSV data. Reporting failures do not delete readings.
 
 ## Power notes
 

@@ -26,6 +26,7 @@ from water_logger import DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, PICO_SER
 
 DOWNLOAD_REQUEST_SECONDS = 12
 CELLULAR_UPLOAD_ENABLED = os.environ.get("CELLULAR_UPLOAD_ENABLED", "0") == "1"
+CELLULAR_REPORTING_ENABLED = os.environ.get("CELLULAR_REPORTING_ENABLED", "0") == "1"
 
 
 def shutdown() -> None:
@@ -72,6 +73,10 @@ def main() -> int:
         return result.returncode
 
     log_once()
+
+    if CELLULAR_REPORTING_ENABLED:
+        reporter = Path(__file__).with_name("cellular_uploader.py")
+        subprocess.run([sys.executable, str(reporter), "--report"], check=False)
 
     if CELLULAR_UPLOAD_ENABLED:
         uploader = Path(__file__).with_name("cellular_uploader.py")

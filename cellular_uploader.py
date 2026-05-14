@@ -9,22 +9,29 @@ Optional environment:
   EC25_AT_PORT=/dev/ttyUSB2
   EC25_BAUDRATE=115200
   CELLULAR_UPLOAD_URL=https://example.com/upload
+  CELLULAR_STATUS_URL=https://example.com/status
+  ALERT_SMS_NUMBERS=+61400111222,+61400999888
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import time
+import urllib.request
 from pathlib import Path
 
+from alert_manager import build_report
 from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH
 
 
 EC25_AT_PORT = os.environ.get("EC25_AT_PORT", "/dev/ttyUSB2")
 EC25_BAUDRATE = int(os.environ.get("EC25_BAUDRATE", "115200"))
 CELLULAR_UPLOAD_URL = os.environ.get("CELLULAR_UPLOAD_URL", "")
+CELLULAR_STATUS_URL = os.environ.get("CELLULAR_STATUS_URL", "")
+ALERT_SMS_NUMBERS = [number.strip() for number in os.environ.get("ALERT_SMS_NUMBERS", "").split(",") if number.strip()]
 
 
 def weekly_csv_files() -> list[Path]:
@@ -44,6 +51,27 @@ def at_command(serial_port, command: str, wait_seconds: float = 0.5) -> str:
     serial_port.flush()
     time.sleep(wait_seconds)
     return serial_port.read(serial_port.in_waiting or 1).decode("utf-8", errors="ignore").strip()
+
+
+def send_sms(number: str, message: str) -> str:
+    try:
+        import serial
+    except ImportError:
+        return "pyserial_missing"
+
+    try:
+        with serial.Serial(EC25_AT_PORT, EC25_BAUDRATE, timeout=2) as serial_port:
+            at_command(serial_port, "AT")
+            at_command(serial_port, "AT+CMGF=1")
+            serial_port.write((f'AT+CMGS="{number}"\r').encode("ascii"))
+            serial_port.flush()
+            time.sleep(0.5)
+            serial_port.write(message[:1500].encode("utf-8", errors="ignore") + b"\x1a")
+            serial_port.flush()
+            time.sleep(5)
+            return serial_port.read(serial_port.in_waiting or 1).decode("utf-8", errors="ignore").strip()
+    except OSError as exc:
+        return f"ec25_sms_failed: {exc}"
 
 
 def modem_status() -> str:
@@ -93,14 +121,70 @@ def upload_latest() -> int:
     return result.returncode
 
 
+def post_status(report: dict) -> int:
+    if not CELLULAR_STATUS_URL:
+        print("CELLULAR_STATUS_URL is not set; skipping server status update.")
+        return 0
+    payload = json.dumps(report).encode("utf-8")
+    request = urllib.request.Request(
+        CELLULAR_STATUS_URL,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "orange-pi-water-logger/1.0"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=45) as response:
+            print(f"Server status update HTTP {response.status}")
+            return 0 if 200 <= response.status < 300 else 1
+    except OSError as exc:
+        print(f"Server status update failed: {exc}")
+        return 1
+
+
+def send_sms_reports(report: dict) -> int:
+    if not ALERT_SMS_NUMBERS:
+        print("ALERT_SMS_NUMBERS is not set; skipping SMS.")
+        return 0
+
+    messages: list[str] = []
+    if report.get("daily_status_due"):
+        messages.append("Daily " + report["summary"])
+    for item in report.get("sms_alerts", []):
+        messages.append(f"{item['severity'].upper()}: {item['message']}")
+
+    if not messages:
+        print("No daily status or unsent alerts due for SMS.")
+        return 0
+
+    failures = 0
+    for number in ALERT_SMS_NUMBERS:
+        for message in messages:
+            result = send_sms(number, message)
+            print(f"SMS to {number}: {result}")
+            if "ERROR" in result or "failed" in result or "missing" in result:
+                failures += 1
+    return 1 if failures else 0
+
+
+def report_status() -> int:
+    report = build_report()
+    print(json.dumps(report, indent=2, sort_keys=True))
+    server_result = post_status(report)
+    sms_result = send_sms_reports(report)
+    return 1 if server_result or sms_result else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check EC25-AU status or upload latest water CSV.")
     parser.add_argument("--status", action="store_true", help="Print EC25-AU AT command status.")
     parser.add_argument("--upload-latest", action="store_true", help="Upload newest weekly CSV with curl.")
+    parser.add_argument("--report", action="store_true", help="Post server status and send due SMS alerts.")
     args = parser.parse_args()
 
     if args.upload_latest:
         return upload_latest()
+    if args.report:
+        return report_status()
 
     print(modem_status())
     return 0
