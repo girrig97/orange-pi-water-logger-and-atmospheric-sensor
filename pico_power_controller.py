@@ -10,7 +10,7 @@ Download mode:
   - Press the button once to power the Orange Pi and keep it on.
   - Hold the button for 2 seconds to start Bluetooth pairing mode.
   - Download the CSV over Bluetooth or WiFi.
-  - Hold the button again while awake to cut power, or let the timeout end it.
+  - Hold the button for 10 seconds while awake to cut power, or let the timeout end it.
 
 Run this with MicroPython on the Pico. The Orange Pi should run:
   python3 water_logger.py --once --shutdown-after
@@ -39,7 +39,9 @@ SCHEDULED_ON_SECONDS = 10 * 60
 DOWNLOAD_TIMEOUT_SECONDS = 60 * 60
 BUTTON_DEBOUNCE_MS = 80
 BUTTON_HOLD_SECONDS = 2
+MANUAL_POWER_OFF_HOLD_SECONDS = 10
 PAIRING_HOLD_MS = BUTTON_HOLD_SECONDS * 1000
+MANUAL_POWER_OFF_HOLD_MS = MANUAL_POWER_OFF_HOLD_SECONDS * 1000
 DOWNLOAD_LED_BLINK_MS = 800
 PAIRING_LED_BLINK_MS = 180
 
@@ -129,7 +131,7 @@ def read_button_action():
 def held_button_exit_requested():
     pressed_at = time.ticks_ms()
     while button.value() == 0:
-        if time.ticks_diff(time.ticks_ms(), pressed_at) >= PAIRING_HOLD_MS:
+        if time.ticks_diff(time.ticks_ms(), pressed_at) >= MANUAL_POWER_OFF_HOLD_MS:
             wait_for_button_release()
             return True
         time.sleep_ms(50)

@@ -556,7 +556,7 @@ Download mode:
 - Pico powers the Orange Pi, keeps it on, and sends a UART download-mode request.
 - The status LED flashes slowly while the Orange Pi is awake for download mode.
 - Download the CSV over Bluetooth or WiFi.
-- Hold the button for 2 seconds while awake to cut power manually.
+- Hold the button for 10 seconds while awake to cut power manually.
 - A 1-hour timeout turns it off as a fallback.
 
 Pairing mode:
@@ -587,7 +587,7 @@ Button behavior summary:
 | --- | --- | --- |
 | Short press and release | Download mode | Slow flash |
 | Hold for 2 seconds from sleep | Bluetooth pairing mode | Fast flash |
-| Hold for 2 seconds while awake | Manual power-off fallback | LED off after power cut |
+| Hold for 10 seconds while awake | Manual power-off fallback | LED off after power cut |
 
 The button is the normal way to enter download or pairing mode. As a fallback, you can manually create this empty file before boot:
 
