@@ -31,8 +31,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
@@ -45,6 +47,7 @@ public class MainActivity extends Activity {
     private BluetoothDevice selectedDevice;
     private TextView statusText;
     private TextView recordsText;
+    private final Map<String, TextView> valueViews = new HashMap<>();
     private Spinner deviceSpinner;
     private Button connectButton;
     private Button disconnectButton;
@@ -64,10 +67,15 @@ public class MainActivity extends Activity {
     }
 
     private void buildUi() {
+        ScrollView page = new ScrollView(this);
+        page.setFillViewport(true);
+        page.setBackgroundColor(Color.rgb(244, 247, 250));
+
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16), dp(16), dp(16), dp(16));
         root.setBackgroundColor(Color.rgb(244, 247, 250));
+        page.addView(root);
 
         TextView title = new TextView(this);
         title.setText("Water Logger");
@@ -112,6 +120,10 @@ public class MainActivity extends Activity {
         statusText.setBackground(rounded(Color.rgb(230, 239, 248), dp(8), Color.TRANSPARENT));
         root.addView(statusText, matchWrapBottom(dp(12)));
 
+        LinearLayout dashboardCard = card();
+        buildDashboard(dashboardCard);
+        root.addView(dashboardCard, matchWrapBottom(dp(12)));
+
         recordsText = new TextView(this);
         recordsText.setTextSize(14);
         recordsText.setTextColor(Color.rgb(22, 28, 36));
@@ -121,15 +133,12 @@ public class MainActivity extends Activity {
         recordsText.setText("Output will appear here.");
 
         ScrollView scrollView = new ScrollView(this);
+        scrollView.setMinimumHeight(dp(180));
         scrollView.setBackground(rounded(Color.WHITE, dp(8), Color.rgb(218, 226, 234)));
         scrollView.addView(recordsText);
-        root.addView(scrollView, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                1
-        ));
+        root.addView(scrollView, matchWrap());
 
-        setContentView(root);
+        setContentView(page);
 
         connectButton.setOnClickListener(v -> runInBackground(this::connect));
         disconnectButton.setOnClickListener(v -> disconnect());
@@ -147,6 +156,58 @@ public class MainActivity extends Activity {
                 selectedDevice = null;
             }
         });
+
+        resetDashboard();
+    }
+
+    private void buildDashboard(LinearLayout root) {
+        root.addView(sectionTitle("Water"));
+        addMetricRow(root, "Water temp", "water_temp_c");
+        addMetricRow(root, "pH", "ph");
+        addMetricRow(root, "TDS", "tds_ppm");
+        addMetricRow(root, "Turbidity", "turbidity_ntu");
+        addMetricRow(root, "Dissolved oxygen", "do_mg_l");
+        addMetricRow(root, "Condition", "condition");
+
+        root.addView(sectionTitle("Chemistry"));
+        addMetricRow(root, "EC", "ec_ms_cm");
+        addMetricRow(root, "ORP", "orp_mv");
+        addMetricRow(root, "NH4", "nh4_mg_l");
+        addMetricRow(root, "NH3", "nh3_mg_l");
+
+        root.addView(sectionTitle("Air"));
+        addMetricRow(root, "Air temp", "air_temp_c");
+        addMetricRow(root, "Humidity", "humidity_percent");
+        addMetricRow(root, "Pressure", "pressure_hpa");
+
+        root.addView(sectionTitle("System"));
+        addMetricRow(root, "Time", "time");
+        addMetricRow(root, "Records", "total_records");
+        addMetricRow(root, "Latest file", "latest_file");
+        addMetricRow(root, "Download mode", "download_mode");
+    }
+
+    private void addMetricRow(LinearLayout root, String label, String key) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, dp(3), 0, dp(3));
+
+        TextView labelView = new TextView(this);
+        labelView.setText(label);
+        labelView.setTextSize(13);
+        labelView.setTextColor(Color.rgb(71, 85, 99));
+        row.addView(labelView, weightedWrap());
+
+        TextView valueView = new TextView(this);
+        valueView.setText("--");
+        valueView.setTextSize(13);
+        valueView.setTypeface(Typeface.DEFAULT_BOLD);
+        valueView.setTextColor(Color.rgb(15, 23, 42));
+        valueView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+        row.addView(valueView, weightedWrap());
+
+        valueViews.put(key, valueView);
+        root.addView(row, matchWrap());
     }
 
     private void addActionButtons(LinearLayout root) {
@@ -370,6 +431,8 @@ public class MainActivity extends Activity {
         runOnUiThread(() -> {
             setButtonEnabled(connectButton, true);
             setButtonEnabled(disconnectButton, false);
+            resetDashboard();
+            statusText.setText("Disconnected. Values are shown as -- until the next connection.");
         });
     }
 
@@ -384,6 +447,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> {
                     statusText.setText("Command: " + command);
                     recordsText.setText(response);
+                    updateDashboardFromText(response);
                 });
             } catch (IOException e) {
                 show("Command failed: " + e.getMessage());
@@ -411,6 +475,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> {
                     statusText.setText("Saved download to:\n" + output.getAbsolutePath());
                     recordsText.setText(response);
+                    updateDashboardFromText(response);
                 });
             } catch (IOException e) {
                 show("Download failed: " + e.getMessage());
@@ -441,7 +506,10 @@ public class MainActivity extends Activity {
                             if (line.startsWith("LIVE ")) {
                                 latest.setLength(0);
                                 latest.append(line.replace(", ", "\n").replace("LIVE ", ""));
-                                runOnUiThread(() -> recordsText.setText(latest.toString()));
+                                runOnUiThread(() -> {
+                                    recordsText.setText(latest.toString());
+                                    updateDashboardFromText(line);
+                                });
                             }
                         } else {
                             sleep(100);
@@ -484,6 +552,114 @@ public class MainActivity extends Activity {
             sleep(80);
         }
         return response.toString().trim();
+    }
+
+    private void resetDashboard() {
+        for (TextView valueView : valueViews.values()) {
+            valueView.setText("--");
+            valueView.setTextColor(Color.rgb(100, 116, 139));
+        }
+    }
+
+    private void updateDashboardFromText(String text) {
+        Map<String, String> values = new HashMap<>();
+        parseLiveValues(text, values);
+        parseLatestCsvValues(text, values);
+        parseStatusValues(text, values);
+        applyDashboardValues(values);
+    }
+
+    private void parseLiveValues(String text, Map<String, String> values) {
+        String normalized = text.replace("\r", "");
+        int liveIndex = normalized.indexOf("LIVE ");
+        if (liveIndex < 0) {
+            return;
+        }
+        String liveText = normalized.substring(liveIndex + 5).trim();
+        String[] parts = liveText.split(",");
+        for (String part : parts) {
+            String[] pair = part.trim().split("=", 2);
+            if (pair.length == 2) {
+                values.put(pair[0].trim(), cleanValue(pair[1]));
+            }
+        }
+    }
+
+    private void parseLatestCsvValues(String text, Map<String, String> values) {
+        String[] lines = text.replace("\r", "").split("\n");
+        for (int index = 0; index < lines.length - 1; index++) {
+            String header = lines[index].trim();
+            String row = lines[index + 1].trim();
+            if (header.startsWith("timestamp,") && row.length() > 0 && !row.startsWith("END ")) {
+                String[] headers = header.split(",", -1);
+                String[] cells = row.split(",", -1);
+                for (int cell = 0; cell < headers.length && cell < cells.length; cell++) {
+                    String key = headers[cell].trim();
+                    if ("timestamp".equals(key)) {
+                        values.put("time", cleanValue(cells[cell]));
+                    } else {
+                        values.put(key, cleanValue(cells[cell]));
+                    }
+                }
+                copyIfPresent(values, "temperature_c", "water_temp_c");
+                copyIfPresent(values, "dissolved_oxygen_mg_l", "do_mg_l");
+                copyIfPresent(values, "ammonium_nh4_mg_l", "nh4_mg_l");
+                copyIfPresent(values, "toxic_ammonia_nh3_mg_l", "nh3_mg_l");
+                copyIfPresent(values, "air_temperature_c", "air_temp_c");
+                copyIfPresent(values, "air_humidity_percent", "humidity_percent");
+                copyIfPresent(values, "air_pressure_hpa", "pressure_hpa");
+                copyIfPresent(values, "water_condition", "condition");
+                return;
+            }
+        }
+    }
+
+    private void parseStatusValues(String text, Map<String, String> values) {
+        String[] lines = text.replace("\r", "").split("\n");
+        for (String line : lines) {
+            String[] pair = line.split(":", 2);
+            if (pair.length != 2) {
+                continue;
+            }
+            String key = pair[0].trim().toLowerCase(Locale.US);
+            String value = cleanValue(pair[1]);
+            if ("total records".equals(key)) {
+                values.put("total_records", value);
+            } else if ("latest file".equals(key)) {
+                values.put("latest_file", value);
+            } else if ("download mode".equals(key)) {
+                values.put("download_mode", value);
+            } else if ("orange pi utc time".equals(key) && !values.containsKey("time")) {
+                values.put("time", value);
+            }
+        }
+    }
+
+    private void copyIfPresent(Map<String, String> values, String from, String to) {
+        String value = values.get(from);
+        if (value != null && value.length() > 0) {
+            values.put(to, value);
+        }
+    }
+
+    private void applyDashboardValues(Map<String, String> values) {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            TextView valueView = valueViews.get(entry.getKey());
+            if (valueView == null) {
+                continue;
+            }
+            String value = entry.getValue();
+            valueView.setText(value.length() == 0 ? "--" : value);
+            valueView.setTextColor(value.length() == 0 ? Color.rgb(100, 116, 139) : Color.rgb(15, 23, 42));
+        }
+    }
+
+    private String cleanValue(String value) {
+        String cleaned = value.trim();
+        if (cleaned.length() == 0 || "null".equalsIgnoreCase(cleaned) || "none".equalsIgnoreCase(cleaned)) {
+            return "";
+        }
+        return cleaned;
     }
 
     private void ensureConnected() throws IOException {
