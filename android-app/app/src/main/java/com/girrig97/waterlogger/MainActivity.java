@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,36 +66,62 @@ public class MainActivity extends Activity {
     private void buildUi() {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(28, 28, 28, 28);
+        root.setPadding(dp(16), dp(16), dp(16), dp(16));
+        root.setBackgroundColor(Color.rgb(244, 247, 250));
 
         TextView title = new TextView(this);
-        title.setText("Water Logger Companion");
-        title.setTextSize(24);
-        title.setPadding(0, 0, 0, 18);
+        title.setText("Water Logger");
+        title.setTextSize(26);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setTextColor(Color.rgb(18, 32, 46));
+        title.setPadding(0, 0, 0, dp(4));
         root.addView(title);
 
+        TextView subtitle = new TextView(this);
+        subtitle.setText("Creek sensor companion");
+        subtitle.setTextSize(14);
+        subtitle.setTextColor(Color.rgb(86, 102, 118));
+        subtitle.setPadding(0, 0, 0, dp(14));
+        root.addView(subtitle);
+
+        LinearLayout connectionCard = card();
+        connectionCard.addView(sectionTitle("Bluetooth"));
+
         deviceSpinner = new Spinner(this);
-        root.addView(deviceSpinner);
+        connectionCard.addView(deviceSpinner, matchWrap());
 
         connectButton = button("Connect");
         disconnectButton = button("Disconnect");
-        disconnectButton.setEnabled(false);
-        root.addView(connectButton);
-        root.addView(disconnectButton);
+        setButtonEnabled(disconnectButton, false);
+        LinearLayout connectionButtons = row();
+        connectionButtons.addView(connectButton, weightedWrap());
+        connectionButtons.addView(space(dp(10), 1));
+        connectionButtons.addView(disconnectButton, weightedWrap());
+        connectionCard.addView(connectionButtons);
+        root.addView(connectionCard, matchWrapBottom(dp(12)));
 
-        addActionButtons(root);
+        LinearLayout controlsCard = card();
+        addActionButtons(controlsCard);
+        root.addView(controlsCard, matchWrapBottom(dp(12)));
 
         statusText = new TextView(this);
         statusText.setText("Select a paired Orange Pi Bluetooth device, then connect.");
         statusText.setTextSize(15);
-        statusText.setPadding(0, 18, 0, 18);
-        root.addView(statusText);
+        statusText.setTextColor(Color.rgb(18, 32, 46));
+        statusText.setPadding(dp(14), dp(12), dp(14), dp(12));
+        statusText.setBackground(rounded(Color.rgb(230, 239, 248), dp(8), Color.TRANSPARENT));
+        root.addView(statusText, matchWrapBottom(dp(12)));
 
         recordsText = new TextView(this);
         recordsText.setTextSize(14);
+        recordsText.setTextColor(Color.rgb(22, 28, 36));
+        recordsText.setLineSpacing(0, 1.08f);
+        recordsText.setPadding(dp(14), dp(14), dp(14), dp(14));
         recordsText.setTextIsSelectable(true);
+        recordsText.setText("Output will appear here.");
 
         ScrollView scrollView = new ScrollView(this);
+        scrollView.setBackground(rounded(Color.WHITE, dp(8), Color.rgb(218, 226, 234)));
         scrollView.addView(recordsText);
         root.addView(scrollView, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -121,29 +150,29 @@ public class MainActivity extends Activity {
     }
 
     private void addActionButtons(LinearLayout root) {
+        root.addView(sectionTitle("Readings"));
         Button status = button("System Status");
         Button summary = button("Record Count");
         Button times = button("List Record Times");
         Button latest = button("Latest Reading");
         Button live = button("Start Live Readings");
         Button stopLive = button("Stop Live Readings");
+
+        addButtonRow(root, status, latest);
+        addButtonRow(root, summary, times);
+        addButtonRow(root, live, stopLive);
+
+        root.addView(sectionTitle("Logging"));
         Button syncTime = button("Sync Time + Log");
         Button log = button("Log Fresh Reading");
+        addButtonRow(root, syncTime, log);
+
+        root.addView(sectionTitle("Files"));
         Button download = button("Download Latest Week");
         Button downloadAll = button("Download All Weeks");
         Button resume = button("Resume Normal Logging");
-
-        root.addView(status);
-        root.addView(summary);
-        root.addView(times);
-        root.addView(latest);
-        root.addView(live);
-        root.addView(stopLive);
-        root.addView(syncTime);
-        root.addView(log);
-        root.addView(download);
-        root.addView(downloadAll);
-        root.addView(resume);
+        addButtonRow(root, download, downloadAll);
+        root.addView(resume, matchWrapTop(dp(8)));
 
         status.setOnClickListener(v -> sendCommandToScreen("status"));
         summary.setOnClickListener(v -> sendCommandToScreen("summary"));
@@ -162,7 +191,99 @@ public class MainActivity extends Activity {
         Button button = new Button(this);
         button.setText(text);
         button.setAllCaps(false);
+        button.setTextSize(14);
+        button.setMinHeight(dp(44));
+        button.setPadding(dp(8), 0, dp(8), 0);
+        setButtonEnabled(button, true);
         return button;
+    }
+
+    private void setButtonEnabled(Button button, boolean enabled) {
+        button.setEnabled(enabled);
+        button.setTextColor(enabled ? Color.WHITE : Color.rgb(100, 116, 139));
+        int fill = enabled ? Color.rgb(21, 101, 192) : Color.rgb(226, 232, 240);
+        int stroke = enabled ? Color.TRANSPARENT : Color.rgb(203, 213, 225);
+        button.setBackground(rounded(fill, dp(7), stroke));
+    }
+
+    private TextView sectionTitle(String text) {
+        TextView title = new TextView(this);
+        title.setText(text);
+        title.setTextColor(Color.rgb(71, 85, 99));
+        title.setTextSize(12);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setPadding(0, dp(8), 0, dp(6));
+        return title;
+    }
+
+    private LinearLayout card() {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(dp(14), dp(8), dp(14), dp(14));
+        card.setBackground(rounded(Color.WHITE, dp(8), Color.rgb(218, 226, 234)));
+        return card;
+    }
+
+    private LinearLayout row() {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, dp(8), 0, 0);
+        return row;
+    }
+
+    private void addButtonRow(LinearLayout root, Button left, Button right) {
+        LinearLayout row = row();
+        row.addView(left, weightedWrap());
+        row.addView(space(dp(10), 1));
+        row.addView(right, weightedWrap());
+        root.addView(row, matchWrap());
+    }
+
+    private View space(int width, int height) {
+        View view = new View(this);
+        view.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        return view;
+    }
+
+    private LinearLayout.LayoutParams matchWrap() {
+        return new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+    }
+
+    private LinearLayout.LayoutParams matchWrapBottom(int bottomMargin) {
+        LinearLayout.LayoutParams params = matchWrap();
+        params.setMargins(0, 0, 0, bottomMargin);
+        return params;
+    }
+
+    private LinearLayout.LayoutParams matchWrapTop(int topMargin) {
+        LinearLayout.LayoutParams params = matchWrap();
+        params.setMargins(0, topMargin, 0, 0);
+        return params;
+    }
+
+    private LinearLayout.LayoutParams weightedWrap() {
+        return new LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1
+        );
+    }
+
+    private GradientDrawable rounded(int fillColor, int radius, int strokeColor) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(fillColor);
+        drawable.setCornerRadius(radius);
+        if (strokeColor != Color.TRANSPARENT) {
+            drawable.setStroke(1, strokeColor);
+        }
+        return drawable;
+    }
+
+    private int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
     }
 
     private void requestBluetoothPermission() {
@@ -225,8 +346,8 @@ public class MainActivity extends Activity {
             writer = socket.getOutputStream();
             readAvailableFor(1200);
             runOnUiThread(() -> {
-                connectButton.setEnabled(false);
-                disconnectButton.setEnabled(true);
+                setButtonEnabled(connectButton, false);
+                setButtonEnabled(disconnectButton, true);
                 statusText.setText("Connected to " + selectedDevice.getName());
             });
         } catch (IOException e) {
@@ -247,8 +368,8 @@ public class MainActivity extends Activity {
         writer = null;
         liveMode = false;
         runOnUiThread(() -> {
-            connectButton.setEnabled(true);
-            disconnectButton.setEnabled(false);
+            setButtonEnabled(connectButton, true);
+            setButtonEnabled(disconnectButton, false);
         });
     }
 
