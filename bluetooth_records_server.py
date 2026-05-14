@@ -13,6 +13,8 @@ Commands from a Bluetooth serial terminal:
   stop      - stop live streaming
   sms       - show alert SMS recipient numbers
   setsms numbers - set alert SMS recipients, comma separated
+  signal    - show EC25-AU network generation and signal level
+  testsms   - send a test SMS to configured alert recipients
   download  - send newest weekly CSV, remove DOWNLOAD_MODE, sync, and shut down
   download all - send all weekly CSVs, remove DOWNLOAD_MODE, sync, and shut down
   resume    - remove DOWNLOAD_MODE, sync, and shut down without download
@@ -26,6 +28,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from cellular_config import get_sms_numbers, set_sms_numbers, sms_numbers_text
+from cellular_uploader import modem_signal_text, send_test_sms
 from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, RECORDS_PATH, collect_reading, log_once
 
 
@@ -306,11 +309,25 @@ def handle_command(client, command: str) -> str:
             send_text(client, f"Could not save SMS numbers: {exc}\n")
         return "continue"
 
-    if command in {"help", "?"}:
-        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, download, download all, resume\n")
+    if command == "signal":
+        send_text(client, "BEGIN SIGNAL\n")
+        send_text(client, modem_signal_text())
+        send_text(client, "END SIGNAL\n")
         return "continue"
 
-    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, download, download all, resume\n")
+    if command == "testsms":
+        result = send_test_sms()
+        if result == 0:
+            send_text(client, "Test SMS sent to configured alert recipients.\n")
+        else:
+            send_text(client, "Test SMS failed or no alert recipients are configured.\n")
+        return "continue"
+
+    if command in {"help", "?"}:
+        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, signal, testsms, download, download all, resume\n")
+        return "continue"
+
+    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, signal, testsms, download, download all, resume\n")
     return "continue"
 
 
@@ -353,7 +370,7 @@ def main() -> int:
     print(f"Bluetooth client connected: {address}")
     if pairing_requested:
         send_text(client, "Pairing mode active. Bluetooth is discoverable and pairable.\n")
-    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, download, download all, resume\n")
+    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, signal, testsms, download, download all, resume\n")
 
     live_mode = False
     client.settimeout(1)

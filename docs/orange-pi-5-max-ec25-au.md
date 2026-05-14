@@ -155,7 +155,7 @@ If no upload URL is set, the uploader exits without blocking normal logging.
 This branch can send:
 
 - A JSON status update to your server after each reading.
-- A daily SMS status message.
+- A daily SMS status message on the first log of the day after 4am local time.
 - SMS alerts when freshwater readings look unsafe.
 - SMS alerts for barometric pressure drops.
 - SMS alerts for water temperature changes compared with the recent average.
@@ -179,6 +179,8 @@ From the Android app, use:
 ```text
 Get SMS Numbers
 Save SMS Numbers
+Signal Status
+Test SMS
 ```
 
 From a Bluetooth terminal:
@@ -186,6 +188,8 @@ From a Bluetooth terminal:
 ```text
 sms
 setsms +61400111222,+61400999888
+signal
+testsms
 ```
 
 To clear saved SMS recipients:
@@ -233,6 +237,7 @@ These are starter alert thresholds, not legal or scientific certification. Tune 
 | `ALERT_PRESSURE_DROP_HPA_24H` | `6.0` | pressure drop over recent 24h alerts |
 | `ALERT_TEMP_CHANGE_C_24H` | `2.0` | water temp change versus recent 24h average alerts |
 | `ALERT_COOLDOWN_SECONDS` | `21600` | same alert SMS cooldown, default 6 hours |
+| `DAILY_STATUS_AFTER_HOUR` | `4` | daily status waits until the first log at or after this local hour |
 
 Sensor communication failures can generate warning alerts, but only for sensors that were working in the initial logged record. This avoids nuisance alerts for optional sensors that were never installed.
 
@@ -269,6 +274,32 @@ python3 cellular_uploader.py --status
 ```
 
 If SMS fails, the logger still keeps the CSV data. Reporting failures do not delete readings.
+
+## Signal status
+
+The recorder can report modem signal over Bluetooth or the Android app:
+
+```text
+signal
+```
+
+The response includes:
+
+```text
+Network: 4G
+Cell signal: 74% (-67 dBm)
+CSQ: 23
+Operator: ...
+Radio info: ...
+```
+
+`Network` is shown as `2G`, `3G`, `4G`, `no signal`, or `signal, network type unknown`, based on EC25 `AT+QNWINFO` and `AT+CSQ` responses.
+
+To send a test SMS to the configured alert recipients:
+
+```text
+testsms
+```
 
 ## Power notes
 

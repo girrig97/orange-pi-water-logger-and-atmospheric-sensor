@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import time
 import urllib.request
@@ -86,6 +87,86 @@ def modem_status() -> str:
             return "\n".join(f"{command}: {at_command(serial_port, command)}" for command in commands)
     except OSError as exc:
         return f"ec25_at_port_unavailable: {exc}"
+
+
+def network_generation(qnwinfo_response: str, csq_value: int | None) -> str:
+    text = qnwinfo_response.upper()
+    if "LTE" in text:
+        return "4G"
+    if any(token in text for token in ("WCDMA", "UMTS", "HSPA", "CDMA", "EVDO")):
+        return "3G"
+    if any(token in text for token in ("GSM", "GPRS", "EDGE")):
+        return "2G"
+    if csq_value is None or csq_value == 99 or csq_value <= 0:
+        return "no signal"
+    return "signal, network type unknown"
+
+
+def parse_csq(csq_response: str) -> tuple[int | None, int | None, int | None]:
+    match = re.search(r"\+CSQ:\s*(\d+),", csq_response)
+    if not match:
+        return None, None, None
+    csq = int(match.group(1))
+    if csq == 99:
+        return csq, None, None
+    dbm = -113 + (2 * csq)
+    percent = max(0, min(100, round(csq / 31 * 100)))
+    return csq, dbm, percent
+
+
+def modem_signal_report() -> dict[str, str | int | None]:
+    try:
+        import serial
+    except ImportError:
+        return {"network": "unknown", "signal": "pyserial_missing", "csq": None, "dbm": None, "percent": None, "raw": "pyserial_missing"}
+
+    try:
+        with serial.Serial(EC25_AT_PORT, EC25_BAUDRATE, timeout=1) as serial_port:
+            at_command(serial_port, "AT")
+            csq_response = at_command(serial_port, "AT+CSQ")
+            qnwinfo_response = at_command(serial_port, "AT+QNWINFO")
+            cops_response = at_command(serial_port, "AT+COPS?")
+    except OSError as exc:
+        return {"network": "no signal", "signal": f"ec25_at_port_unavailable: {exc}", "csq": None, "dbm": None, "percent": None, "raw": str(exc)}
+
+    csq, dbm, percent = parse_csq(csq_response)
+    network = network_generation(qnwinfo_response, csq)
+    signal = "no signal" if percent is None else f"{percent}% ({dbm} dBm)"
+    return {
+        "network": network,
+        "signal": signal,
+        "csq": csq,
+        "dbm": dbm,
+        "percent": percent,
+        "operator": cops_response,
+        "raw": qnwinfo_response,
+    }
+
+
+def modem_signal_text() -> str:
+    report = modem_signal_report()
+    return (
+        f"Network: {report['network']}\n"
+        f"Cell signal: {report['signal']}\n"
+        f"CSQ: {report['csq'] if report['csq'] is not None else '--'}\n"
+        f"Operator: {report.get('operator') or '--'}\n"
+        f"Radio info: {report.get('raw') or '--'}\n"
+    )
+
+
+def send_test_sms() -> int:
+    numbers = get_sms_numbers()
+    if not numbers:
+        print("No alert SMS numbers configured.")
+        return 1
+    failures = 0
+    message = "Water logger test SMS: cellular alert service is working."
+    for number in numbers:
+        result = send_sms(number, message)
+        print(f"Test SMS to {number}: {result}")
+        if "ERROR" in result or "failed" in result or "missing" in result:
+            failures += 1
+    return 1 if failures else 0
 
 
 def upload_latest() -> int:
@@ -178,6 +259,8 @@ def report_status() -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check EC25-AU status or upload latest water CSV.")
     parser.add_argument("--status", action="store_true", help="Print EC25-AU AT command status.")
+    parser.add_argument("--signal", action="store_true", help="Print parsed EC25-AU signal status.")
+    parser.add_argument("--test-sms", action="store_true", help="Send a test SMS to configured alert recipients.")
     parser.add_argument("--upload-latest", action="store_true", help="Upload newest weekly CSV with curl.")
     parser.add_argument("--report", action="store_true", help="Post server status and send due SMS alerts.")
     args = parser.parse_args()
@@ -186,6 +269,11 @@ def main() -> int:
         return upload_latest()
     if args.report:
         return report_status()
+    if args.signal:
+        print(modem_signal_text())
+        return 0
+    if args.test_sms:
+        return send_test_sms()
 
     print(modem_status())
     return 0

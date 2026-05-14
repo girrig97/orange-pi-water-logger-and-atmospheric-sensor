@@ -60,6 +60,7 @@ class AlertThresholds:
     pressure_drop_hpa_24h: float = env_float("ALERT_PRESSURE_DROP_HPA_24H", 6.0)
     temp_change_c_24h: float = env_float("ALERT_TEMP_CHANGE_C_24H", 2.0)
     alert_cooldown_seconds: int = env_int("ALERT_COOLDOWN_SECONDS", 6 * 60 * 60)
+    daily_status_after_hour: int = env_int("DAILY_STATUS_AFTER_HOUR", 4)
 
 
 def weekly_csv_files() -> list[Path]:
@@ -223,8 +224,11 @@ def summary_text(rows: list[dict[str, str]]) -> str:
     )
 
 
-def should_send_daily_status(state: dict[str, Any], now: datetime) -> bool:
-    today = now.astimezone().date().isoformat()
+def should_send_daily_status(state: dict[str, Any], now: datetime, thresholds: AlertThresholds) -> bool:
+    local_now = now.astimezone()
+    if local_now.hour < thresholds.daily_status_after_hour:
+        return False
+    today = local_now.date().isoformat()
     if state.get("last_daily_status_date") == today:
         return False
     state["last_daily_status_date"] = today
@@ -252,7 +256,7 @@ def build_report() -> dict[str, Any]:
     sensor_baseline = get_sensor_baseline(rows, state)
     alerts = evaluate_latest(rows, thresholds, sensor_baseline) + evaluate_trends(rows, thresholds)
     sms_alerts = filter_alerts_for_sms(alerts, state, now, thresholds)
-    daily_due = should_send_daily_status(state, now)
+    daily_due = should_send_daily_status(state, now, thresholds)
     save_state(state)
     latest = rows[-1] if rows else {}
     return {

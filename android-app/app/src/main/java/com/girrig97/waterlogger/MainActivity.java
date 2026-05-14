@@ -187,6 +187,8 @@ public class MainActivity extends Activity {
         addMetricRow(root, "Records", "total_records");
         addMetricRow(root, "Latest file", "latest_file");
         addMetricRow(root, "Download mode", "download_mode");
+        addMetricRow(root, "Network", "network");
+        addMetricRow(root, "Cell signal", "cell_signal");
     }
 
     private void addMetricRow(LinearLayout root, String label, String key) {
@@ -249,6 +251,9 @@ public class MainActivity extends Activity {
         Button getSms = button("Get SMS Numbers");
         Button saveSms = button("Save SMS Numbers");
         addButtonRow(root, getSms, saveSms);
+        Button signal = button("Signal Status");
+        Button testSms = button("Test SMS");
+        addButtonRow(root, signal, testSms);
 
         status.setOnClickListener(v -> sendCommandToScreen("status"));
         summary.setOnClickListener(v -> sendCommandToScreen("summary"));
@@ -263,6 +268,8 @@ public class MainActivity extends Activity {
         resume.setOnClickListener(v -> sendCommandToScreen("resume"));
         getSms.setOnClickListener(v -> getSmsNumbers());
         saveSms.setOnClickListener(v -> saveSmsNumbers());
+        signal.setOnClickListener(v -> sendCommandToScreen("signal"));
+        testSms.setOnClickListener(v -> sendCommandToScreen("testsms"));
     }
 
     private Button button(String text) {
@@ -689,6 +696,10 @@ public class MainActivity extends Activity {
                 values.put("latest_file", value);
             } else if ("download mode".equals(key)) {
                 values.put("download_mode", value);
+            } else if ("network".equals(key)) {
+                values.put("network", value);
+            } else if ("cell signal".equals(key)) {
+                values.put("cell_signal", value);
             } else if ("orange pi utc time".equals(key) && !values.containsKey("time")) {
                 values.put("time", value);
             }
