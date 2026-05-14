@@ -21,6 +21,16 @@ from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH
 
 
 STATE_PATH = RECORDS_PATH / "cellular_alert_state.json"
+SENSOR_STATUS_COLUMNS = [
+    "temperature_status",
+    "ph_status",
+    "tds_status",
+    "turbidity_status",
+    "orp_status",
+    "dissolved_oxygen_status",
+    "ammonium_ise_status",
+    "air_sensor_status",
+]
 
 
 def env_float(name: str, default: float) -> float:
@@ -90,7 +100,7 @@ def load_state() -> dict[str, Any]:
     try:
         return json.loads(STATE_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return {"last_sms_alerts": {}, "last_daily_status_date": ""}
+        return {"last_sms_alerts": {}, "last_daily_status_date": "", "sensor_baseline": {}}
 
 
 def save_state(state: dict[str, Any]) -> None:
@@ -102,7 +112,26 @@ def alert(key: str, severity: str, message: str) -> dict[str, str]:
     return {"key": key, "severity": severity, "message": message}
 
 
-def evaluate_latest(rows: list[dict[str, str]], thresholds: AlertThresholds) -> list[dict[str, str]]:
+def sensor_baseline_from_initial_row(row: dict[str, str]) -> dict[str, bool]:
+    baseline: dict[str, bool] = {}
+    for key in SENSOR_STATUS_COLUMNS:
+        status = row.get(key, "").strip()
+        baseline[key] = status == "ok"
+    return baseline
+
+
+def get_sensor_baseline(rows: list[dict[str, str]], state: dict[str, Any]) -> dict[str, bool]:
+    baseline = state.get("sensor_baseline")
+    if isinstance(baseline, dict) and baseline:
+        return {str(key): bool(value) for key, value in baseline.items()}
+    if not rows:
+        return {}
+    baseline = sensor_baseline_from_initial_row(rows[0])
+    state["sensor_baseline"] = baseline
+    return baseline
+
+
+def evaluate_latest(rows: list[dict[str, str]], thresholds: AlertThresholds, sensor_baseline: dict[str, bool]) -> list[dict[str, str]]:
     if not rows:
         return [alert("no_records", "warning", "No water logger records found yet.")]
 
@@ -133,8 +162,9 @@ def evaluate_latest(rows: list[dict[str, str]], thresholds: AlertThresholds) -> 
     if tds is not None and tds > thresholds.tds_max_ppm:
         alerts.append(alert("tds_high", "warning", f"TDS {tds:.0f} ppm is above {thresholds.tds_max_ppm:.0f} ppm."))
 
-    for key, value in latest.items():
-        if key.endswith("_status") and value and value != "ok":
+    for key in SENSOR_STATUS_COLUMNS:
+        value = latest.get(key, "").strip()
+        if sensor_baseline.get(key, False) and value and value != "ok":
             alerts.append(alert(f"sensor_{key}", "warning", f"{key} is {value}."))
 
     condition = latest.get("water_condition", "")
@@ -219,7 +249,8 @@ def build_report() -> dict[str, Any]:
     rows = read_rows()
     now = datetime.now(timezone.utc)
     state = load_state()
-    alerts = evaluate_latest(rows, thresholds) + evaluate_trends(rows, thresholds)
+    sensor_baseline = get_sensor_baseline(rows, state)
+    alerts = evaluate_latest(rows, thresholds, sensor_baseline) + evaluate_trends(rows, thresholds)
     sms_alerts = filter_alerts_for_sms(alerts, state, now, thresholds)
     daily_due = should_send_daily_status(state, now)
     save_state(state)
@@ -232,6 +263,7 @@ def build_report() -> dict[str, Any]:
         "sms_alerts": sms_alerts,
         "daily_status_due": daily_due,
         "record_count_window": len(rows),
+        "sensor_baseline": sensor_baseline,
     }
 
 

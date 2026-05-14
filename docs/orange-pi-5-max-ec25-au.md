@@ -234,7 +234,21 @@ These are starter alert thresholds, not legal or scientific certification. Tune 
 | `ALERT_TEMP_CHANGE_C_24H` | `2.0` | water temp change versus recent 24h average alerts |
 | `ALERT_COOLDOWN_SECONDS` | `21600` | same alert SMS cooldown, default 6 hours |
 
-Sensor communication failures also generate warning alerts. That means if a sensor is damaged or disconnected, the logger still records what it can and the cellular branch can tell you which sensor failed.
+Sensor communication failures can generate warning alerts, but only for sensors that were working in the initial logged record. This avoids nuisance alerts for optional sensors that were never installed.
+
+The first logged row creates a sensor baseline in:
+
+```text
+records/cellular_alert_state.json
+```
+
+If a sensor was not reporting in that initial row, later failures for that sensor will not trigger SMS alerts until the records/state are cleared and a new baseline is created. To reset the baseline, delete the records folder or delete:
+
+```text
+records/cellular_alert_state.json
+```
+
+Then let the logger take a new first reading with the sensors you want monitored.
 
 ## EC25-AU SMS notes
 
