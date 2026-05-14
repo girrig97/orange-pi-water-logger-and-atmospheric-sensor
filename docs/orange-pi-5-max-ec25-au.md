@@ -168,6 +168,34 @@ export CELLULAR_STATUS_URL=https://your-server.example/water-logger/status
 export ALERT_SMS_NUMBERS=+61400111222,+61400999888
 ```
 
+`ALERT_SMS_NUMBERS` is optional. If it is not set, the phone app can save alert numbers to:
+
+```text
+records/cellular_config.json
+```
+
+From the Android app, use:
+
+```text
+Get SMS Numbers
+Save SMS Numbers
+```
+
+From a Bluetooth terminal:
+
+```text
+sms
+setsms +61400111222,+61400999888
+```
+
+To clear saved SMS recipients:
+
+```text
+setsms
+```
+
+If `ALERT_SMS_NUMBERS` is set in the environment, it takes priority over the saved phone-app config.
+
 Run manually for testing:
 
 ```bash

@@ -11,6 +11,8 @@ Commands from a Bluetooth serial terminal:
   log       - log one fresh reading using current Orange Pi time
   live      - stream unsaved live readings every 5 seconds
   stop      - stop live streaming
+  sms       - show alert SMS recipient numbers
+  setsms numbers - set alert SMS recipients, comma separated
   download  - send newest weekly CSV, remove DOWNLOAD_MODE, sync, and shut down
   download all - send all weekly CSVs, remove DOWNLOAD_MODE, sync, and shut down
   resume    - remove DOWNLOAD_MODE, sync, and shut down without download
@@ -23,6 +25,7 @@ import csv
 from datetime import datetime, timezone
 from pathlib import Path
 
+from cellular_config import get_sms_numbers, set_sms_numbers, sms_numbers_text
 from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, RECORDS_PATH, collect_reading, log_once
 
 
@@ -211,6 +214,7 @@ def handle_command(client, command: str) -> str:
                 f"Total bytes: {total_size}\n"
                 f"Download mode: {marker_state}\n"
                 f"Pairing mode: {pairing_state}\n"
+                f"Alert SMS numbers: {sms_numbers_text()}\n"
                 f"Orange Pi UTC time: {current_time_text()}\n"
             ),
         )
@@ -286,11 +290,27 @@ def handle_command(client, command: str) -> str:
         send_text(client, "END LIVE\n")
         return "continue"
 
-    if command in {"help", "?"}:
-        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, live, stop, download, download all, resume\n")
+    if command == "sms":
+        send_text(client, f"Alert SMS numbers: {sms_numbers_text()}\n")
         return "continue"
 
-    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, live, stop, download, download all, resume\n")
+    if command == "setsms" or command.startswith("setsms "):
+        try:
+            numbers_text = raw_command.split(" ", 1)[1] if " " in raw_command else ""
+            numbers = set_sms_numbers(numbers_text)
+            if numbers:
+                send_text(client, "Alert SMS numbers saved: " + ",".join(numbers) + "\n")
+            else:
+                send_text(client, "Alert SMS numbers cleared.\n")
+        except ValueError as exc:
+            send_text(client, f"Could not save SMS numbers: {exc}\n")
+        return "continue"
+
+    if command in {"help", "?"}:
+        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, download, download all, resume\n")
+        return "continue"
+
+    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, download, download all, resume\n")
     return "continue"
 
 
@@ -333,7 +353,7 @@ def main() -> int:
     print(f"Bluetooth client connected: {address}")
     if pairing_requested:
         send_text(client, "Pairing mode active. Bluetooth is discoverable and pairable.\n")
-    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, download, download all, resume\n")
+    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, download, download all, resume\n")
 
     live_mode = False
     client.settimeout(1)

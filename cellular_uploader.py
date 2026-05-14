@@ -24,6 +24,7 @@ import urllib.request
 from pathlib import Path
 
 from alert_manager import build_report
+from cellular_config import get_sms_numbers
 from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH
 
 
@@ -31,7 +32,6 @@ EC25_AT_PORT = os.environ.get("EC25_AT_PORT", "/dev/ttyUSB2")
 EC25_BAUDRATE = int(os.environ.get("EC25_BAUDRATE", "115200"))
 CELLULAR_UPLOAD_URL = os.environ.get("CELLULAR_UPLOAD_URL", "")
 CELLULAR_STATUS_URL = os.environ.get("CELLULAR_STATUS_URL", "")
-ALERT_SMS_NUMBERS = [number.strip() for number in os.environ.get("ALERT_SMS_NUMBERS", "").split(",") if number.strip()]
 
 
 def weekly_csv_files() -> list[Path]:
@@ -142,7 +142,8 @@ def post_status(report: dict) -> int:
 
 
 def send_sms_reports(report: dict) -> int:
-    if not ALERT_SMS_NUMBERS:
+    alert_sms_numbers = get_sms_numbers()
+    if not alert_sms_numbers:
         print("ALERT_SMS_NUMBERS is not set; skipping SMS.")
         return 0
 
@@ -157,7 +158,7 @@ def send_sms_reports(report: dict) -> int:
         return 0
 
     failures = 0
-    for number in ALERT_SMS_NUMBERS:
+    for number in alert_sms_numbers:
         for message in messages:
             result = send_sms(number, message)
             print(f"SMS to {number}: {result}")

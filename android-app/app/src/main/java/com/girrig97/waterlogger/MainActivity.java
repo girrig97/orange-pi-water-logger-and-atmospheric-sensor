@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -47,6 +48,7 @@ public class MainActivity extends Activity {
     private BluetoothDevice selectedDevice;
     private TextView statusText;
     private TextView recordsText;
+    private EditText smsNumbersInput;
     private final Map<String, TextView> valueViews = new HashMap<>();
     private Spinner deviceSpinner;
     private Button connectButton;
@@ -235,6 +237,19 @@ public class MainActivity extends Activity {
         addButtonRow(root, download, downloadAll);
         root.addView(resume, matchWrapTop(dp(8)));
 
+        root.addView(sectionTitle("SMS alerts"));
+        smsNumbersInput = new EditText(this);
+        smsNumbersInput.setSingleLine(false);
+        smsNumbersInput.setMinLines(1);
+        smsNumbersInput.setHint("+61400111222, +61400999888");
+        smsNumbersInput.setTextSize(14);
+        smsNumbersInput.setPadding(dp(10), 0, dp(10), 0);
+        smsNumbersInput.setBackground(rounded(Color.rgb(248, 250, 252), dp(7), Color.rgb(203, 213, 225)));
+        root.addView(smsNumbersInput, matchWrapTop(dp(4)));
+        Button getSms = button("Get SMS Numbers");
+        Button saveSms = button("Save SMS Numbers");
+        addButtonRow(root, getSms, saveSms);
+
         status.setOnClickListener(v -> sendCommandToScreen("status"));
         summary.setOnClickListener(v -> sendCommandToScreen("summary"));
         times.setOnClickListener(v -> sendCommandToScreen("times"));
@@ -246,6 +261,8 @@ public class MainActivity extends Activity {
         download.setOnClickListener(v -> downloadCsv("download", "latest-week"));
         downloadAll.setOnClickListener(v -> downloadCsv("download all", "all-weeks"));
         resume.setOnClickListener(v -> sendCommandToScreen("resume"));
+        getSms.setOnClickListener(v -> getSmsNumbers());
+        saveSms.setOnClickListener(v -> saveSmsNumbers());
     }
 
     private Button button(String text) {
@@ -451,6 +468,49 @@ public class MainActivity extends Activity {
                 });
             } catch (IOException e) {
                 show("Command failed: " + e.getMessage());
+            }
+        });
+    }
+
+    private void getSmsNumbers() {
+        runInBackground(() -> {
+            try {
+                if (liveMode) {
+                    stopLiveReadings();
+                    sleep(300);
+                }
+                String response = sendCommand("sms", 2500);
+                runOnUiThread(() -> {
+                    statusText.setText("Command: sms");
+                    recordsText.setText(response);
+                    String prefix = "Alert SMS numbers:";
+                    int index = response.indexOf(prefix);
+                    if (index >= 0) {
+                        String numbers = response.substring(index + prefix.length()).trim();
+                        smsNumbersInput.setText("none".equalsIgnoreCase(numbers) ? "" : numbers);
+                    }
+                });
+            } catch (IOException e) {
+                show("SMS lookup failed: " + e.getMessage());
+            }
+        });
+    }
+
+    private void saveSmsNumbers() {
+        String numbers = smsNumbersInput.getText().toString().trim();
+        runInBackground(() -> {
+            try {
+                if (liveMode) {
+                    stopLiveReadings();
+                    sleep(300);
+                }
+                String response = sendCommand("setsms " + numbers, 2500);
+                runOnUiThread(() -> {
+                    statusText.setText("SMS alert numbers updated");
+                    recordsText.setText(response);
+                });
+            } catch (IOException e) {
+                show("SMS save failed: " + e.getMessage());
             }
         });
     }
