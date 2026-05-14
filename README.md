@@ -36,7 +36,7 @@ Core computer and power:
 | 1 | microSD card | 16GB or larger recommended |
 | 1 | Raspberry Pi Pico or Pico W | Low-power timer and download-mode button controller |
 | 1 | USB power bank | 10,000mAh minimum; larger is better |
-| 1 | 5V load switch module | Rated at least 3A, preferably 5A |
+| 1 | 5V relay or MOS power-switch module | Pico-controlled switch for Orange Pi 5V; rated at least 3A, preferably 5A |
 | 1 | DS3231 RTC module | Keeps accurate time for the Pico controller |
 | 1 | Momentary push button | Download-mode button |
 | 1 | Weatherproof enclosure | Large enough for Orange Pi, Pico, ADCs, and wiring |
@@ -92,29 +92,29 @@ Use two ADS1115 ADC boards on the Orange Pi Zero 3 I2C header.
 
 The supplied visual diagram is mostly accurate, with these corrections:
 
-- The 5V load switch `IN+` must connect to the USB power bank 5V, not to a Pico GPIO pin.
-- The 5V load switch `IN-`/GND must connect to the common ground bus.
-- Pico `GP15` must connect to the load switch `EN` pin only.
-- Pico `GP14` must connect to the download button only, not to the load switch.
+- The 5V power-switch module input must connect to the USB power bank 5V, not to a Pico GPIO pin.
+- The 5V power-switch module GND must connect to the common ground bus.
+- Pico `GP15` must connect only to the power-switch trigger, enable, signal, or `IN` pin.
+- Pico `GP14` must connect to the download button only, not to the power switch.
 - ADS1115 #1 must have `ADDR -> GND` for address `0x48`.
 - ADS1115 #2 must have `ADDR -> 3.3V` for address `0x49`.
 - Any sensor analog output above 3.3V needs level scaling before the ADS1115 input.
 
-In the numbered image, the ADC, DS18B20, I2C, RTC, and button sections are broadly right. Recheck the load-switch section carefully before building.
+In the numbered image, the ADC, DS18B20, I2C, RTC, and button sections are broadly right. Recheck the power-switch section carefully before building, because relay and MOS boards use different terminal names.
 
 Corrected numbered wiring:
 
 | Number | Correct connection |
 | --- | --- |
-| 1 | Power bank 5V to Pico USB/VSYS and load switch `IN+` |
-| 2 | Common GND bus to Pico GND, load switch `IN-`, Orange Pi GND, ADC GND, sensor GND |
-| 3 | Pico `GP15` to load switch `EN` |
+| 1 | Power bank 5V to Pico USB/VSYS and power-switch module 5V input |
+| 2 | Common GND bus to Pico GND, power-switch GND, Orange Pi GND, ADC GND, sensor GND |
+| 3 | Pico `GP15` to power-switch trigger/enable input |
 | 4 | Pico `GP14` to one side of download button |
 | 5 | Pico `GP4` to DS3231 SDA |
 | 6 | Pico `GP5` to DS3231 SCL |
 | 7 | Pico `3V3` to DS3231 VCC |
-| 8 | Load switch `OUT+` to Orange Pi 5V input, pin 2 or 4 |
-| 9 | Load switch `OUT-` to Orange Pi GND, pin 6 |
+| 8 | Power-switch switched 5V output to Orange Pi 5V input, pin 2 or 4 |
+| 9 | Power-switch output/common GND to Orange Pi GND, pin 6 |
 | 10 | Orange Pi pin 1 `3.3V` to ADS1115 VDD and DS18B20 VCC |
 | 11 | Orange Pi pin 3 SDA to both ADS1115 SDA pins |
 | 12 | Orange Pi pin 5 SCL to both ADS1115 SCL pins |
@@ -152,8 +152,8 @@ Corrected wiring view:
                                   +---------------------------+    |
                                   v                                |
                          +------------------+                      |
-                         | 5V LOAD SWITCH   |                      |
-                         | EN  <- Pico GP15 |                      |
+                         | 5V POWER SWITCH   |                      |
+                         | TRIG/EN <- GP15  |                      |
                          | IN+ <- bank 5V   |                      |
                          | IN- <- GND bus --+----------------------+
                          | OUT+ -> OPi 5V   |
@@ -235,7 +235,7 @@ All grounds must be common:
 ```text
 Power bank GND
 Pico GND
-load-switch GND
+power-switch GND
 Orange Pi GND
 ADS1115 GND
 sensor module GND
@@ -243,7 +243,41 @@ DS3231 GND
 DS18B20 GND
 ```
 
-Do not power the Orange Pi directly from a Pico pin. The Pico only controls the load-switch enable pin.
+Do not power the Orange Pi directly from a Pico pin. The Pico only controls the relay/MOS power-switch trigger input.
+
+### Power switch wiring options
+
+The code expects a simple active-high control signal:
+
+```text
+Pico GP15 HIGH -> Orange Pi power on
+Pico GP15 LOW  -> Orange Pi power off
+```
+
+For a relay module, use the relay contacts to switch the Orange Pi 5V positive line:
+
+| Relay terminal | Connect to |
+| --- | --- |
+| `VCC` | module supply voltage, usually 5V unless your board says otherwise |
+| `GND` | common GND |
+| `IN`, `SIG`, or `TRIG` | Pico `GP15` |
+| `COM` | USB power bank 5V |
+| `NO` | Orange Pi 5V pin 2 or 4 |
+| `NC` | leave unused |
+
+Use `NO`, not `NC`, so the Orange Pi is normally off until the Pico enables it.
+
+For a MOS switch board, use the switched output terminals:
+
+| MOS switch terminal | Connect to |
+| --- | --- |
+| `VIN+`, `V+`, or `DC+` | USB power bank 5V |
+| `VIN-`, `V-`, or `DC-` | common GND |
+| `TRIG`, `PWM`, `IN`, or `EN` | Pico `GP15` |
+| `VOUT+`, `OUT+`, or `LOAD+` | Orange Pi 5V pin 2 or 4 |
+| `VOUT-`, `OUT-`, or `LOAD-` | Orange Pi GND |
+
+Some MOS boards are low-side switches, meaning they only switch the ground side. They can work for testing, but a relay contact or high-side switch is safer for field use because it avoids back-powering through UART or sensor wires.
 
 ## Module wiring summary
 
@@ -260,7 +294,7 @@ Do not power the Orange Pi directly from a Pico pin. The Pico only controls the 
 | ADS1115 #1 | Orange Pi 3.3V | common GND | SDA pin 3, SCL pin 5 | A0-A3 analog inputs |
 | ADS1115 #2 | Orange Pi 3.3V | common GND | SDA pin 3, SCL pin 5 | A0-A3 analog inputs |
 | DS3231 RTC | Pico 3.3V | common GND | SDA GP4, SCL GP5 | none |
-| 5V load switch | power bank 5V input | common GND | EN from Pico GP15 | switched 5V to Orange Pi |
+| 5V relay or MOS power switch | power bank 5V input | common GND | trigger/EN from Pico GP15 | switched 5V to Orange Pi |
 | Download button | none | common GND | Pico GP14 | none |
 | Required UART link | Orange Pi 3.3V UART logic | common GND | Orange Pi TX to Pico GP1/RX, Orange Pi RX to Pico GP0/TX | download mode and adaptive wake timing |
 
@@ -498,17 +532,17 @@ Use `pico_power_controller.py` on a Raspberry Pi Pico or Pico W to switch Orange
 
 | Pico pin | Connect to |
 | --- | --- |
-| GP15 | 5V load-switch enable input |
+| GP15 | 5V relay/MOS power-switch trigger input |
 | GP14 | Download button to GND |
 | GP0/TX | Orange Pi UART RX |
 | GP1/RX | Orange Pi UART TX |
 | GP4 | DS3231 SDA |
 | GP5 | DS3231 SCL |
 | 3V3 | DS3231 VCC |
-| GND | DS3231 GND, button GND, load-switch GND |
+| GND | DS3231 GND, button GND, power-switch GND |
 | VSYS or 5V USB input | Pico power from power bank |
 
-The Orange Pi 5V input should be powered through the load switch. Use a 5V switch rated for at least 3A, preferably 5A.
+The Orange Pi 5V input should be powered through the relay/MOS power switch. Use a 5V switch rated for at least 3A, preferably 5A.
 
 Normal mode:
 

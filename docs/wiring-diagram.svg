@@ -39,17 +39,17 @@
   <text x="440" y="140" class="title">Raspberry Pi Pico / W</text>
   <text x="430" y="176" class="label">VSYS/USB 5V</text>
   <text x="430" y="202" class="label">GND</text>
-  <text x="430" y="228" class="label">GP15 load enable</text>
+  <text x="430" y="228" class="label">GP15 power switch trigger</text>
   <text x="430" y="254" class="label">GP14 button</text>
   <text x="430" y="280" class="label">GP4 SDA, GP5 SCL</text>
   <text x="430" y="306" class="label">GP1/RX from OPi TX</text>
   <text x="430" y="332" class="label">GP0/TX to OPi RX</text>
 
   <rect x="780" y="120" width="250" height="160" class="power"/>
-  <text x="810" y="155" class="title">5V Load Switch</text>
-  <text x="815" y="190" class="label">IN+ / IN-</text>
-  <text x="815" y="216" class="label">EN from Pico GP15</text>
-  <text x="815" y="242" class="label">OUT+ / OUT-</text>
+  <text x="800" y="155" class="title">5V Power Switch</text>
+  <text x="815" y="190" class="label">VIN / GND or COM</text>
+  <text x="815" y="216" class="label">TRIG/EN from GP15</text>
+  <text x="815" y="242" class="label">VOUT or NO output</text>
 
   <rect x="660" y="430" width="360" height="260" class="box"/>
   <text x="715" y="468" class="title">Orange Pi Zero 3</text>
@@ -195,9 +195,9 @@
   <!-- Legend -->
   <rect x="50" y="940" width="1180" height="220" class="note"/>
   <text x="80" y="974" class="title">Numbered Wiring Legend</text>
-  <text x="80" y="1010" class="small">1  Bank 5V to Pico VSYS/USB and load switch IN+     2  Common GND bus to every module     3  Pico GP15 to load-switch EN</text>
+  <text x="80" y="1010" class="small">1  Bank 5V to Pico VSYS/USB and power-switch 5V input     2  Common GND bus to every module     3  Pico GP15 to switch TRIG/EN</text>
   <text x="80" y="1036" class="small">4  Pico GP14 to download button                    5  Pico GP4 to DS3231 SDA             6  Pico GP5 to DS3231 SCL</text>
-  <text x="80" y="1062" class="small">7  Pico 3V3 to DS3231 VCC                          8  Load switch OUT+ to Orange Pi 5V   9  Load switch OUT- to Orange Pi GND</text>
+  <text x="80" y="1062" class="small">7  Pico 3V3 to DS3231 VCC                          8  Switched 5V output to Orange Pi 5V  9  Power-switch/output GND to Orange Pi GND</text>
   <text x="80" y="1088" class="small">10 Orange Pi 3.3V to ADS1115, DS18B20, BME280      11 Orange Pi SDA to ADS1115/BME280    12 Orange Pi SCL to ADS1115/BME280</text>
   <text x="80" y="1114" class="small">13 Orange Pi pin 7 to DS18B20 DATA                 14 pH AO to ADS1 A0                   15 TDS AO to ADS1 A1</text>
   <text x="80" y="1140" class="small">16 Turbidity AO to ADS1 A2                         17 ORP AO to ADS1 A3                  18 DO AO to ADS2 A0</text>
@@ -206,7 +206,7 @@
   <rect x="1260" y="940" width="490" height="220" class="note"/>
   <text x="1290" y="974" class="title">Build Notes</text>
   <text x="1290" y="1010" class="small">- Do not power the Orange Pi from a Pico GPIO pin.</text>
-  <text x="1290" y="1038" class="small">- Pico GP15 drives only the load-switch EN pin.</text>
+  <text x="1290" y="1038" class="small">- Pico GP15 drives only the relay/MOS switch trigger input.</text>
   <text x="1290" y="1066" class="small">- ADS1115 #1 ADDR to GND; ADS1115 #2 ADDR to 3.3V.</text>
   <text x="1290" y="1094" class="small">- ADS1115 analog inputs must stay between 0V and 3.3V.</text>
   <text x="1290" y="1122" class="small">- The UART interval link is required for adaptive hourly logging.</text>

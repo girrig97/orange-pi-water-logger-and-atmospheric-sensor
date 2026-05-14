@@ -21,7 +21,7 @@ import time
 
 
 # Wiring
-POWER_ENABLE_PIN = 15       # Pico GP15 -> 5V load-switch enable input
+POWER_ENABLE_PIN = 15       # Pico GP15 -> 5V relay/MOS power-switch trigger
 DOWNLOAD_BUTTON_PIN = 14    # Button between Pico GP14 and GND
 STATUS_LED_PIN = 25         # Pico onboard LED
 RTC_SDA_PIN = 4             # Pico GP4 -> DS3231 SDA
