@@ -18,12 +18,14 @@ from __future__ import annotations
 import subprocess
 import sys
 import time
+import os
 from pathlib import Path
 
 from water_logger import DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, PICO_SERIAL_PORT, RECORDS_PATH, log_once
 
 
 DOWNLOAD_REQUEST_SECONDS = 12
+CELLULAR_UPLOAD_ENABLED = os.environ.get("CELLULAR_UPLOAD_ENABLED", "0") == "1"
 
 
 def shutdown() -> None:
@@ -70,6 +72,10 @@ def main() -> int:
         return result.returncode
 
     log_once()
+
+    if CELLULAR_UPLOAD_ENABLED:
+        uploader = Path(__file__).with_name("cellular_uploader.py")
+        subprocess.run([sys.executable, str(uploader), "--upload-latest"], check=False)
 
     shutdown()
     return 0

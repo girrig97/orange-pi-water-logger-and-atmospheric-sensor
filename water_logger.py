@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Orange Pi Zero 3 water-quality logger.
+Orange Pi water-quality logger.
 
 Every 6 hours this app appends one CSV row to the microSD card. It logs
 raw sensor voltages, calibrated sensor values, and derived water-quality
@@ -44,8 +44,9 @@ SAMPLE_DELAY_SECONDS = 0.2
 # TDS-to-EC factor. 500 is common for hobby TDS meters, but calibrate yours.
 TDS_FACTOR = 500.0
 
-# Orange Pi Zero 3 26-pin header exposes I2C3 on physical pins 3 and 5.
-I2C_BUS_NUMBER = 3
+# Orange Pi boards expose different I2C bus numbers. Zero 3 commonly uses I2C3.
+# Set I2C_BUS_NUMBER for variants such as Orange Pi 5 Max after enabling overlays.
+I2C_BUS_NUMBER = int(os.environ.get("I2C_BUS_NUMBER", "3"))
 
 # ADS1115 addresses. Set ADS1115 #1 ADDR to GND for 0x48.
 # Set ADS1115 #2 ADDR to 3.3V/VDD for 0x49.
