@@ -344,9 +344,12 @@ def main() -> int:
             data = client.recv(1024)
         except Exception as exc:
             if "timed out" in str(exc).lower() or "timeout" in str(exc).lower():
-                data = b""
+                data = None
             else:
                 break
+
+        if data == b"":
+            break
 
         if data:
             command = data.decode("utf-8", errors="ignore")
