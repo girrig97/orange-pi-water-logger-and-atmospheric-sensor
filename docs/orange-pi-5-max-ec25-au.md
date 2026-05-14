@@ -2,11 +2,51 @@
 
 This branch targets an Orange Pi 5 Max with a Quectel EC25-AU cellular modem.
 
-## Important hardware note
+## Compact M.2 modem build
 
-The Orange Pi 5 Max has an M.2 M-key slot intended for NVMe/SATA storage. The Quectel EC25-AU M.2 modem is a WWAN-style module and should be connected through a compatible USB WWAN adapter, HAT, or carrier board, not directly into the Orange Pi 5 Max M-key storage slot.
+You can absolutely make this compact, but use the right kind of M.2/carrier connection.
 
-Use the EC25-AU through USB. On Linux it should appear as several `/dev/ttyUSB*` ports after the correct USB serial drivers bind. The AT command port is commonly `/dev/ttyUSB2`, but confirm on your board.
+The Orange Pi 5 Max onboard M.2 slot is an M-key PCIe storage slot for NVMe/SATA SSDs. Do not plug a cellular modem into that slot.
+
+For the EC25-AU, use one of these compact options:
+
+| Modem form | Compact carrier to search for | Connects to Orange Pi as |
+| --- | --- | --- |
+| EC25-AU Mini PCIe | `Mini PCIe LTE modem USB adapter` or `Mini PCIe WWAN USB carrier` | USB |
+| M.2 B-key LTE modem | `M.2 B key LTE modem USB adapter` or `M.2 B key WWAN USB carrier` | USB |
+| Bare EC25-AU LGA module | Custom carrier board only | USB/UART from carrier |
+
+Many EC25-AU listings are Mini PCIe, not M.2. If your listing really says M.2, check the key notch and pinout before buying the carrier.
+
+The compact carrier should provide:
+
+- USB 2.0 data connection to the Orange Pi.
+- SIM card slot.
+- Main LTE antenna connector.
+- Stable modem power supply.
+- Optional GNSS antenna connector if your module supports GPS/GNSS.
+
+On Linux the modem should appear as several `/dev/ttyUSB*` ports after the correct USB serial drivers bind. The AT command port is commonly `/dev/ttyUSB2`, but confirm on your board.
+
+Recommended search terms:
+
+```text
+EC25-AU Mini PCIe USB adapter SIM antenna
+Mini PCIe LTE modem USB carrier board SIM
+M.2 B key LTE modem USB adapter SIM
+M.2 WWAN USB adapter Quectel SIM antenna
+Quectel EC25 USB carrier board
+```
+
+Avoid:
+
+```text
+M.2 M-key NVMe adapter
+M.2 SSD adapter
+PCIe NVMe riser
+```
+
+Those are for storage, not LTE modems.
 
 ## What changes in this branch
 
@@ -192,7 +232,7 @@ If SMS fails, the logger still keeps the CSV data. Reporting failures do not del
 
 The Orange Pi 5 Max uses more power than the Zero 3. Use a larger power bank or battery pack, and make sure the 5V relay/MOS switch can handle the startup current.
 
-The EC25-AU can draw burst current during LTE transmit. Use a modem carrier board with stable power and a good antenna.
+The EC25-AU can draw burst current during LTE transmit. Use a modem carrier board with stable power and a good antenna. For a compact enclosure, keep the antenna outside or against a non-metallic window in the case; do not bury the antenna behind metal or next to noisy power wiring.
 
 ## Branch purpose
 
