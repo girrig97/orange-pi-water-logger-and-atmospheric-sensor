@@ -23,7 +23,7 @@ import csv
 from datetime import datetime, timezone
 from pathlib import Path
 
-from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, RECORDS_PATH, collect_reading, log_once
+from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, RECORDS_PATH, collect_reading, log_once
 
 
 SERVICE_NAME = "OrangePi Water Records"
@@ -46,10 +46,33 @@ def download_mode_path() -> Path:
     return RECORDS_PATH / DOWNLOAD_MODE_FILENAME
 
 
-def remove_download_marker() -> None:
-    marker = download_mode_path()
-    if marker.exists():
-        marker.unlink()
+def pairing_mode_path() -> Path:
+    return RECORDS_PATH / PAIRING_MODE_FILENAME
+
+
+def remove_mode_markers() -> None:
+    for marker in (download_mode_path(), pairing_mode_path()):
+        if marker.exists():
+            marker.unlink()
+
+
+def bluetoothctl(*args: str) -> None:
+    try:
+        subprocess.run(["bluetoothctl", *args], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except FileNotFoundError:
+        pass
+
+
+def set_pairing_window(enabled: bool) -> None:
+    state = "on" if enabled else "off"
+    bluetoothctl("power", "on")
+    if enabled:
+        bluetoothctl("agent", "NoInputNoOutput")
+        bluetoothctl("default-agent")
+        bluetoothctl("pairable-timeout", "0")
+        bluetoothctl("discoverable-timeout", "0")
+    bluetoothctl("pairable", state)
+    bluetoothctl("discoverable", state)
 
 
 def shutdown() -> None:
@@ -179,6 +202,7 @@ def handle_command(client, command: str) -> str:
         latest = files[-1].name if files else "none"
         total_size = sum(path.stat().st_size for path in files)
         marker_state = "yes" if download_mode_path().exists() else "no"
+        pairing_state = "yes" if pairing_mode_path().exists() else "no"
         send_text(
             client,
             (
@@ -186,6 +210,7 @@ def handle_command(client, command: str) -> str:
                 f"Latest file: {latest}\n"
                 f"Total bytes: {total_size}\n"
                 f"Download mode: {marker_state}\n"
+                f"Pairing mode: {pairing_state}\n"
                 f"Orange Pi UTC time: {current_time_text()}\n"
             ),
         )
@@ -230,7 +255,8 @@ def handle_command(client, command: str) -> str:
         send_text(client, read_latest_csv())
         send_text(client, "\nEND CSV\n")
         send_text(client, "Download complete. Resuming normal timed logging.\n")
-        remove_download_marker()
+        remove_mode_markers()
+        set_pairing_window(False)
         shutdown()
         return "shutdown"
 
@@ -239,13 +265,15 @@ def handle_command(client, command: str) -> str:
         send_text(client, read_all_csvs())
         send_text(client, "\nEND ALL CSV\n")
         send_text(client, "Download complete. Resuming normal timed logging.\n")
-        remove_download_marker()
+        remove_mode_markers()
+        set_pairing_window(False)
         shutdown()
         return "shutdown"
 
     if command == "resume":
-        send_text(client, "Download mode cleared. Resuming normal timed logging.\n")
-        remove_download_marker()
+        send_text(client, "Download/pairing mode cleared. Resuming normal timed logging.\n")
+        remove_mode_markers()
+        set_pairing_window(False)
         shutdown()
         return "shutdown"
 
@@ -273,6 +301,9 @@ def main() -> int:
         print("Bluetooth Python package missing. Install python3-bluez or PyBluez.")
         return 1
 
+    pairing_requested = pairing_mode_path().exists()
+    set_pairing_window(pairing_requested)
+
     server = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
     server.bind(("", bluetooth.PORT_ANY))
     server.listen(1)
@@ -287,6 +318,8 @@ def main() -> int:
     )
 
     print(f"Bluetooth record server listening on RFCOMM channel {port}")
+    if pairing_requested:
+        print("Bluetooth pairing mode enabled: adapter is discoverable and pairable.")
 
     try:
         client, address = server.accept()
@@ -298,6 +331,8 @@ def main() -> int:
         return 0
 
     print(f"Bluetooth client connected: {address}")
+    if pairing_requested:
+        send_text(client, "Pairing mode active. Bluetooth is discoverable and pairable.\n")
     send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, download, download all, resume\n")
 
     live_mode = False

@@ -40,7 +40,7 @@
   <text x="430" y="176" class="label">VSYS/USB 5V</text>
   <text x="430" y="202" class="label">GND</text>
   <text x="430" y="228" class="label">GP15 power switch trigger</text>
-  <text x="430" y="254" class="label">GP14 button</text>
+  <text x="430" y="254" class="label">GP14 button NO</text>
   <text x="430" y="280" class="label">GP4 SDA, GP5 SCL</text>
   <text x="430" y="306" class="label">GP1/RX from OPi TX</text>
   <text x="430" y="332" class="label">GP0/TX to OPi RX</text>
@@ -99,7 +99,7 @@
   <text x="1155" y="205" class="label">DS3231 GND to common GND</text>
   <text x="1155" y="232" class="label">DS3231 SDA to Pico GP4</text>
   <text x="1155" y="259" class="label">DS3231 SCL to Pico GP5</text>
-  <text x="1155" y="286" class="label">Button between GP14 and GND</text>
+  <text x="1155" y="286" class="label">Button NO to GP14, C to GND</text>
 
   <rect x="1490" y="340" width="245" height="300" class="box"/>
   <text x="1530" y="376" class="title">Sensor Modules</text>
@@ -196,7 +196,7 @@
   <rect x="50" y="940" width="1180" height="220" class="note"/>
   <text x="80" y="974" class="title">Numbered Wiring Legend</text>
   <text x="80" y="1010" class="small">1  Bank 5V to Pico VSYS/USB and power-switch 5V input     2  Common GND bus to every module     3  Pico GP15 to switch TRIG/EN</text>
-  <text x="80" y="1036" class="small">4  Pico GP14 to download button                    5  Pico GP4 to DS3231 SDA             6  Pico GP5 to DS3231 SCL</text>
+  <text x="80" y="1036" class="small">4  Button NO to Pico GP14, C to GND               5  Pico GP4 to DS3231 SDA             6  Pico GP5 to DS3231 SCL</text>
   <text x="80" y="1062" class="small">7  Pico 3V3 to DS3231 VCC                          8  Switched 5V output to Orange Pi 5V  9  Power-switch/output GND to Orange Pi GND</text>
   <text x="80" y="1088" class="small">10 Orange Pi 3.3V to ADS1115, DS18B20, BME280      11 Orange Pi SDA to ADS1115/BME280    12 Orange Pi SCL to ADS1115/BME280</text>
   <text x="80" y="1114" class="small">13 Orange Pi pin 7 to DS18B20 DATA                 14 pH AO to ADS1 A0                   15 TDS AO to ADS1 A1</text>

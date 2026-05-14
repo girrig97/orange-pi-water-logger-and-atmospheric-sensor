@@ -8,8 +8,9 @@ Normal mode:
 
 Download mode:
   - Press the button once to power the Orange Pi and keep it on.
+  - Hold the button for 2 seconds to start Bluetooth pairing mode.
   - Download the CSV over Bluetooth or WiFi.
-  - Long-press the button to cut power, or let the safety timeout end it.
+  - Hold the button again while awake to cut power, or let the timeout end it.
 
 Run this with MicroPython on the Pico. The Orange Pi should run:
   python3 water_logger.py --once --shutdown-after
@@ -37,7 +38,10 @@ MAX_LOG_INTERVAL_SECONDS = 6 * 60 * 60
 SCHEDULED_ON_SECONDS = 10 * 60
 DOWNLOAD_TIMEOUT_SECONDS = 60 * 60
 BUTTON_DEBOUNCE_MS = 80
-BUTTON_LONG_PRESS_SECONDS = 2
+BUTTON_HOLD_SECONDS = 2
+PAIRING_HOLD_MS = BUTTON_HOLD_SECONDS * 1000
+DOWNLOAD_LED_BLINK_MS = 800
+PAIRING_LED_BLINK_MS = 180
 
 DS3231_ADDRESS = 0x68
 
@@ -112,31 +116,47 @@ def wait_for_button_release():
         time.sleep_ms(50)
 
 
-def run_download_mode():
+def read_button_action():
+    pressed_at = time.ticks_ms()
+    while button.value() == 0:
+        if time.ticks_diff(time.ticks_ms(), pressed_at) >= PAIRING_HOLD_MS:
+            wait_for_button_release()
+            return "pairing"
+        time.sleep_ms(50)
+    return "download"
+
+
+def held_button_exit_requested():
+    pressed_at = time.ticks_ms()
+    while button.value() == 0:
+        if time.ticks_diff(time.ticks_ms(), pressed_at) >= PAIRING_HOLD_MS:
+            wait_for_button_release()
+            return True
+        time.sleep_ms(50)
+    return False
+
+
+def run_download_mode(pairing=False):
     orange_pi_on()
     started_at = now_seconds()
     blink_at = time.ticks_ms()
     announce_at = time.ticks_ms()
     led_state = True
-
-    wait_for_button_release()
+    uart_message = "PAIRING_MODE=1\n" if pairing else "DOWNLOAD_MODE=1\n"
+    blink_interval_ms = PAIRING_LED_BLINK_MS if pairing else DOWNLOAD_LED_BLINK_MS
 
     while now_seconds() - started_at < DOWNLOAD_TIMEOUT_SECONDS:
         if time.ticks_diff(time.ticks_ms(), announce_at) > 2000:
             announce_at = time.ticks_ms()
-            uart.write("DOWNLOAD_MODE=1\n")
+            uart.write(uart_message)
 
-        if time.ticks_diff(time.ticks_ms(), blink_at) > 500:
+        if time.ticks_diff(time.ticks_ms(), blink_at) > blink_interval_ms:
             blink_at = time.ticks_ms()
             led_state = not led_state
             led.value(led_state)
 
-        if button_pressed():
-            pressed_at = now_seconds()
-            while button.value() == 0:
-                time.sleep_ms(50)
-            if now_seconds() - pressed_at >= BUTTON_LONG_PRESS_SECONDS:
-                break
+        if button_pressed() and held_button_exit_requested():
+            break
 
         time.sleep(1)
 
@@ -196,9 +216,9 @@ def main():
         current_time = now_seconds()
 
         if button_pressed():
-            run_download_mode()
+            action = read_button_action()
+            run_download_mode(pairing=(action == "pairing"))
             next_log_at = now_seconds() + LOG_INTERVAL_SECONDS
-            wait_for_button_release()
 
         if current_time >= next_log_at:
             next_interval = run_scheduled_log()

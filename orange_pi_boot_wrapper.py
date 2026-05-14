@@ -6,8 +6,9 @@ Normal mode:
   - Log one reading.
   - Shut down.
 
-Download mode:
+Download/pairing mode:
   - Start Bluetooth record server before taking an extra download-mode reading.
+  - Pairing mode also makes Bluetooth discoverable and pairable.
   - Send settime from a phone, which logs a fresh row with corrected time.
   - After a successful Bluetooth download, remove DOWNLOAD_MODE and shut down.
 """
@@ -19,7 +20,7 @@ import sys
 import time
 from pathlib import Path
 
-from water_logger import DOWNLOAD_MODE_FILENAME, PICO_SERIAL_PORT, RECORDS_PATH, log_once
+from water_logger import DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, PICO_SERIAL_PORT, RECORDS_PATH, log_once
 
 
 DOWNLOAD_REQUEST_SECONDS = 12
@@ -30,12 +31,12 @@ def shutdown() -> None:
     subprocess.run(["shutdown", "-h", "now"], check=False)
 
 
-def pico_requested_download() -> bool:
-    """Return True when the Pico button controller requests download mode."""
+def pico_requested_mode() -> str | None:
+    """Return the mode requested by the Pico button controller."""
     try:
         import serial
     except ImportError:
-        return False
+        return None
 
     deadline = time.monotonic() + DOWNLOAD_REQUEST_SECONDS
     try:
@@ -43,19 +44,27 @@ def pico_requested_download() -> bool:
             while time.monotonic() < deadline:
                 line = serial_port.readline().decode("utf-8", errors="ignore").strip()
                 if line == "DOWNLOAD_MODE=1":
-                    return True
+                    return "download"
+                if line == "PAIRING_MODE=1":
+                    return "pairing"
     except OSError:
-        return False
+        return None
 
-    return False
+    return None
 
 
 def main() -> int:
     download_mode_path = RECORDS_PATH / DOWNLOAD_MODE_FILENAME
+    pairing_mode_path = RECORDS_PATH / PAIRING_MODE_FILENAME
+    requested_mode = pico_requested_mode()
 
-    if download_mode_path.exists() or pico_requested_download():
+    if download_mode_path.exists() or pairing_mode_path.exists() or requested_mode:
         RECORDS_PATH.mkdir(parents=True, exist_ok=True)
         download_mode_path.touch()
+        if requested_mode == "pairing":
+            pairing_mode_path.touch()
+        elif requested_mode == "download" and pairing_mode_path.exists():
+            pairing_mode_path.unlink()
         server = Path(__file__).with_name("bluetooth_records_server.py")
         result = subprocess.run([sys.executable, str(server)], check=False)
         return result.returncode

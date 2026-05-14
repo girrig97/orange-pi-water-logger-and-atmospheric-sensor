@@ -27,6 +27,7 @@ PROJECT_PATH = Path(__file__).resolve().parent
 RECORDS_PATH = PROJECT_PATH / "records"
 CSV_FILENAME_PREFIX = "water_conditions"
 DOWNLOAD_MODE_FILENAME = "DOWNLOAD_MODE"
+PAIRING_MODE_FILENAME = "PAIRING_MODE"
 NEXT_INTERVAL_FILENAME = "next_interval_seconds.txt"
 
 # 6 hours, in seconds.
@@ -690,14 +691,15 @@ def main() -> None:
     args = parser.parse_args()
 
     download_mode_path = RECORDS_PATH / DOWNLOAD_MODE_FILENAME
+    pairing_mode_path = RECORDS_PATH / PAIRING_MODE_FILENAME
 
     if args.once:
         log_once()
-        if args.shutdown_after and not download_mode_path.exists():
+        if args.shutdown_after and not download_mode_path.exists() and not pairing_mode_path.exists():
             subprocess.run(["sync"], check=False)
             subprocess.run(["shutdown", "-h", "now"], check=False)
-        elif download_mode_path.exists():
-            print(f"Download mode marker found at {download_mode_path}; staying on.")
+        elif download_mode_path.exists() or pairing_mode_path.exists():
+            print("Download or pairing mode marker found; staying on.")
         return
 
     while True:

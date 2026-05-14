@@ -38,7 +38,7 @@ Core computer and power:
 | 1 | USB power bank | 10,000mAh minimum; larger is better |
 | 1 | 5V relay or MOS power-switch module | Pico-controlled switch for Orange Pi 5V; rated at least 3A, preferably 5A |
 | 1 | DS3231 RTC module | Keeps accurate time for the Pico controller |
-| 1 | Momentary push button | Download-mode button |
+| 1 | Momentary self-reset illuminated button | Use `NO` and `C` for the button signal; LED terminals are separate |
 | 1 | Weatherproof enclosure | Large enough for Orange Pi, Pico, ADCs, and wiring |
 
 Sensor and interface modules:
@@ -109,7 +109,7 @@ Corrected numbered wiring:
 | 1 | Power bank 5V to Pico USB/VSYS and power-switch module 5V input |
 | 2 | Common GND bus to Pico GND, power-switch GND, Orange Pi GND, ADC GND, sensor GND |
 | 3 | Pico `GP15` to power-switch trigger/enable input |
-| 4 | Pico `GP14` to one side of download button |
+| 4 | Pico `GP14` to button `NO`; button `C` to common GND |
 | 5 | Pico `GP4` to DS3231 SDA |
 | 6 | Pico `GP5` to DS3231 SCL |
 | 7 | Pico `3V3` to DS3231 VCC |
@@ -143,7 +143,7 @@ Corrected wiring view:
                     | VSYS/USB <- 5V power bank   |               |
                     | GND ------ COMMON GND BUS --+               |
                     | GP15 ---- power enable ----------------+    |
-                    | GP14 ---- download button ---- GND     |    |
+                    | GP14 ---- button NO/C ---- GND          |    |
                     | GP4  ---- DS3231 SDA                   |    |
                     | GP5  ---- DS3231 SCL                   |    |
                     | 3V3  ---- DS3231 VCC                   |    |
@@ -221,9 +221,9 @@ Corrected wiring view:
                           +--------------------------+
 
                           +--------------------------+
-                          | Download mode button     |
-                          | one side -> Pico GP14    |
-                          | other side -> common GND |
+                          | Momentary button         |
+                          | NO -> Pico GP14          |
+                          | C  -> common GND         |
                           +--------------------------+
 
 * If a module's analog output can exceed 3.3V, add a voltage divider or level
@@ -295,7 +295,7 @@ Some MOS boards are low-side switches, meaning they only switch the ground side.
 | ADS1115 #2 | Orange Pi 3.3V | common GND | SDA pin 3, SCL pin 5 | A0-A3 analog inputs |
 | DS3231 RTC | Pico 3.3V | common GND | SDA GP4, SCL GP5 | none |
 | 5V relay or MOS power switch | power bank 5V input | common GND | trigger/EN from Pico GP15 | switched 5V to Orange Pi |
-| Download button | none | common GND | Pico GP14 | none |
+| Momentary button switch | none | `C` to common GND | `NO` to Pico GP14 | none |
 | Required UART link | Orange Pi 3.3V UART logic | common GND | Orange Pi TX to Pico GP1/RX, Orange Pi RX to Pico GP0/TX | download mode and adaptive wake timing |
 
 ## Orange Pi Zero 3 header wiring
@@ -533,13 +533,13 @@ Use `pico_power_controller.py` on a Raspberry Pi Pico or Pico W to switch Orange
 | Pico pin | Connect to |
 | --- | --- |
 | GP15 | 5V relay/MOS power-switch trigger input |
-| GP14 | Download button to GND |
+| GP14 | Momentary button `NO`; button `C` to GND |
 | GP0/TX | Orange Pi UART RX |
 | GP1/RX | Orange Pi UART TX |
 | GP4 | DS3231 SDA |
 | GP5 | DS3231 SCL |
 | 3V3 | DS3231 VCC |
-| GND | DS3231 GND, button GND, power-switch GND |
+| GND | DS3231 GND, button `C`, power-switch GND |
 | VSYS or 5V USB input | Pico power from power bank |
 
 The Orange Pi 5V input should be powered through the relay/MOS power switch. Use a 5V switch rated for at least 3A, preferably 5A.
@@ -552,19 +552,56 @@ Normal mode:
 
 Download mode:
 
-- Press the Pico button once.
+- Press the Pico button once and release.
 - Pico powers the Orange Pi, keeps it on, and sends a UART download-mode request.
+- The status LED flashes slowly while the Orange Pi is awake for download mode.
 - Download the CSV over Bluetooth or WiFi.
-- Long-press the button for 2 seconds to leave download mode.
+- Hold the button for 2 seconds while awake to cut power manually.
 - A 1-hour timeout turns it off as a fallback.
 
-The button is the normal way to enter download mode. As a fallback, you can manually create this empty file before boot:
+Pairing mode:
+
+- Hold the Pico button for 2 seconds while the logger is asleep.
+- Pico powers the Orange Pi, keeps it on, and sends a UART pairing-mode request.
+- The status LED flashes quickly while the Orange Pi is awake for pairing mode.
+- The Orange Pi makes Bluetooth discoverable and pairable, then starts the same Bluetooth records server.
+- Pair your phone, then use the Android app or Bluetooth terminal commands.
+
+The momentary self-reset button terminals are:
+
+| Button terminal | Use |
+| --- | --- |
+| `NO` | Connect to Pico `GP14` |
+| `C` | Connect to common GND |
+| `NC` | Leave unused |
+| `A` or `+` | LED positive, optional |
+| `LED` or `-` | LED negative, optional |
+
+Use `NO` and `C`, so the Pico input is normally open and only connects to GND while pressed. Do not use the self-locking/latching version for this behavior.
+
+The button LED is separate from the button switch. The code flashes `STATUS_LED_PIN`, which defaults to the Pico onboard LED on `GP25`. To flash the button's built-in LED instead, change `STATUS_LED_PIN` in `pico_power_controller.py` to a spare Pico GPIO and wire the LED terminals according to the voltage rating of your button LED. If the LED is bare 3V style, use a current-limiting resistor, for example 330 ohms. If it is a 5V/12V/24V button LED, do not connect it directly to a Pico GPIO unless the listing says it is safe at 3.3V.
+
+Button behavior summary:
+
+| Button action | Result | LED pattern |
+| --- | --- | --- |
+| Short press and release | Download mode | Slow flash |
+| Hold for 2 seconds from sleep | Bluetooth pairing mode | Fast flash |
+| Hold for 2 seconds while awake | Manual power-off fallback | LED off after power cut |
+
+The button is the normal way to enter download or pairing mode. As a fallback, you can manually create this empty file before boot:
 
 ```text
 DOWNLOAD_MODE
 ```
 
-When the boot wrapper sees the Pico request or `records/DOWNLOAD_MODE`, it starts the Bluetooth serial download server instead of doing the normal unattended log-and-shutdown cycle.
+For pairing mode fallback, create:
+
+```text
+PAIRING_MODE
+```
+
+When the boot wrapper sees the Pico request, `records/DOWNLOAD_MODE`, or `records/PAIRING_MODE`, it starts the Bluetooth serial download server instead of doing the normal unattended log-and-shutdown cycle.
 
 ## Boot service for timed power
 
@@ -583,7 +620,7 @@ sudo systemctl enable orange_pi_boot_logger.service
 
 When the Pico powers the Orange Pi, the service runs one reading and shuts the Orange Pi down unless the microSD records folder contains `DOWNLOAD_MODE`.
 
-If `DOWNLOAD_MODE` exists, the boot wrapper starts a Bluetooth serial download server instead of shutting down.
+If `DOWNLOAD_MODE` or `PAIRING_MODE` exists, the boot wrapper starts a Bluetooth serial download server instead of shutting down. `PAIRING_MODE` also asks BlueZ to make the Orange Pi Bluetooth adapter discoverable and pairable.
 
 Bluetooth commands:
 
@@ -597,7 +634,7 @@ Bluetooth commands:
 | `stop` | Stops live reading stream |
 | `download` | Sends the newest weekly CSV, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `download all` | Sends all weekly CSV files, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
-| `resume` | Deletes `DOWNLOAD_MODE` and shuts down without downloading |
+| `resume` | Deletes `DOWNLOAD_MODE`/`PAIRING_MODE` and shuts down without downloading |
 
 That means after a successful Bluetooth `download`, the next Pico wake returns to normal 6-hour logging automatically.
 
@@ -670,6 +707,8 @@ The button request uses the required UART link from Pico to Orange Pi. As a fall
 ```text
 records/DOWNLOAD_MODE
 ```
+
+If your phone has not been paired before, hold the button for 2 seconds from sleep instead of short-pressing it. The fast LED flash means pairing mode is active. Pair the phone first, then open the Android app or Bluetooth terminal.
 
 ## Sync time from phone over Bluetooth
 
