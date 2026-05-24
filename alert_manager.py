@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH
+from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH, weekly_csv_files
 
 
 STATE_PATH = RECORDS_PATH / "cellular_alert_state.json"
@@ -66,10 +66,6 @@ class AlertThresholds:
     alert_cooldown_seconds: int = env_int("ALERT_COOLDOWN_SECONDS", 6 * 60 * 60)
     daily_status_after_hour: int = env_int("DAILY_STATUS_AFTER_HOUR", 4)
     timezone_name: str = os.environ.get("ALERT_TIMEZONE", "Australia/Brisbane")
-
-
-def weekly_csv_files() -> list[Path]:
-    return sorted(RECORDS_PATH.glob(f"{CSV_FILENAME_PREFIX}_*_week_*.csv"))
 
 
 def parse_time(value: str) -> datetime | None:

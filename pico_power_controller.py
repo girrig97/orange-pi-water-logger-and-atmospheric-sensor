@@ -160,6 +160,33 @@ def held_button_exit_requested():
     return False
 
 
+def held_button_exit_with_uart_drain():
+    """Like held_button_exit_requested, but also drains UART so a NEXT_INTERVAL
+    message from the Orange Pi is not lost while the button is held during a
+    scheduled wake. Returns (exit_requested, drained_next_interval_or_None).
+    """
+    pressed_at = time.ticks_ms()
+    drained = None
+    while button.value() == 0:
+        if uart.any():
+            try:
+                line = uart.readline()
+                if line:
+                    message = line.decode("utf-8").strip()
+                    if message.startswith("NEXT_INTERVAL="):
+                        try:
+                            drained = int(message.split("=", 1)[1])
+                        except ValueError:
+                            pass
+            except Exception:
+                pass
+        if time.ticks_diff(time.ticks_ms(), pressed_at) >= MANUAL_POWER_OFF_HOLD_MS:
+            wait_for_button_release()
+            return True, drained
+        time.sleep_ms(50)
+    return False, drained
+
+
 def run_download_mode(pairing=False):
     orange_pi_on()
     started_at = now_seconds()
@@ -215,8 +242,15 @@ def run_scheduled_log():
         if orange_pi_ready.value() == 1:
             time.sleep(10)
             break
-        if button_pressed() and held_button_exit_requested():
-            break
+        if button_pressed():
+            exit_requested, drained = held_button_exit_with_uart_drain()
+            if drained is not None:
+                next_interval = max(
+                    MIN_LOG_INTERVAL_SECONDS,
+                    min(MAX_LOG_INTERVAL_SECONDS, drained),
+                )
+            if exit_requested:
+                break
         time.sleep(2)
 
     if next_interval is None:

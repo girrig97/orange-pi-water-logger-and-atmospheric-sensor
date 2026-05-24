@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -62,7 +63,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = manager == null ? null : manager.getAdapter();
         buildUi();
         requestBluetoothPermission();
         loadPairedDevices();
@@ -542,7 +544,7 @@ public class MainActivity extends Activity {
                 if (directory == null) {
                     throw new IOException("Documents folder unavailable.");
                 }
-                String filename = "water-logger-" + label + "-" + System.currentTimeMillis() + ".txt";
+                String filename = "water-logger-" + label + "-" + System.currentTimeMillis() + ".csv";
                 File output = new File(directory, filename);
                 try (FileOutputStream stream = new FileOutputStream(output)) {
                     stream.write(response.getBytes(StandardCharsets.UTF_8));
@@ -570,7 +572,6 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> statusText.setText("Live readings running"));
 
             liveThread = new Thread(() -> {
-                StringBuilder latest = new StringBuilder();
                 while (liveMode) {
                     try {
                         if (reader != null && reader.ready()) {
@@ -579,10 +580,9 @@ public class MainActivity extends Activity {
                                 break;
                             }
                             if (line.startsWith("LIVE ")) {
-                                latest.setLength(0);
-                                latest.append(line.replace(", ", "\n").replace("LIVE ", ""));
+                                final String displayText = line.replace(", ", "\n").replace("LIVE ", "");
                                 runOnUiThread(() -> {
-                                    recordsText.setText(latest.toString());
+                                    recordsText.setText(displayText);
                                     updateDashboardFromText(line);
                                 });
                             }

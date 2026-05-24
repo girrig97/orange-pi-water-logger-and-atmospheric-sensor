@@ -26,7 +26,7 @@ from pathlib import Path
 
 from alert_manager import build_report
 from cellular_config import get_sms_numbers
-from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH
+from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH, weekly_csv_files
 
 
 EC25_AT_PORT = os.environ.get("EC25_AT_PORT", "/dev/ttyUSB2")
@@ -34,10 +34,6 @@ EC25_BAUDRATE = int(os.environ.get("EC25_BAUDRATE", "115200"))
 CELLULAR_UPLOAD_URL = os.environ.get("CELLULAR_UPLOAD_URL", "")
 CELLULAR_STATUS_URL = os.environ.get("CELLULAR_STATUS_URL", "")
 CELLULAR_SMS_ENABLED = os.environ.get("CELLULAR_SMS_ENABLED", "auto").strip().lower()
-
-
-def weekly_csv_files() -> list[Path]:
-    return sorted(RECORDS_PATH.glob(f"{CSV_FILENAME_PREFIX}_*_week_*.csv"))
 
 
 def latest_csv_path() -> Path | None:
@@ -94,14 +90,19 @@ def send_sms(number: str, message: str, check_ready: bool = True) -> str:
     except ImportError:
         return "pyserial_missing"
 
+    # Text-mode SMS with the GSM 7-bit alphabet is the safest minimum that all
+    # carriers accept. 160 chars is the single-segment limit; longer alert text
+    # is truncated here rather than relying on the modem to silently reject it.
+    ascii_message = message.encode("ascii", errors="replace").decode("ascii")[:160]
     try:
         with serial.Serial(EC25_AT_PORT, EC25_BAUDRATE, timeout=2) as serial_port:
             at_command(serial_port, "AT")
             at_command(serial_port, "AT+CMGF=1")
+            at_command(serial_port, 'AT+CSCS="GSM"')
             serial_port.write((f'AT+CMGS="{number}"\r').encode("ascii"))
             serial_port.flush()
             time.sleep(0.5)
-            serial_port.write(message[:1500].encode("utf-8", errors="ignore") + b"\x1a")
+            serial_port.write(ascii_message.encode("ascii") + b"\x1a")
             serial_port.flush()
             time.sleep(5)
             return serial_port.read(serial_port.in_waiting or 1).decode("utf-8", errors="ignore").strip()
@@ -202,7 +203,7 @@ def send_test_sms() -> int:
     for number in numbers:
         result = send_sms(number, message, check_ready=False)
         print(f"Test SMS to {number}: {result}")
-        if "ERROR" in result or "failed" in result or "missing" in result:
+        if "+CMGS:" not in result:
             failures += 1
     return 1 if failures else 0
 
@@ -288,7 +289,7 @@ def send_sms_reports(report: dict) -> int:
         for message in messages:
             result = send_sms(number, message, check_ready=False)
             print(f"SMS to {number}: {result}")
-            if "ERROR" in result or "failed" in result or "missing" in result:
+            if "+CMGS:" not in result:
                 failures += 1
     return 1 if failures else 0
 

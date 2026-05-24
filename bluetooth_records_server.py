@@ -32,16 +32,12 @@ from pathlib import Path
 
 from cellular_config import get_sms_numbers, set_sms_numbers, sms_numbers_text
 from cellular_uploader import modem_signal_text, send_test_sms
-from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, RECORDS_PATH, collect_reading, log_once
+from water_logger import CSV_FILENAME_PREFIX, DOWNLOAD_MODE_FILENAME, PAIRING_MODE_FILENAME, RECORDS_PATH, collect_reading, log_once, weekly_csv_files
 
 
 SERVICE_NAME = "OrangePi Water Records"
 SERVER_TIMEOUT_SECONDS = 60 * 60
 LIVE_INTERVAL_SECONDS = 5
-
-
-def weekly_csv_files() -> list[Path]:
-    return sorted(RECORDS_PATH.glob(f"{CSV_FILENAME_PREFIX}_*_week_*.csv"))
 
 
 def latest_csv_path() -> Path | None:
@@ -431,7 +427,10 @@ def main() -> int:
         if live_mode:
             now = datetime.now(timezone.utc).timestamp()
             if now - last_live_at >= LIVE_INTERVAL_SECONDS:
-                send_text(client, live_reading_text())
+                try:
+                    send_text(client, live_reading_text())
+                except OSError:
+                    break
                 last_live_at = now
 
     client.close()

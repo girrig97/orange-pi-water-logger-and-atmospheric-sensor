@@ -719,6 +719,10 @@ def weekly_csv_path(timestamp: datetime | None = None) -> Path:
     return RECORDS_PATH / f"{CSV_FILENAME_PREFIX}_{year}_week_{week:02d}.csv"
 
 
+def weekly_csv_files() -> list[Path]:
+    return sorted(RECORDS_PATH.glob(f"{CSV_FILENAME_PREFIX}_*_week_*.csv"))
+
+
 def send_next_interval_to_pico(next_interval_seconds: int) -> None:
     """Tell the Pico when to wake the Orange Pi next.
 
