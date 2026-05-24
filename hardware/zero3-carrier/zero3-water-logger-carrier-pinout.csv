@@ -1,0 +1,86 @@
+Ref,Pin,Net,Function,Notes
+J1,1,OPI_3V3,Orange Pi 3.3V logic rail,Feeds ADC logic and sensor pullups if current budget allows
+J1,2,OPI_5V_SW,Orange Pi switched 5V input,From high-side switch output
+J1,3,OPI_SDA,Orange Pi I2C SDA,ADS1115/BME280 SDA
+J1,4,OPI_5V_SW,Orange Pi switched 5V input,Parallel 5V pin
+J1,5,OPI_SCL,Orange Pi I2C SCL,ADS1115/BME280 SCL
+J1,6,GND,Common ground,Power and logic reference
+J1,7,OPI_1WIRE,DS18B20 data,4.7k pull-up to 3.3V
+J1,8,OPI_UART_TX,Orange Pi TX to Pico RX,Adaptive interval data to Pico GP1
+J1,9,GND,Common ground,
+J1,10,OPI_UART_RX,Orange Pi RX from Pico TX,Download/pairing request from Pico GP0
+J1,11,OPI_READY,Optional ready GPIO to Pico GP13,Set high before shutdown if used
+J1,12,NC,Unused/reserved,
+J1,13,NC,Unused/reserved,
+J1,14,GND,Common ground,
+J1,15,NC,Unused/reserved,
+J1,16,NC,Unused/reserved,
+J1,17,OPI_3V3,Orange Pi 3.3V logic rail,
+J1,18,NC,Unused/reserved,
+J1,19,NC,Unused/reserved,
+J1,20,GND,Common ground,
+J1,21,NC,Unused/reserved,
+J1,22,NC,Unused/reserved,
+J1,23,NC,Unused/reserved,
+J1,24,NC,Unused/reserved,
+J1,25,GND,Common ground,
+J1,26,NC,Unused/reserved,
+J2,1,PICO_5V_IN,Pico VSYS/USB 5V input,Always-on from power bank
+J2,2,GND,Pico ground,Common ground
+J2,3,PICO_GP15,Power switch enable,Controls high-side switch
+J2,4,PICO_GP14,Button input,Button NO to GP14 and C to GND
+J2,5,PICO_GP4,Pico I2C SDA,DS3231 SDA
+J2,6,PICO_GP5,Pico I2C SCL,DS3231 SCL
+J2,7,PICO_GP0_TX,Pico UART TX,To Orange Pi RX
+J2,8,PICO_GP1_RX,Pico UART RX,From Orange Pi TX
+J2,9,PICO_GP13,Optional Orange Pi ready input,From OPI_READY
+J2,10,PICO_LED,Optional button LED output,Use resistor/transistor as needed
+J3,1,OPI_3V3,ADS1115 #1 VDD,Address 0x48
+J3,2,GND,ADS1115 #1 GND,
+J3,3,OPI_SDA,ADS1115 #1 SDA,
+J3,4,OPI_SCL,ADS1115 #1 SCL,
+J3,5,GND,ADS1115 #1 ADDR,ADDR to GND for 0x48
+J3,6,PH_AIN,pH analog input,To ADS1115 #1 A0
+J3,7,TDS_AIN,TDS analog input,To ADS1115 #1 A1
+J3,8,TURB_AIN,Turbidity analog input,To ADS1115 #1 A2
+J3,9,ORP_AIN,ORP analog input,To ADS1115 #1 A3
+J4,1,OPI_3V3,ADS1115 #2 VDD,Address 0x49
+J4,2,GND,ADS1115 #2 GND,
+J4,3,OPI_SDA,ADS1115 #2 SDA,
+J4,4,OPI_SCL,ADS1115 #2 SCL,
+J4,5,OPI_3V3,ADS1115 #2 ADDR,ADDR to VDD for 0x49
+J4,6,DO_AIN,Dissolved oxygen analog input,To ADS1115 #2 A0
+J4,7,NH4_AIN,Ammonium ISE amp analog input,To ADS1115 #2 A1
+J4,8,SPARE_AIN2,Spare analog input,To ADS1115 #2 A2
+J4,9,SPARE_AIN3,Spare analog input,To ADS1115 #2 A3
+R1,1,OPI_3V3,DS18B20 pull-up,4.7k to 3.3V
+R1,2,OPI_1WIRE,DS18B20 data pull-up,
+J5,1,OPI_3V3,DS18B20 VCC,
+J5,2,OPI_1WIRE,DS18B20 DATA,
+J5,3,GND,DS18B20 GND,
+J6,1,OPI_3V3,BME280 VCC,
+J6,2,GND,BME280 GND,
+J6,3,OPI_SDA,BME280 SDA,
+J6,4,OPI_SCL,BME280 SCL,
+J7,1,PICO_3V3,DS3231 VCC,From Pico 3V3
+J7,2,GND,DS3231 GND,
+J7,3,PICO_GP4,DS3231 SDA,
+J7,4,PICO_GP5,DS3231 SCL,
+J8,1,SENSOR_5V,Sensor/module 5V output,Use only for modules needing 5V
+J8,2,GND,Sensor ground,
+J8,3,PH_AIN,pH analog output,
+J9,1,SENSOR_5V,Sensor/module 5V output,
+J9,2,GND,Sensor ground,
+J9,3,TDS_AIN,TDS analog output,
+J10,1,SENSOR_5V,Sensor/module 5V output,
+J10,2,GND,Sensor ground,
+J10,3,TURB_AIN,Turbidity analog output,
+J11,1,SENSOR_5V,Sensor/module 5V output,
+J11,2,GND,Sensor ground,
+J11,3,ORP_AIN,ORP analog output,
+J12,1,SENSOR_5V,Sensor/module 5V output,
+J12,2,GND,Sensor ground,
+J12,3,DO_AIN,Dissolved oxygen analog output,
+J13,1,SENSOR_5V,Sensor/module 5V output,
+J13,2,GND,Sensor ground,
+J13,3,NH4_AIN,Ammonium ISE amp analog output,

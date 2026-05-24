@@ -133,6 +133,7 @@ Use two ADS1115 ADC boards on the Orange Pi I2C header. The code auto-detects li
 ![Wiring diagram](docs/wiring-diagram.svg)
 
 PCB carrier design notes are in [docs/pcb-carrier-design-brief.md](docs/pcb-carrier-design-brief.md).
+The first Zero 3 KiCad carrier scaffold is in [hardware/zero3-carrier](hardware/zero3-carrier).
 
 Key things to double-check before powering on:
 

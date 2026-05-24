@@ -1,0 +1,31 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "8554cb5d-1a41-42c5-8106-c01a3d049d8a")
+	(paper "A3")
+	(title_block
+		(title "Orange Pi Zero 3 Water Logger Carrier")
+		(date "2026-05-25")
+		(rev "R0 placement skeleton")
+		(company "Water Logger")
+		(comment 1 "Use pinout CSV and PCB placement skeleton as the source for schematic capture.")
+		(comment 2 "Not ready for manufacture until schematic ERC and PCB DRC pass.")
+	)
+	(lib_symbols)
+	(text "R0 KiCad project scaffold. Build the final schematic from zero3-water-logger-carrier-pinout.csv before ordering."
+		(exclude_from_sim no)
+		(at 30 40 0)
+		(effects
+			(font
+				(size 2 2)
+			)
+		)
+		(uuid "4d660933-43a5-4d71-83c0-9a7a24a092a7")
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
