@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1320" viewBox="0 0 2000 1320">
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1450" viewBox="0 0 2400 1450">
   <defs>
     <style>
       .bg { fill: #ffffff; }
@@ -7,392 +7,374 @@
       .boxTitle { font: 700 16px Arial, sans-serif; fill: #111827; }
       .label { font: 13px Arial, sans-serif; fill: #111827; }
       .small { font: 12px Arial, sans-serif; fill: #374151; }
-      .tiny { font: 11px Arial, sans-serif; fill: #374151; }
-      .power { fill: #fff7ed; stroke: #9a3412; stroke-width: 2; rx: 8; }
-      .switch { fill: #fef2f2; stroke: #991b1b; stroke-width: 2; rx: 8; }
+      .power   { fill: #fff7ed; stroke: #9a3412; stroke-width: 2; rx: 8; }
+      .switch  { fill: #fef2f2; stroke: #991b1b; stroke-width: 2; rx: 8; }
       .compute { fill: #f5f3ff; stroke: #5b21b6; stroke-width: 2; rx: 8; }
-      .adc { fill: #fffbeb; stroke: #92400e; stroke-width: 2; rx: 8; }
-      .sensor { fill: #f0fdf4; stroke: #166534; stroke-width: 2; rx: 8; }
-      .ctrl { fill: #fdf2f8; stroke: #9d174d; stroke-width: 2; rx: 8; }
+      .adc     { fill: #fffbeb; stroke: #92400e; stroke-width: 2; rx: 8; }
+      .sensor  { fill: #f0fdf4; stroke: #166534; stroke-width: 2; rx: 8; }
+      .ctrl    { fill: #fdf2f8; stroke: #9d174d; stroke-width: 2; rx: 8; }
       .ambient { fill: #eff6ff; stroke: #1e40af; stroke-width: 2; rx: 8; }
-      .note { fill: #fffbeb; stroke: #92400e; stroke-width: 2; rx: 10; }
+      .note    { fill: #fffbeb; stroke: #92400e; stroke-width: 2; rx: 10; }
       .wire { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-      .w5 { stroke: #d32f2f; }
-      .w33 { stroke: #ef6c00; }
-      .wgnd { stroke: #111827; }
-      .wctrl { stroke: #2e7d32; }
-      .wsda { stroke: #1565c0; }
-      .wscl { stroke: #6a1b9a; }
-      .wdata { stroke: #00897b; }
+      .w5      { stroke: #d32f2f; }
+      .w33     { stroke: #ef6c00; }
+      .wgnd    { stroke: #111827; }
+      .wctrl   { stroke: #2e7d32; }
+      .wsda    { stroke: #1565c0; }
+      .wscl    { stroke: #6a1b9a; }
+      .wdata   { stroke: #00897b; }
       .wanalog { stroke: #f9a825; }
-      .num { fill: #ffffff; stroke: #111827; stroke-width: 1.5; }
+      .num     { fill: #ffffff; stroke: #111827; stroke-width: 1.5; }
       .numText { font: 700 12px Arial, sans-serif; fill: #111827; text-anchor: middle; dominant-baseline: central; }
-      .pin { fill: #111827; }
+      .pin     { fill: #111827; }
     </style>
   </defs>
 
-  <rect class="bg" width="2000" height="1320"/>
-  <text x="40" y="44" class="title">Orange Pi Water Logger Wiring Diagram</text>
-  <text x="40" y="68" class="subtitle">Zero 3 header shown. For Orange Pi 5 Max, map the same 5V, GND, 3.3V, I2C, UART, and optional ready functions to its enabled header pins.</text>
+  <rect class="bg" width="2400" height="1450"/>
+  <text x="50" y="50" class="title">Orange Pi Water Logger Wiring Diagram</text>
+  <text x="50" y="74" class="subtitle">Zero 3 header shown. For Orange Pi 5 Max, map the same 5V, GND, 3.3V, I2C, UART, and optional ready functions to its enabled header pins.</text>
 
-  <!-- ============= COLUMN A: power source + ambient sensors ============= -->
-  <rect x="50" y="100" width="220" height="120" class="power"/>
-  <text x="76" y="132" class="boxTitle">USB Power Bank</text>
-  <text x="76" y="158" class="label">5V output</text>
-  <text x="76" y="184" class="label">GND</text>
+  <!-- ============ COLUMN A (x=60-300): power + ambient sensors ============ -->
+  <rect x="60" y="110" width="240" height="130" class="power"/>
+  <text x="84" y="142" class="boxTitle">USB Power Bank</text>
+  <text x="84" y="174" class="label">5V output</text>
+  <text x="84" y="202" class="label">GND</text>
 
-  <rect x="50" y="290" width="220" height="150" class="ambient"/>
-  <text x="76" y="322" class="boxTitle">DS18B20 Temp Probe</text>
-  <text x="76" y="352" class="label">VCC to 3.3V</text>
-  <text x="76" y="378" class="label">GND to common GND</text>
-  <text x="76" y="404" class="label">DATA to OPi pin 7</text>
-  <text x="76" y="428" class="small">+ 4.7k pull-up DATA to 3.3V</text>
+  <rect x="60" y="320" width="240" height="170" class="ambient"/>
+  <text x="84" y="352" class="boxTitle">DS18B20 Temp Probe</text>
+  <text x="84" y="382" class="label">VCC  to 3.3V</text>
+  <text x="84" y="416" class="label">GND  to common GND</text>
+  <text x="84" y="450" class="label">DATA to OPi pin 7</text>
+  <text x="84" y="476" class="small">+ 4.7k pull-up DATA to 3.3V</text>
 
-  <rect x="50" y="510" width="220" height="160" class="ambient"/>
-  <text x="76" y="542" class="boxTitle">BME280 Air Sensor</text>
-  <text x="76" y="572" class="label">VCC to 3.3V</text>
-  <text x="76" y="598" class="label">GND to common GND</text>
-  <text x="76" y="624" class="label">SDA to I2C bus</text>
-  <text x="76" y="650" class="label">SCL to I2C bus</text>
+  <rect x="60" y="540" width="240" height="200" class="ambient"/>
+  <text x="84" y="572" class="boxTitle">BME280 Air Sensor</text>
+  <text x="84" y="608" class="label">VCC to 3.3V</text>
+  <text x="84" y="642" class="label">GND to common GND</text>
+  <text x="84" y="676" class="label">SDA to I2C bus</text>
+  <text x="84" y="710" class="label">SCL to I2C bus</text>
 
-  <!-- ============= COLUMN B: Pico, RTC, Button ============= -->
-  <rect x="320" y="100" width="300" height="400" class="compute"/>
-  <text x="346" y="132" class="boxTitle">Raspberry Pi Pico / W</text>
-  <text x="346" y="158" class="label">VSYS / USB 5V</text>
-  <text x="346" y="184" class="label">GND</text>
-  <text x="346" y="210" class="label">3V3 out</text>
-  <text x="346" y="236" class="label">GP15  power-switch trigger</text>
-  <text x="346" y="262" class="label">GP14  button NO</text>
-  <text x="346" y="288" class="label">GP4   SDA (DS3231)</text>
-  <text x="346" y="314" class="label">GP5   SCL (DS3231)</text>
-  <text x="346" y="340" class="label">GP1/RX from OPi UART TX</text>
-  <text x="346" y="366" class="label">GP0/TX to OPi UART RX</text>
-  <text x="346" y="392" class="label">GP13  optional OPi ready</text>
+  <!-- ============ COLUMN B (x=420-740): Pico, RTC, Button ============ -->
+  <rect x="420" y="100" width="320" height="440" class="compute"/>
+  <text x="446" y="132" class="boxTitle">Raspberry Pi Pico / W</text>
+  <text x="446" y="174" class="label">VSYS / USB 5V</text>
+  <text x="446" y="214" class="label">GND</text>
+  <text x="446" y="254" class="label">3V3 out</text>
+  <text x="446" y="294" class="label">GP15  power-switch trigger</text>
+  <text x="446" y="334" class="label">GP14  button NO</text>
+  <text x="446" y="374" class="label">GP4   SDA (DS3231)</text>
+  <text x="446" y="414" class="label">GP5   SCL (DS3231)</text>
+  <text x="446" y="454" class="label">GP1/RX from OPi UART TX</text>
+  <text x="446" y="494" class="label">GP0/TX to OPi UART RX</text>
+  <text x="446" y="528" class="label">GP13  optional OPi ready</text>
 
-  <rect x="320" y="540" width="300" height="140" class="ctrl"/>
-  <text x="346" y="572" class="boxTitle">DS3231 RTC</text>
-  <text x="346" y="598" class="label">VCC to Pico 3V3</text>
-  <text x="346" y="624" class="label">GND to common GND</text>
-  <text x="346" y="650" class="label">SDA to Pico GP4</text>
-  <text x="346" y="672" class="label">SCL to Pico GP5</text>
+  <rect x="420" y="590" width="320" height="150" class="ctrl"/>
+  <text x="446" y="622" class="boxTitle">DS3231 RTC</text>
+  <text x="446" y="652" class="label">VCC to Pico 3V3</text>
+  <text x="446" y="680" class="label">GND to common GND</text>
+  <text x="446" y="708" class="label">SDA to Pico GP4</text>
+  <text x="446" y="730" class="label">SCL to Pico GP5</text>
 
-  <rect x="320" y="720" width="300" height="100" class="ctrl"/>
-  <text x="346" y="752" class="boxTitle">Momentary Button</text>
-  <text x="346" y="778" class="label">NO to Pico GP14</text>
-  <text x="346" y="800" class="label">C  to common GND</text>
+  <rect x="420" y="790" width="320" height="110" class="ctrl"/>
+  <text x="446" y="822" class="boxTitle">Momentary Button</text>
+  <text x="446" y="852" class="label">NO to Pico GP14</text>
+  <text x="446" y="878" class="label">C  to common GND</text>
 
-  <!-- ============= COLUMN C: Switch + Orange Pi header ============= -->
-  <rect x="680" y="100" width="240" height="200" class="switch"/>
-  <text x="706" y="132" class="boxTitle">5V Power Switch</text>
-  <text x="700" y="160" class="label">5V in  (from power bank)</text>
-  <text x="700" y="186" class="label">GND in (common GND)</text>
-  <text x="700" y="212" class="label">TRIG / EN  from Pico GP15</text>
-  <text x="700" y="246" class="label">5V out  to Orange Pi 5V</text>
-  <text x="700" y="272" class="label">GND out to Orange Pi GND</text>
+  <!-- ============ COLUMN C (x=900-1170): Switch + Orange Pi ============ -->
+  <rect x="900" y="100" width="270" height="220" class="switch"/>
+  <text x="924" y="132" class="boxTitle">5V Power Switch</text>
+  <text x="918" y="162" class="label">5V in  (from power bank)</text>
+  <text x="918" y="196" class="label">GND in (common GND)</text>
+  <text x="918" y="230" class="label">TRIG / EN  from Pico GP15</text>
+  <text x="918" y="266" class="label">5V out  to Orange Pi 5V</text>
+  <text x="918" y="296" class="label">GND out to Orange Pi GND</text>
 
-  <rect x="680" y="340" width="240" height="460" class="compute"/>
-  <text x="706" y="372" class="boxTitle">Orange Pi header</text>
-  <text x="700" y="394" class="small">Zero 3 physical pins shown</text>
-  <text x="700" y="420" class="label">Pin 2/4  5V in</text>
-  <text x="700" y="446" class="label">Pin 6    GND</text>
-  <text x="700" y="472" class="label">Pin 1    3.3V</text>
-  <text x="700" y="498" class="label">Pin 3    I2C SDA</text>
-  <text x="700" y="524" class="label">Pin 5    I2C SCL</text>
-  <text x="700" y="550" class="label">Pin 7    DS18B20 DATA</text>
-  <text x="700" y="586" class="label">UART TX  to Pico GP1</text>
-  <text x="700" y="612" class="label">UART RX  from Pico GP0</text>
-  <text x="700" y="638" class="label">GPIO ready to Pico GP13</text>
+  <rect x="900" y="360" width="270" height="540" class="compute"/>
+  <text x="924" y="392" class="boxTitle">Orange Pi header</text>
+  <text x="918" y="414" class="small">Zero 3 physical pins shown</text>
+  <text x="918" y="444" class="label">Pin 2/4  5V in</text>
+  <text x="918" y="478" class="label">Pin 6    GND</text>
+  <text x="918" y="512" class="label">Pin 1    3.3V</text>
+  <text x="918" y="546" class="label">Pin 3    I2C SDA</text>
+  <text x="918" y="580" class="label">Pin 5    I2C SCL</text>
+  <text x="918" y="618" class="label">Pin 7    DS18B20 DATA</text>
+  <text x="918" y="660" class="label">UART TX  to Pico GP1</text>
+  <text x="918" y="694" class="label">UART RX  from Pico GP0</text>
+  <text x="918" y="728" class="label">GPIO ready to Pico GP13</text>
 
-  <!-- ============= COLUMN D: ADS1115 #1 and #2 ============= -->
-  <rect x="980" y="100" width="320" height="300" class="adc"/>
-  <text x="1006" y="132" class="boxTitle">ADS1115 #1</text>
-  <text x="1006" y="156" class="small">address 0x48 (ADDR to GND)</text>
-  <text x="996" y="190" class="label">VDD</text>
-  <text x="996" y="216" class="label">GND</text>
-  <text x="996" y="242" class="label">SDA</text>
-  <text x="996" y="268" class="label">SCL</text>
-  <text x="1180" y="190" class="label">A0  pH</text>
-  <text x="1180" y="226" class="label">A1  TDS</text>
-  <text x="1180" y="262" class="label">A2  turbidity</text>
-  <text x="1180" y="298" class="label">A3  ORP</text>
+  <!-- ============ COLUMN D (x=1320-1660): ADS1115 #1 and #2 ============ -->
+  <rect x="1320" y="100" width="340" height="320" class="adc"/>
+  <text x="1346" y="132" class="boxTitle">ADS1115 #1</text>
+  <text x="1346" y="156" class="small">address 0x48 (ADDR to GND)</text>
+  <text x="1340" y="204" class="label">VDD</text>
+  <text x="1340" y="244" class="label">GND</text>
+  <text x="1340" y="284" class="label">SDA</text>
+  <text x="1340" y="324" class="label">SCL</text>
+  <text x="1530" y="204" class="label">A0  pH</text>
+  <text x="1530" y="259" class="label">A1  TDS</text>
+  <text x="1530" y="314" class="label">A2  turbidity</text>
+  <text x="1530" y="369" class="label">A3  ORP</text>
 
-  <rect x="980" y="440" width="320" height="320" class="adc"/>
-  <text x="1006" y="472" class="boxTitle">ADS1115 #2</text>
-  <text x="1006" y="496" class="small">address 0x49 (ADDR to 3.3V)</text>
-  <text x="996" y="530" class="label">VDD</text>
-  <text x="996" y="556" class="label">GND</text>
-  <text x="996" y="582" class="label">SDA</text>
-  <text x="996" y="608" class="label">SCL</text>
-  <text x="1180" y="530" class="label">A0  dissolved oxygen</text>
-  <text x="1180" y="566" class="label">A1  NH4+ ISE</text>
-  <text x="1180" y="602" class="label">A2  spare</text>
-  <text x="1180" y="638" class="label">A3  spare</text>
+  <rect x="1320" y="480" width="340" height="320" class="adc"/>
+  <text x="1346" y="512" class="boxTitle">ADS1115 #2</text>
+  <text x="1346" y="536" class="small">address 0x49 (ADDR to 3.3V)</text>
+  <text x="1340" y="584" class="label">VDD</text>
+  <text x="1340" y="624" class="label">GND</text>
+  <text x="1340" y="664" class="label">SDA</text>
+  <text x="1340" y="704" class="label">SCL</text>
+  <text x="1530" y="584" class="label">A0  dissolved oxygen</text>
+  <text x="1530" y="639" class="label">A1  NH4+ ISE</text>
+  <text x="1530" y="694" class="label">A2  spare</text>
+  <text x="1530" y="749" class="label">A3  spare</text>
 
-  <!-- ============= COLUMN E: 6 separate sensor module blocks ============= -->
-  <rect x="1380" y="100" width="240" height="80" class="sensor"/>
-  <text x="1406" y="132" class="boxTitle">pH module</text>
-  <text x="1406" y="158" class="small">AO to ADS1115 #1 A0</text>
+  <!-- ============ COLUMN E (x=1780-2060): 6 sensor module blocks ============ -->
+  <rect x="1780" y="130" width="280" height="90" class="sensor"/>
+  <text x="1806" y="166" class="boxTitle">pH module</text>
+  <text x="1806" y="194" class="small">AO to ADS1115 #1 A0</text>
 
-  <rect x="1380" y="200" width="240" height="80" class="sensor"/>
-  <text x="1406" y="232" class="boxTitle">TDS module</text>
-  <text x="1406" y="258" class="small">AO to ADS1115 #1 A1</text>
+  <rect x="1780" y="240" width="280" height="90" class="sensor"/>
+  <text x="1806" y="276" class="boxTitle">TDS module</text>
+  <text x="1806" y="304" class="small">AO to ADS1115 #1 A1</text>
 
-  <rect x="1380" y="300" width="240" height="80" class="sensor"/>
-  <text x="1406" y="332" class="boxTitle">Turbidity module</text>
-  <text x="1406" y="358" class="small">AO to ADS1115 #1 A2</text>
+  <rect x="1780" y="350" width="280" height="90" class="sensor"/>
+  <text x="1806" y="386" class="boxTitle">Turbidity module</text>
+  <text x="1806" y="414" class="small">AO to ADS1115 #1 A2</text>
 
-  <rect x="1380" y="400" width="240" height="80" class="sensor"/>
-  <text x="1406" y="432" class="boxTitle">ORP module</text>
-  <text x="1406" y="458" class="small">AO to ADS1115 #1 A3</text>
+  <rect x="1780" y="460" width="280" height="90" class="sensor"/>
+  <text x="1806" y="496" class="boxTitle">ORP module</text>
+  <text x="1806" y="524" class="small">AO to ADS1115 #1 A3</text>
 
-  <rect x="1380" y="500" width="240" height="80" class="sensor"/>
-  <text x="1406" y="532" class="boxTitle">Dissolved Oxygen module</text>
-  <text x="1406" y="558" class="small">AO to ADS1115 #2 A0</text>
+  <rect x="1780" y="570" width="280" height="90" class="sensor"/>
+  <text x="1806" y="606" class="boxTitle">Dissolved Oxygen module</text>
+  <text x="1806" y="634" class="small">AO to ADS1115 #2 A0</text>
 
-  <rect x="1380" y="600" width="240" height="80" class="sensor"/>
-  <text x="1406" y="632" class="boxTitle">NH4+ ISE amplifier</text>
-  <text x="1406" y="658" class="small">AO to ADS1115 #2 A1</text>
+  <rect x="1780" y="680" width="280" height="90" class="sensor"/>
+  <text x="1806" y="716" class="boxTitle">NH4+ ISE amplifier</text>
+  <text x="1806" y="744" class="small">AO to ADS1115 #2 A1</text>
 
-  <!-- =========================== PIN DOTS =========================== -->
-  <!-- USB Power Bank right edge -->
-  <circle cx="270" cy="158" r="4" class="pin"/>
-  <circle cx="270" cy="184" r="4" class="pin"/>
+  <!-- ====================== PIN DOTS ====================== -->
+  <!-- USB Power Bank right -->
+  <circle cx="300" cy="170" r="4" class="pin"/>
+  <circle cx="300" cy="210" r="4" class="pin"/>
+  <!-- DS18B20 right -->
+  <circle cx="300" cy="370" r="4" class="pin"/>
+  <circle cx="300" cy="410" r="4" class="pin"/>
+  <circle cx="300" cy="450" r="4" class="pin"/>
+  <!-- BME280 right -->
+  <circle cx="300" cy="610" r="4" class="pin"/>
+  <circle cx="300" cy="650" r="4" class="pin"/>
+  <circle cx="300" cy="690" r="4" class="pin"/>
+  <circle cx="300" cy="720" r="4" class="pin"/>
+  <!-- Pico left: VSYS, GND -->
+  <circle cx="420" cy="170" r="4" class="pin"/>
+  <circle cx="420" cy="210" r="4" class="pin"/>
+  <!-- Pico right: 3V3, GP15, GP14, GP4, GP5, GP1, GP0, GP13 -->
+  <circle cx="740" cy="250" r="4" class="pin"/>
+  <circle cx="740" cy="290" r="4" class="pin"/>
+  <circle cx="740" cy="330" r="4" class="pin"/>
+  <circle cx="740" cy="370" r="4" class="pin"/>
+  <circle cx="740" cy="410" r="4" class="pin"/>
+  <circle cx="740" cy="450" r="4" class="pin"/>
+  <circle cx="740" cy="490" r="4" class="pin"/>
+  <circle cx="740" cy="524" r="4" class="pin"/>
+  <!-- DS3231 right -->
+  <circle cx="740" cy="648" r="4" class="pin"/>
+  <circle cx="740" cy="676" r="4" class="pin"/>
+  <circle cx="740" cy="704" r="4" class="pin"/>
+  <circle cx="740" cy="726" r="4" class="pin"/>
+  <!-- Button right -->
+  <circle cx="740" cy="848" r="4" class="pin"/>
+  <circle cx="740" cy="874" r="4" class="pin"/>
+  <!-- 5V Switch left: 5V in, GND in, TRIG -->
+  <circle cx="900" cy="158" r="4" class="pin"/>
+  <circle cx="900" cy="192" r="4" class="pin"/>
+  <circle cx="900" cy="226" r="4" class="pin"/>
+  <!-- 5V Switch bottom: 5V out, GND out -->
+  <circle cx="1010" cy="320" r="4" class="pin"/>
+  <circle cx="1100" cy="320" r="4" class="pin"/>
+  <!-- Orange Pi top: 5V in, GND in -->
+  <circle cx="1010" cy="360" r="4" class="pin"/>
+  <circle cx="1100" cy="360" r="4" class="pin"/>
+  <!-- Orange Pi right: 3.3V, SDA, SCL (to ADS1115s) -->
+  <circle cx="1170" cy="508" r="4" class="pin"/>
+  <circle cx="1170" cy="542" r="4" class="pin"/>
+  <circle cx="1170" cy="576" r="4" class="pin"/>
+  <!-- Orange Pi left: UART TX, UART RX, ready, 3.3V, SDA, SCL, DATA -->
+  <circle cx="900" cy="656" r="4" class="pin"/>
+  <circle cx="900" cy="690" r="4" class="pin"/>
+  <circle cx="900" cy="724" r="4" class="pin"/>
+  <circle cx="900" cy="508" r="4" class="pin"/>
+  <circle cx="900" cy="542" r="4" class="pin"/>
+  <circle cx="900" cy="576" r="4" class="pin"/>
+  <circle cx="900" cy="614" r="4" class="pin"/>
+  <!-- ADS1115 #1 left -->
+  <circle cx="1320" cy="200" r="4" class="pin"/>
+  <circle cx="1320" cy="240" r="4" class="pin"/>
+  <circle cx="1320" cy="280" r="4" class="pin"/>
+  <circle cx="1320" cy="320" r="4" class="pin"/>
+  <!-- ADS1115 #1 right A0..A3 -->
+  <circle cx="1660" cy="200" r="4" class="pin"/>
+  <circle cx="1660" cy="255" r="4" class="pin"/>
+  <circle cx="1660" cy="310" r="4" class="pin"/>
+  <circle cx="1660" cy="365" r="4" class="pin"/>
+  <!-- ADS1115 #2 left -->
+  <circle cx="1320" cy="580" r="4" class="pin"/>
+  <circle cx="1320" cy="620" r="4" class="pin"/>
+  <circle cx="1320" cy="660" r="4" class="pin"/>
+  <circle cx="1320" cy="700" r="4" class="pin"/>
+  <!-- ADS1115 #2 right A0..A3 -->
+  <circle cx="1660" cy="580" r="4" class="pin"/>
+  <circle cx="1660" cy="635" r="4" class="pin"/>
+  <circle cx="1660" cy="690" r="4" class="pin"/>
+  <circle cx="1660" cy="745" r="4" class="pin"/>
+  <!-- Sensor module left pins -->
+  <circle cx="1780" cy="175" r="4" class="pin"/>
+  <circle cx="1780" cy="285" r="4" class="pin"/>
+  <circle cx="1780" cy="395" r="4" class="pin"/>
+  <circle cx="1780" cy="505" r="4" class="pin"/>
+  <circle cx="1780" cy="615" r="4" class="pin"/>
+  <circle cx="1780" cy="725" r="4" class="pin"/>
 
-  <!-- DS18B20 right edge -->
-  <circle cx="270" cy="352" r="4" class="pin"/>
-  <circle cx="270" cy="378" r="4" class="pin"/>
-  <circle cx="270" cy="404" r="4" class="pin"/>
+  <!-- ============================= WIRES ============================= -->
+  <!-- Spacing strategy:
+       Col A->B gap is 120 px (x=300 to x=420). Lanes 20 px apart.
+       Col B->C gap is 160 px (x=740 to x=900). Loops 760-790, control 820-880.
+       Col C->D gap is 150 px (x=1170 to x=1320). Trunks 1210, 1250, 1290.
+       Col D->E gap is 120 px (x=1660 to x=1780). Analog wires drawn as
+       monotonically-ordered diagonals so they never cross each other.        -->
 
-  <!-- BME280 right edge -->
-  <circle cx="270" cy="572" r="4" class="pin"/>
-  <circle cx="270" cy="598" r="4" class="pin"/>
-  <circle cx="270" cy="624" r="4" class="pin"/>
-  <circle cx="270" cy="650" r="4" class="pin"/>
+  <!-- #1 Bank 5V -> Pico VSYS (straight) -->
+  <path d="M300 170 H420" class="wire w5"/>
+  <!-- #1 Bank 5V -> Switch 5V in (over the top, y=78) -->
+  <path d="M300 170 V78 H900 V158" class="wire w5"/>
 
-  <!-- Pico left edge: VSYS, GND -->
-  <circle cx="320" cy="158" r="4" class="pin"/>
-  <circle cx="320" cy="184" r="4" class="pin"/>
-  <!-- Pico right edge: 3V3, GP15, GP14, GP4, GP5, GP1, GP0, GP13 -->
-  <circle cx="620" cy="210" r="4" class="pin"/>
-  <circle cx="620" cy="236" r="4" class="pin"/>
-  <circle cx="620" cy="262" r="4" class="pin"/>
-  <circle cx="620" cy="288" r="4" class="pin"/>
-  <circle cx="620" cy="314" r="4" class="pin"/>
-  <circle cx="620" cy="340" r="4" class="pin"/>
-  <circle cx="620" cy="366" r="4" class="pin"/>
-  <circle cx="620" cy="392" r="4" class="pin"/>
+  <!-- #2 Bank GND -> Pico GND (straight) -->
+  <path d="M300 210 H420" class="wire wgnd"/>
+  <!-- #2 Bank GND -> Switch GND in (over the top, y=94) -->
+  <path d="M300 210 V94 H900 V192" class="wire wgnd"/>
 
-  <!-- DS3231 right edge -->
-  <circle cx="620" cy="598" r="4" class="pin"/>
-  <circle cx="620" cy="624" r="4" class="pin"/>
-  <circle cx="620" cy="650" r="4" class="pin"/>
-  <circle cx="620" cy="672" r="4" class="pin"/>
+  <!-- #3 Pico GP15 -> Switch TRIG (lane x=860) -->
+  <path d="M740 290 H860 V226 H900" class="wire wctrl"/>
 
-  <!-- Button right edge -->
-  <circle cx="620" cy="778" r="4" class="pin"/>
-  <circle cx="620" cy="800" r="4" class="pin"/>
+  <!-- #4 Pico GP14 -> Button NO (loop on right side, x=790) -->
+  <path d="M740 330 H790 V848 H740" class="wire wctrl"/>
 
-  <!-- 5V Power Switch left edge: 5V in, GND in, TRIG -->
-  <circle cx="680" cy="160" r="4" class="pin"/>
-  <circle cx="680" cy="186" r="4" class="pin"/>
-  <circle cx="680" cy="212" r="4" class="pin"/>
-  <!-- 5V Power Switch right edge: 5V out, GND out -->
-  <circle cx="920" cy="246" r="4" class="pin"/>
-  <circle cx="920" cy="272" r="4" class="pin"/>
+  <!-- #5 Pico GP4 SDA -> DS3231 SDA (loop x=770) -->
+  <path d="M740 370 H770 V704 H740" class="wire wsda"/>
 
-  <!-- Orange Pi left edge: 5V in (matches switch out path comes from right) - put on right for routing -->
-  <!-- Orange Pi right edge: all pins -->
-  <circle cx="920" cy="420" r="4" class="pin"/>
-  <circle cx="920" cy="446" r="4" class="pin"/>
-  <circle cx="920" cy="472" r="4" class="pin"/>
-  <circle cx="920" cy="498" r="4" class="pin"/>
-  <circle cx="920" cy="524" r="4" class="pin"/>
-  <circle cx="920" cy="550" r="4" class="pin"/>
-  <circle cx="920" cy="586" r="4" class="pin"/>
-  <circle cx="920" cy="612" r="4" class="pin"/>
-  <circle cx="920" cy="638" r="4" class="pin"/>
-  <!-- Orange Pi left edge: 3.3V, SDA, SCL, pin 7 (for left-column sensor routing) -->
-  <circle cx="680" cy="472" r="4" class="pin"/>
-  <circle cx="680" cy="498" r="4" class="pin"/>
-  <circle cx="680" cy="524" r="4" class="pin"/>
-  <circle cx="680" cy="550" r="4" class="pin"/>
+  <!-- #6 Pico GP5 SCL -> DS3231 SCL (loop x=780) -->
+  <path d="M740 410 H780 V726 H740" class="wire wscl"/>
 
-  <!-- ADS1115 #1 left edge: VDD, GND, SDA, SCL -->
-  <circle cx="980" cy="186" r="4" class="pin"/>
-  <circle cx="980" cy="212" r="4" class="pin"/>
-  <circle cx="980" cy="238" r="4" class="pin"/>
-  <circle cx="980" cy="264" r="4" class="pin"/>
-  <!-- ADS1115 #1 right edge: A0..A3 -->
-  <circle cx="1300" cy="186" r="4" class="pin"/>
-  <circle cx="1300" cy="222" r="4" class="pin"/>
-  <circle cx="1300" cy="258" r="4" class="pin"/>
-  <circle cx="1300" cy="294" r="4" class="pin"/>
+  <!-- #7 Pico 3V3 -> DS3231 VCC (loop x=760) -->
+  <path d="M740 250 H760 V648 H740" class="wire w33"/>
 
-  <!-- ADS1115 #2 left edge: VDD, GND, SDA, SCL -->
-  <circle cx="980" cy="526" r="4" class="pin"/>
-  <circle cx="980" cy="552" r="4" class="pin"/>
-  <circle cx="980" cy="578" r="4" class="pin"/>
-  <circle cx="980" cy="604" r="4" class="pin"/>
-  <!-- ADS1115 #2 right edge: A0..A3 -->
-  <circle cx="1300" cy="526" r="4" class="pin"/>
-  <circle cx="1300" cy="562" r="4" class="pin"/>
-  <circle cx="1300" cy="598" r="4" class="pin"/>
-  <circle cx="1300" cy="634" r="4" class="pin"/>
+  <!-- #8 Switch 5V out -> Orange Pi 5V in (short vertical drop) -->
+  <path d="M1010 320 V360" class="wire w5"/>
+  <!-- #9 Switch GND out -> Orange Pi GND in (short vertical drop) -->
+  <path d="M1100 320 V360" class="wire wgnd"/>
 
-  <!-- Sensor module left-edge pins -->
-  <circle cx="1380" cy="140" r="4" class="pin"/>
-  <circle cx="1380" cy="240" r="4" class="pin"/>
-  <circle cx="1380" cy="340" r="4" class="pin"/>
-  <circle cx="1380" cy="440" r="4" class="pin"/>
-  <circle cx="1380" cy="540" r="4" class="pin"/>
-  <circle cx="1380" cy="640" r="4" class="pin"/>
+  <!-- #10 OPi 3.3V right -> ADS1115 #1 VDD and ADS1115 #2 VDD (trunk x=1210) -->
+  <path d="M1170 508 H1210 V200 H1320" class="wire w33"/>
+  <path d="M1170 508 H1210 V580 H1320" class="wire w33"/>
 
-  <!-- =========================== WIRES =========================== -->
-  <!-- Lane convention:
-       Horizontal trunks:  y=80 (top spine, 5V & GND going OVER everything),
-                           y=830 (bottom spine, GND distribution & sensor 3.3V trunk).
-       Vertical lanes:     x=294 (Col A->B gap), x=646/660/664/668 (Col B short loops),
-                           x=950/955/960/965 (Col C->D, ADS power/I2C),
-                           x=940 (OPi->ADS upper trunk), x=948 (OPi->ADS lower trunk). -->
+  <!-- #11 OPi SDA right -> ADS1115 #1 SDA and ADS1115 #2 SDA (trunk x=1250) -->
+  <path d="M1170 542 H1250 V280 H1320" class="wire wsda"/>
+  <path d="M1170 542 H1250 V660 H1320" class="wire wsda"/>
 
-  <!-- #1  Power bank 5V -> Pico VSYS, and -> Switch 5V in (over the top) -->
-  <path d="M270 158 H320" class="wire w5"/>
-  <path d="M270 158 V80 H680 V160" class="wire w5"/>
+  <!-- #12 OPi SCL right -> ADS1115 #1 SCL and ADS1115 #2 SCL (trunk x=1290) -->
+  <path d="M1170 576 H1290 V320 H1320" class="wire wscl"/>
+  <path d="M1170 576 H1290 V700 H1320" class="wire wscl"/>
 
-  <!-- #2  Power bank GND -> Pico GND, -> Switch GND in (over the top, lower) -->
-  <path d="M270 184 H320" class="wire wgnd"/>
-  <path d="M270 184 V92 H680 V186" class="wire wgnd"/>
+  <!-- #10 OPi 3.3V left -> DS18B20 VCC and BME280 VCC (trunk x=380) -->
+  <path d="M900 508 H380 V370 H300" class="wire w33"/>
+  <path d="M900 508 H380 V610 H300" class="wire w33"/>
 
-  <!-- #3  Pico GP15 -> Switch TRIG -->
-  <path d="M620 236 H650 V212 H680" class="wire wctrl"/>
+  <!-- #11 OPi SDA left -> BME280 SDA (lane x=360) -->
+  <path d="M900 542 H360 V690 H300" class="wire wsda"/>
 
-  <!-- #4  Pico GP14 -> Button NO (right-side loop) -->
-  <path d="M620 262 H668 V778 H620" class="wire wctrl"/>
+  <!-- #12 OPi SCL left -> BME280 SCL (lane x=340) -->
+  <path d="M900 576 H340 V720 H300" class="wire wscl"/>
 
-  <!-- #5  Pico GP4 SDA -> DS3231 SDA (right-side loop) -->
-  <path d="M620 288 H660 V650 H620" class="wire wsda"/>
+  <!-- #13 OPi DATA left -> DS18B20 DATA (lane x=400) -->
+  <path d="M900 614 H400 V450 H300" class="wire wdata"/>
 
-  <!-- #6  Pico GP5 SCL -> DS3231 SCL (right-side loop) -->
-  <path d="M620 314 H664 V672 H620" class="wire wscl"/>
+  <!-- #14 pH AO -> ADS1115 #1 A0 (diagonal) -->
+  <path d="M1660 200 L1780 175" class="wire wanalog"/>
+  <!-- #15 TDS AO -> ADS1115 #1 A1 (diagonal) -->
+  <path d="M1660 255 L1780 285" class="wire wanalog"/>
+  <!-- #16 Turbidity AO -> ADS1115 #1 A2 (diagonal) -->
+  <path d="M1660 310 L1780 395" class="wire wanalog"/>
+  <!-- #17 ORP AO -> ADS1115 #1 A3 (diagonal) -->
+  <path d="M1660 365 L1780 505" class="wire wanalog"/>
+  <!-- #18 DO AO -> ADS1115 #2 A0 (diagonal) -->
+  <path d="M1660 580 L1780 615" class="wire wanalog"/>
+  <!-- #19 NH4+ ISE AO -> ADS1115 #2 A1 (diagonal) -->
+  <path d="M1660 635 L1780 725" class="wire wanalog"/>
 
-  <!-- #7  Pico 3V3 -> DS3231 VCC (right-side loop) -->
-  <path d="M620 210 H654 V598 H620" class="wire w33"/>
+  <!-- #22 OPi UART TX -> Pico GP1/RX (lane x=830) -->
+  <path d="M900 656 H830 V450 H740" class="wire wctrl"/>
+  <!-- #24 Pico GP0/TX -> OPi UART RX (lane x=850) -->
+  <path d="M740 490 H850 V690 H900" class="wire wctrl"/>
+  <!-- #25 OPi ready -> Pico GP13 (lane x=870) -->
+  <path d="M900 724 H870 V524 H740" class="wire wctrl"/>
 
-  <!-- #8  Switch 5V out -> Orange Pi 5V in -->
-  <path d="M920 246 H950 V420 H920" class="wire w5"/>
+  <!-- ============================ NUMBER BADGES ============================ -->
+  <g><circle cx="320" cy="170" r="14" class="num"/><text x="320" y="170" class="numText">1</text></g>
+  <g><circle cx="320" cy="210" r="14" class="num"/><text x="320" y="210" class="numText">2</text></g>
+  <g><circle cx="860" cy="258" r="14" class="num"/><text x="860" y="258" class="numText">3</text></g>
+  <g><circle cx="790" cy="600" r="14" class="num"/><text x="790" y="600" class="numText">4</text></g>
+  <g><circle cx="770" cy="540" r="14" class="num"/><text x="770" y="540" class="numText">5</text></g>
+  <g><circle cx="780" cy="570" r="14" class="num"/><text x="780" y="570" class="numText">6</text></g>
+  <g><circle cx="760" cy="460" r="14" class="num"/><text x="760" y="460" class="numText">7</text></g>
+  <g><circle cx="1010" cy="338" r="14" class="num"/><text x="1010" y="338" class="numText">8</text></g>
+  <g><circle cx="1100" cy="338" r="14" class="num"/><text x="1100" y="338" class="numText">9</text></g>
+  <g><circle cx="1210" cy="400" r="14" class="num"/><text x="1210" y="400" class="numText">10</text></g>
+  <g><circle cx="1250" cy="440" r="14" class="num"/><text x="1250" y="440" class="numText">11</text></g>
+  <g><circle cx="1290" cy="480" r="14" class="num"/><text x="1290" y="480" class="numText">12</text></g>
+  <g><circle cx="400" cy="530" r="14" class="num"/><text x="400" y="530" class="numText">13</text></g>
+  <g><circle cx="1720" cy="188" r="14" class="num"/><text x="1720" y="188" class="numText">14</text></g>
+  <g><circle cx="1720" cy="270" r="14" class="num"/><text x="1720" y="270" class="numText">15</text></g>
+  <g><circle cx="1720" cy="353" r="14" class="num"/><text x="1720" y="353" class="numText">16</text></g>
+  <g><circle cx="1720" cy="435" r="14" class="num"/><text x="1720" y="435" class="numText">17</text></g>
+  <g><circle cx="1720" cy="598" r="14" class="num"/><text x="1720" y="598" class="numText">18</text></g>
+  <g><circle cx="1720" cy="680" r="14" class="num"/><text x="1720" y="680" class="numText">19</text></g>
+  <g><circle cx="830" cy="554" r="14" class="num"/><text x="830" y="554" class="numText">22</text></g>
+  <g><circle cx="380" cy="488" r="14" class="num"/><text x="380" y="488" class="numText">23</text></g>
+  <g><circle cx="850" cy="590" r="14" class="num"/><text x="850" y="590" class="numText">24</text></g>
+  <g><circle cx="870" cy="624" r="14" class="num"/><text x="870" y="624" class="numText">25</text></g>
 
-  <!-- #9  Switch GND out -> Orange Pi GND in -->
-  <path d="M920 272 H944 V446 H920" class="wire wgnd"/>
+  <!-- ============================ LEGEND + NOTES ============================ -->
+  <rect x="60" y="940" width="1500" height="440" class="note"/>
+  <text x="86" y="976" class="title" style="font-size:22px">Numbered Wiring Legend</text>
+  <text x="86" y="1010" class="small">1   Power bank 5V to Pico VSYS/USB and 5V power-switch input</text>
+  <text x="86" y="1036" class="small">2   Power bank GND to common GND bus (Pico, switch, Orange Pi, all sensor modules)</text>
+  <text x="86" y="1062" class="small">3   Pico GP15 to 5V power-switch TRIG / EN</text>
+  <text x="86" y="1088" class="small">4   Pico GP14 to momentary button NO (button C to common GND)</text>
+  <text x="86" y="1114" class="small">5   Pico GP4 to DS3231 SDA</text>
+  <text x="86" y="1140" class="small">6   Pico GP5 to DS3231 SCL</text>
+  <text x="86" y="1166" class="small">7   Pico 3V3 to DS3231 VCC</text>
+  <text x="86" y="1192" class="small">8   5V power-switch output to Orange Pi 5V input</text>
+  <text x="86" y="1218" class="small">9   5V power-switch ground out to Orange Pi GND</text>
+  <text x="86" y="1244" class="small">10  Orange Pi 3.3V to ADS1115 #1 VDD, ADS1115 #2 VDD, DS18B20 VCC, BME280 VCC</text>
+  <text x="86" y="1270" class="small">11  Orange Pi SDA to ADS1115 #1 SDA, ADS1115 #2 SDA, BME280 SDA</text>
+  <text x="86" y="1296" class="small">12  Orange Pi SCL to ADS1115 #1 SCL, ADS1115 #2 SCL, BME280 SCL</text>
+  <text x="86" y="1322" class="small">13  Orange Pi pin 7 (PC9 / GPIO7) to DS18B20 DATA (with 4.7k pull-up to 3.3V)</text>
+  <text x="86" y="1348" class="small">14-19  Sensor analogs: pH/TDS/turbidity/ORP to ADS1 A0/A1/A2/A3; DO/NH4+ ISE to ADS2 A0/A1     22 OPi UART TX to Pico GP1     24 Pico GP0/TX to OPi UART RX     25 Optional ready GPIO</text>
 
-  <!-- #10 Orange Pi 3.3V -> ADS1115 #1 VDD, ADS1115 #2 VDD,
-        and left side to DS18B20 VCC, BME280 VCC (separate routes) -->
-  <path d="M920 472 H940 V186 H980" class="wire w33"/>
-  <path d="M920 472 H940 V526 H980" class="wire w33"/>
-  <path d="M680 472 H294 V352 H270" class="wire w33"/>
-  <path d="M680 472 H290 V572 H270" class="wire w33"/>
-
-  <!-- #11 Orange Pi SDA -> ADS1115 #1 SDA, ADS1115 #2 SDA, BME280 SDA -->
-  <path d="M920 498 H952 V238 H980" class="wire wsda"/>
-  <path d="M920 498 H952 V578 H980" class="wire wsda"/>
-  <path d="M680 498 H286 V624 H270" class="wire wsda"/>
-
-  <!-- #12 Orange Pi SCL -> ADS1115 #1 SCL, ADS1115 #2 SCL, BME280 SCL -->
-  <path d="M920 524 H964 V264 H980" class="wire wscl"/>
-  <path d="M920 524 H964 V604 H980" class="wire wscl"/>
-  <path d="M680 524 H282 V650 H270" class="wire wscl"/>
-
-  <!-- #13 Orange Pi pin 7 -> DS18B20 DATA -->
-  <path d="M680 550 H278 V404 H270" class="wire wdata"/>
-
-  <!-- #14 pH AO -> ADS1115 #1 A0 -->
-  <path d="M1300 186 H1340 V140 H1380" class="wire wanalog"/>
-
-  <!-- #15 TDS AO -> ADS1115 #1 A1 -->
-  <path d="M1300 222 H1340 V240 H1380" class="wire wanalog"/>
-
-  <!-- #16 Turbidity AO -> ADS1115 #1 A2 -->
-  <path d="M1300 258 H1344 V340 H1380" class="wire wanalog"/>
-
-  <!-- #17 ORP AO -> ADS1115 #1 A3 -->
-  <path d="M1300 294 H1310 V440 H1380" class="wire wanalog"/>
-
-  <!-- #18 DO AO -> ADS1115 #2 A0 -->
-  <path d="M1300 526 H1340 V540 H1380" class="wire wanalog"/>
-
-  <!-- #19 NH4+ ISE AO -> ADS1115 #2 A1 -->
-  <path d="M1300 562 H1344 V640 H1380" class="wire wanalog"/>
-
-  <!-- #22 OPi UART TX -> Pico GP1/RX -->
-  <path d="M920 586 H938 V340 H620" class="wire wctrl"/>
-
-  <!-- #24 Pico GP0/TX -> OPi UART RX -->
-  <path d="M620 366 H932 V612 H920" class="wire wctrl"/>
-
-  <!-- #25 OPi ready GPIO -> Pico GP13 -->
-  <path d="M920 638 H928 V392 H620" class="wire wctrl"/>
-
-  <!-- =========================== NUMBER BADGES =========================== -->
-  <g><circle cx="295" cy="158" r="13" class="num"/><text x="295" y="158" class="numText">1</text></g>
-  <g><circle cx="295" cy="184" r="13" class="num"/><text x="295" y="184" class="numText">2</text></g>
-  <g><circle cx="660" cy="220" r="13" class="num"/><text x="660" y="220" class="numText">3</text></g>
-  <g><circle cx="678" cy="262" r="13" class="num"/><text x="678" y="262" class="numText">4</text></g>
-  <g><circle cx="670" cy="288" r="13" class="num"/><text x="670" y="288" class="numText">5</text></g>
-  <g><circle cx="674" cy="314" r="13" class="num"/><text x="674" y="314" class="numText">6</text></g>
-  <g><circle cx="664" cy="210" r="13" class="num"/><text x="664" y="210" class="numText">7</text></g>
-  <g><circle cx="950" cy="370" r="13" class="num"/><text x="950" y="370" class="numText">8</text></g>
-  <g><circle cx="944" cy="386" r="13" class="num"/><text x="944" y="386" class="numText">9</text></g>
-  <g><circle cx="940" cy="186" r="13" class="num"/><text x="940" y="186" class="numText">10</text></g>
-  <g><circle cx="952" cy="238" r="13" class="num"/><text x="952" y="238" class="numText">11</text></g>
-  <g><circle cx="964" cy="264" r="13" class="num"/><text x="964" y="264" class="numText">12</text></g>
-  <g><circle cx="282" cy="404" r="13" class="num"/><text x="282" y="404" class="numText">13</text></g>
-  <g><circle cx="1340" cy="140" r="13" class="num"/><text x="1340" y="140" class="numText">14</text></g>
-  <g><circle cx="1340" cy="240" r="13" class="num"/><text x="1340" y="240" class="numText">15</text></g>
-  <g><circle cx="1344" cy="340" r="13" class="num"/><text x="1344" y="340" class="numText">16</text></g>
-  <g><circle cx="1310" cy="440" r="13" class="num"/><text x="1310" y="440" class="numText">17</text></g>
-  <g><circle cx="1340" cy="540" r="13" class="num"/><text x="1340" y="540" class="numText">18</text></g>
-  <g><circle cx="1344" cy="640" r="13" class="num"/><text x="1344" y="640" class="numText">19</text></g>
-  <g><circle cx="938" cy="586" r="13" class="num"/><text x="938" y="586" class="numText">22</text></g>
-  <g><circle cx="290" cy="624" r="13" class="num"/><text x="290" y="624" class="numText">23</text></g>
-  <g><circle cx="932" cy="612" r="13" class="num"/><text x="932" y="612" class="numText">24</text></g>
-  <g><circle cx="928" cy="638" r="13" class="num"/><text x="928" y="638" class="numText">25</text></g>
-
-  <!-- =========================== LEGEND + NOTES =========================== -->
-  <rect x="50" y="850" width="1280" height="430" class="note"/>
-  <text x="80" y="884" class="title" style="font-size:22px">Numbered Wiring Legend</text>
-  <text x="80" y="918"  class="small">1   Power bank 5V to Pico VSYS/USB and 5V power-switch input</text>
-  <text x="80" y="942"  class="small">2   Power bank GND to common GND bus (Pico, switch, Orange Pi, all sensor modules)</text>
-  <text x="80" y="966"  class="small">3   Pico GP15 to 5V power-switch TRIG / EN</text>
-  <text x="80" y="990"  class="small">4   Pico GP14 to momentary button NO (button C to common GND)</text>
-  <text x="80" y="1014" class="small">5   Pico GP4 to DS3231 SDA</text>
-  <text x="80" y="1038" class="small">6   Pico GP5 to DS3231 SCL</text>
-  <text x="80" y="1062" class="small">7   Pico 3V3 to DS3231 VCC</text>
-  <text x="80" y="1086" class="small">8   5V power-switch output to Orange Pi 5V input</text>
-  <text x="80" y="1110" class="small">9   5V power-switch ground out to Orange Pi GND</text>
-  <text x="80" y="1134" class="small">10  Orange Pi 3.3V to ADS1115 #1 VDD, ADS1115 #2 VDD, DS18B20 VCC, BME280 VCC</text>
-  <text x="80" y="1158" class="small">11  Orange Pi SDA to ADS1115 #1 SDA, ADS1115 #2 SDA, BME280 SDA</text>
-  <text x="80" y="1182" class="small">12  Orange Pi SCL to ADS1115 #1 SCL, ADS1115 #2 SCL, BME280 SCL</text>
-  <text x="80" y="1206" class="small">13  Orange Pi pin 7 (PC9 / GPIO7) to DS18B20 DATA (with 4.7k pull-up to 3.3V)</text>
-  <text x="80" y="1230" class="small">14  pH AO to ADS1 A0     15  TDS AO to ADS1 A1     16  Turbidity AO to ADS1 A2     17  ORP AO to ADS1 A3</text>
-  <text x="80" y="1254" class="small">18  Dissolved oxygen AO to ADS2 A0     19  NH4+ ISE amplifier AO to ADS2 A1     20  ADS2 A2 spare     21  ADS2 A3 spare</text>
-  <text x="80" y="1278" class="small">22  Orange Pi UART TX to Pico GP1/RX     23  BME280 branches off the Orange Pi 3.3V/SDA/SCL rails</text>
-  <text x="80" y="1302" class="small">24  Pico GP0/TX to Orange Pi UART RX       25  Optional Orange Pi ready GPIO to Pico GP13</text>
-
-  <rect x="1360" y="850" width="600" height="430" class="note"/>
-  <text x="1390" y="884" class="title" style="font-size:22px">Build Notes</text>
-  <text x="1390" y="918"  class="small">- Every block above is a physically separate module.</text>
-  <text x="1390" y="942"  class="small">- Do not power the Orange Pi from a Pico GPIO pin.</text>
-  <text x="1390" y="966"  class="small">- Pico GP15 drives only the relay/MOS switch trigger input.</text>
-  <text x="1390" y="990"  class="small">- ADS1115 #1 ADDR to GND (0x48); ADS1115 #2 ADDR to 3.3V (0x49).</text>
-  <text x="1390" y="1014" class="small">- ADS1115 analog inputs must stay between 0V and 3.3V.</text>
-  <text x="1390" y="1038" class="small">  Add a voltage divider if a sensor board can output above 3.3V.</text>
-  <text x="1390" y="1062" class="small">- The UART interval link (#22, #24) is required for adaptive logging.</text>
-  <text x="1390" y="1086" class="small">- Optional ready GPIO (#25) lets the Pico cut power sooner after</text>
-  <text x="1390" y="1110" class="small">  the Orange Pi has shut down.</text>
-  <text x="1390" y="1146" class="small" style="font-weight:700">Wire colour key</text>
-  <text x="1390" y="1170" class="small">red       5V power</text>
-  <text x="1390" y="1194" class="small">orange    3.3V power</text>
-  <text x="1390" y="1218" class="small">black     ground</text>
-  <text x="1390" y="1242" class="small">green     GPIO control / UART</text>
-  <text x="1390" y="1266" class="small">blue / purple   I2C SDA / SCL</text>
-  <text x="1390" y="1290" class="small">teal      DS18B20 1-Wire   yellow   sensor analog</text>
+  <rect x="1600" y="940" width="740" height="440" class="note"/>
+  <text x="1626" y="976" class="title" style="font-size:22px">Build Notes</text>
+  <text x="1626" y="1010" class="small">- Every block above is a physically separate module.</text>
+  <text x="1626" y="1036" class="small">- Do not power the Orange Pi from a Pico GPIO pin.</text>
+  <text x="1626" y="1062" class="small">- Pico GP15 drives only the relay/MOS switch trigger input.</text>
+  <text x="1626" y="1088" class="small">- ADS1115 #1 ADDR to GND (0x48); ADS1115 #2 ADDR to 3.3V (0x49).</text>
+  <text x="1626" y="1114" class="small">- ADS1115 analog inputs must stay between 0V and 3.3V. Add a</text>
+  <text x="1626" y="1138" class="small">  voltage divider if a sensor board can output above 3.3V.</text>
+  <text x="1626" y="1164" class="small">- The UART interval link (#22, #24) is required for adaptive logging.</text>
+  <text x="1626" y="1190" class="small">- Optional ready GPIO (#25) lets the Pico cut power sooner after</text>
+  <text x="1626" y="1214" class="small">  the Orange Pi has shut down.</text>
+  <text x="1626" y="1250" class="small" style="font-weight:700">Wire colour key</text>
+  <text x="1626" y="1276" class="small">red       5V power</text>
+  <text x="1626" y="1300" class="small">orange    3.3V power            black     ground</text>
+  <text x="1626" y="1324" class="small">green     GPIO control / UART   blue / purple   I2C SDA / SCL</text>
+  <text x="1626" y="1348" class="small">teal      DS18B20 1-Wire        yellow    sensor analog</text>
 </svg>
