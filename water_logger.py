@@ -48,9 +48,16 @@ SAMPLE_DELAY_SECONDS = 0.2
 # TDS-to-EC factor. 500 is common for hobby TDS meters, but calibrate yours.
 TDS_FACTOR = 500.0
 
-# Orange Pi boards expose different I2C bus numbers. Zero 3 commonly uses I2C3.
-# Set I2C_BUS_NUMBER for variants such as Orange Pi 5 Max after enabling overlays.
-I2C_BUS_NUMBER = int(os.environ.get("I2C_BUS_NUMBER", "3"))
+# Orange Pi boards expose different I2C bus numbers. Zero 3 commonly uses I2C3;
+# Orange Pi 5 Max setups commonly use another enabled header bus. Set
+# I2C_BUS_NUMBER to force one bus, otherwise the logger tries likely buses and
+# uses the first bus where configured sensors respond.
+I2C_BUS_NUMBER_TEXT = os.environ.get("I2C_BUS_NUMBER", "").strip()
+try:
+    I2C_BUS_NUMBER = int(I2C_BUS_NUMBER_TEXT) if I2C_BUS_NUMBER_TEXT else None
+except ValueError:
+    I2C_BUS_NUMBER = None
+I2C_BUS_CANDIDATES = [3, 5, 1, 0, 2, 4, 6, 7]
 
 # ADS1115 addresses. Set ADS1115 #1 ADDR to GND for 0x48.
 # Set ADS1115 #2 ADDR to 3.3V/VDD for 0x49.
@@ -183,6 +190,23 @@ def clamp(value: float, low: float, high: float) -> float:
     return max(low, min(high, value))
 
 
+def i2c_bus_candidates() -> list[int]:
+    if I2C_BUS_NUMBER is not None:
+        return [I2C_BUS_NUMBER]
+    available = []
+    for path in sorted(Path("/dev").glob("i2c-*")):
+        try:
+            available.append(int(path.name.split("-", 1)[1]))
+        except (IndexError, ValueError):
+            continue
+    candidates = available or I2C_BUS_CANDIDATES
+    ordered: list[int] = []
+    for bus in [*I2C_BUS_CANDIDATES, *candidates]:
+        if bus not in ordered:
+            ordered.append(bus)
+    return ordered
+
+
 def read_bme280() -> dict[str, float | str | None]:
     """Read BME280 ambient air sensor from I2C3.
 
@@ -212,23 +236,24 @@ def read_bme280() -> dict[str, float | str | None]:
             "air_sensor_status": "bme280_library_missing",
         }
 
-    for address in (0x76, 0x77):
-        bus = None
-        try:
-            bus = SMBus(I2C_BUS_NUMBER)
-            calibration = bme280.load_calibration_params(bus, address)
-            data = bme280.sample(bus, address, calibration)
-            return {
-                "air_temperature_c": float(data.temperature),
-                "air_humidity_percent": float(data.humidity),
-                "air_pressure_hpa": float(data.pressure),
-                "air_sensor_status": "ok",
-            }
-        except Exception:
-            continue
-        finally:
-            if bus is not None and hasattr(bus, "close"):
-                bus.close()
+    for bus_number in i2c_bus_candidates():
+        for address in (0x76, 0x77):
+            bus = None
+            try:
+                bus = SMBus(bus_number)
+                calibration = bme280.load_calibration_params(bus, address)
+                data = bme280.sample(bus, address, calibration)
+                return {
+                    "air_temperature_c": float(data.temperature),
+                    "air_humidity_percent": float(data.humidity),
+                    "air_pressure_hpa": float(data.pressure),
+                    "air_sensor_status": "ok",
+                }
+            except Exception:
+                continue
+            finally:
+                if bus is not None and hasattr(bus, "close"):
+                    bus.close()
 
     return {
         "air_temperature_c": None,
@@ -327,18 +352,25 @@ def read_sensor_voltages(ads1: ADS1115 | None = None, ads2: ADS1115 | None = Non
     """
     ads1_status = "ok"
     ads2_status = "ok"
+    bus_numbers = i2c_bus_candidates()
 
     if ads1 is None:
-        try:
-            ads1 = ADS1115(I2C_BUS_NUMBER, ADS1115_1_ADDRESS)
-        except Exception:
-            ads1 = None
+        for bus_number in bus_numbers:
+            try:
+                ads1 = ADS1115(bus_number, ADS1115_1_ADDRESS)
+                break
+            except Exception:
+                ads1 = None
+        if ads1 is None:
             ads1_status = "ads1115_0x48_not_found_or_i2c_failed"
     if ads2 is None:
-        try:
-            ads2 = ADS1115(I2C_BUS_NUMBER, ADS1115_2_ADDRESS)
-        except Exception:
-            ads2 = None
+        for bus_number in bus_numbers:
+            try:
+                ads2 = ADS1115(bus_number, ADS1115_2_ADDRESS)
+                break
+            except Exception:
+                ads2 = None
+        if ads2 is None:
             ads2_status = "ads1115_0x49_not_found_or_i2c_failed"
 
     def read_channel(
@@ -378,14 +410,21 @@ def read_sensor_voltages(ads1: ADS1115 | None = None, ads2: ADS1115 | None = Non
 
 
 def read_average_sensor_voltages() -> SensorVoltages:
-    try:
-        ads1 = ADS1115(I2C_BUS_NUMBER, ADS1115_1_ADDRESS)
-    except Exception:
-        ads1 = None
-    try:
-        ads2 = ADS1115(I2C_BUS_NUMBER, ADS1115_2_ADDRESS)
-    except Exception:
-        ads2 = None
+    ads1 = None
+    ads2 = None
+    for bus_number in i2c_bus_candidates():
+        if ads1 is None:
+            try:
+                ads1 = ADS1115(bus_number, ADS1115_1_ADDRESS)
+            except Exception:
+                pass
+        if ads2 is None:
+            try:
+                ads2 = ADS1115(bus_number, ADS1115_2_ADDRESS)
+            except Exception:
+                pass
+        if ads1 is not None and ads2 is not None:
+            break
 
     samples = []
     for sample_index in range(SAMPLE_COUNT):

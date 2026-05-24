@@ -48,6 +48,9 @@ def env_int(name: str, default: int) -> int:
         return default
 
 
+BASELINE_SAMPLE_ROWS = env_int("SENSOR_BASELINE_SAMPLE_ROWS", 8)
+
+
 @dataclass(frozen=True)
 class AlertThresholds:
     ph_min: float = env_float("ALERT_PH_MIN", 6.5)
@@ -127,18 +130,22 @@ def alert_timezone(thresholds: AlertThresholds):
 def sensor_baseline_from_rows(rows: list[dict[str, str]]) -> dict[str, bool]:
     baseline: dict[str, bool] = {}
     for key in SENSOR_STATUS_COLUMNS:
-        baseline[key] = any(row.get(key, "").strip() == "ok" for row in rows[:8])
+        baseline[key] = any(row.get(key, "").strip() == "ok" for row in rows[:BASELINE_SAMPLE_ROWS])
     return baseline
 
 
 def get_sensor_baseline(rows: list[dict[str, str]], state: dict[str, Any]) -> dict[str, bool]:
     baseline = state.get("sensor_baseline")
-    if isinstance(baseline, dict) and baseline:
+    if isinstance(baseline, dict) and state.get("sensor_baseline_finalized"):
         return {str(key): bool(value) for key, value in baseline.items()}
     if not rows:
         return {}
-    baseline = sensor_baseline_from_rows(rows)
+    previous = {str(key): bool(value) for key, value in baseline.items()} if isinstance(baseline, dict) else {}
+    detected = sensor_baseline_from_rows(rows)
+    baseline = {key: previous.get(key, False) or detected.get(key, False) for key in SENSOR_STATUS_COLUMNS}
     state["sensor_baseline"] = baseline
+    if len(rows) >= BASELINE_SAMPLE_ROWS:
+        state["sensor_baseline_finalized"] = True
     return baseline
 
 

@@ -2,7 +2,7 @@
 
 This starter project logs water-condition readings to a CSV file on the Orange Pi microSD card every 6 hours.
 
-Variant branch: this branch also includes notes and helper code for an Orange Pi 5 Max with a Quectel EC25-AU cellular modem, SMS alerts, server status updates, and daily status reporting. See [docs/orange-pi-5-max-ec25-au.md](docs/orange-pi-5-max-ec25-au.md).
+Variant branch: this branch includes shared logger code for Orange Pi Zero 3 and Orange Pi 5 Max. The EC25-AU cellular modem, SMS alerts, server status updates, and daily status reporting are optional and are skipped automatically when no modem/SIM is detected. See [docs/orange-pi-5-max-ec25-au.md](docs/orange-pi-5-max-ec25-au.md).
 
 On the cellular branch, SMS alert recipients can be changed from the Android app using `Get SMS Numbers` and `Save SMS Numbers`.
 
@@ -36,7 +36,7 @@ Core computer and power:
 
 | Qty | Item | Notes |
 | ---: | --- | --- |
-| 1 | Orange Pi Zero 3 | Main logger, stores CSV on microSD |
+| 1 | Orange Pi Zero 3 or Orange Pi 5 Max | Main logger, stores CSV on microSD |
 | 1 | microSD card | 16GB or larger recommended |
 | 1 | Raspberry Pi Pico or Pico W | Low-power timer and download-mode button controller |
 | 1 | USB power bank | 10,000mAh minimum; larger is better |
@@ -88,7 +88,7 @@ Calibration and maintenance:
 
 ## Hardware shape
 
-Use two ADS1115 ADC boards on the Orange Pi Zero 3 I2C header.
+Use two ADS1115 ADC boards on the Orange Pi I2C header. The code auto-detects likely I2C buses for Orange Pi Zero 3 and Orange Pi 5 Max. Set `I2C_BUS_NUMBER` only if you want to force a specific bus.
 
 ## Wiring diagram
 
@@ -468,6 +468,13 @@ The logger records the row even if this UART link is unavailable, then logs a wa
 
 ```bash
 export PICO_SERIAL_PORT=/dev/ttyS1
+```
+
+For I2C, auto-detection usually avoids board-specific edits. To force a bus:
+
+```bash
+export I2C_BUS_NUMBER=3   # common Zero 3 setup
+export I2C_BUS_NUMBER=5   # example 5 Max setup
 ```
 
 ## microSD record path

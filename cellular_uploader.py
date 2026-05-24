@@ -33,6 +33,7 @@ EC25_AT_PORT = os.environ.get("EC25_AT_PORT", "/dev/ttyUSB2")
 EC25_BAUDRATE = int(os.environ.get("EC25_BAUDRATE", "115200"))
 CELLULAR_UPLOAD_URL = os.environ.get("CELLULAR_UPLOAD_URL", "")
 CELLULAR_STATUS_URL = os.environ.get("CELLULAR_STATUS_URL", "")
+CELLULAR_SMS_ENABLED = os.environ.get("CELLULAR_SMS_ENABLED", "auto").strip().lower()
 
 
 def weekly_csv_files() -> list[Path]:
@@ -54,7 +55,40 @@ def at_command(serial_port, command: str, wait_seconds: float = 0.5) -> str:
     return serial_port.read(serial_port.in_waiting or 1).decode("utf-8", errors="ignore").strip()
 
 
-def send_sms(number: str, message: str) -> str:
+def ec25_port_present() -> bool:
+    path = Path(EC25_AT_PORT)
+    if path.exists():
+        return True
+    return any(Path("/dev").glob("ttyUSB*")) or any(Path("/dev").glob("ttyACM*"))
+
+
+def modem_sms_ready() -> tuple[bool, str]:
+    if CELLULAR_SMS_ENABLED in {"0", "false", "no", "off"}:
+        return False, "CELLULAR_SMS_ENABLED=0"
+    if not ec25_port_present():
+        return False, f"EC25 AT port not found at {EC25_AT_PORT}"
+    try:
+        import serial
+    except ImportError:
+        return False, "pyserial_missing"
+    try:
+        with serial.Serial(EC25_AT_PORT, EC25_BAUDRATE, timeout=1) as serial_port:
+            at_response = at_command(serial_port, "AT")
+            cpin_response = at_command(serial_port, "AT+CPIN?")
+    except OSError as exc:
+        return False, f"ec25_at_port_unavailable: {exc}"
+    if "OK" not in at_response:
+        return False, "ec25_no_at_response"
+    if "READY" not in cpin_response.upper():
+        return False, f"sim_not_ready: {cpin_response or '--'}"
+    return True, "ready"
+
+
+def send_sms(number: str, message: str, check_ready: bool = True) -> str:
+    if check_ready:
+        ready, reason = modem_sms_ready()
+        if not ready:
+            return f"sms_unavailable: {reason}"
     try:
         import serial
     except ImportError:
@@ -159,10 +193,14 @@ def send_test_sms() -> int:
     if not numbers:
         print("No alert SMS numbers configured.")
         return 1
+    ready, reason = modem_sms_ready()
+    if not ready:
+        print(f"SMS unavailable: {reason}")
+        return 1
     failures = 0
     message = "Water logger test SMS: cellular alert service is working."
     for number in numbers:
-        result = send_sms(number, message)
+        result = send_sms(number, message, check_ready=False)
         print(f"Test SMS to {number}: {result}")
         if "ERROR" in result or "failed" in result or "missing" in result:
             failures += 1
@@ -223,9 +261,16 @@ def post_status(report: dict) -> int:
 
 
 def send_sms_reports(report: dict) -> int:
+    if CELLULAR_SMS_ENABLED in {"0", "false", "no", "off"}:
+        print("CELLULAR_SMS_ENABLED=0; skipping SMS.")
+        return 0
     alert_sms_numbers = get_sms_numbers()
     if not alert_sms_numbers:
         print("ALERT_SMS_NUMBERS is not set; skipping SMS.")
+        return 0
+    ready, reason = modem_sms_ready()
+    if not ready:
+        print(f"SMS unavailable; skipping SMS: {reason}")
         return 0
 
     messages: list[str] = []
@@ -241,7 +286,7 @@ def send_sms_reports(report: dict) -> int:
     failures = 0
     for number in alert_sms_numbers:
         for message in messages:
-            result = send_sms(number, message)
+            result = send_sms(number, message, check_ready=False)
             print(f"SMS to {number}: {result}")
             if "ERROR" in result or "failed" in result or "missing" in result:
                 failures += 1

@@ -50,7 +50,7 @@ Those are for storage, not LTE modems.
 
 ## What changes in this branch
 
-- `I2C_BUS_NUMBER` is now configurable by environment variable.
+- `I2C_BUS_NUMBER` is configurable by environment variable, but the logger now auto-detects likely Orange Pi I2C buses when it is not set.
 - `PICO_SERIAL_PORT` remains configurable by environment variable.
 - `cellular_uploader.py` can check EC25-AU status with AT commands.
 - `orange_pi_boot_wrapper.py` can optionally upload the newest weekly CSV before shutdown.
@@ -85,6 +85,8 @@ export I2C_BUS_NUMBER=5
 export PICO_SERIAL_PORT=/dev/ttyS4
 export EC25_AT_PORT=/dev/ttyUSB2
 ```
+
+`I2C_BUS_NUMBER` is optional. Leave it unset first; set it only if the enabled header bus is known and auto-detection does not find the ADS1115/BME280 modules.
 
 If your enabled header UART appears as another device, change `PICO_SERIAL_PORT`.
 
@@ -168,6 +170,13 @@ export CELLULAR_STATUS_URL=https://your-server.example/water-logger/status
 export ALERT_SMS_NUMBERS=+61400111222,+61400999888
 ```
 
+SMS is optional. If there is no EC25 AT port, no SIM, the SIM is PIN-locked, `pyserial` is missing, or `CELLULAR_SMS_ENABLED=0`, SMS sending is skipped before any alert texts are attempted.
+
+```bash
+export CELLULAR_SMS_ENABLED=auto  # default: send only when modem and SIM are ready
+export CELLULAR_SMS_ENABLED=0     # force SMS off
+```
+
 `ALERT_SMS_NUMBERS` is optional. If it is not set, the phone app can save alert numbers to:
 
 ```text
@@ -220,7 +229,7 @@ daily_status_due
 record_count_window
 ```
 
-If `CELLULAR_STATUS_URL` is not set, server updates are skipped. If `ALERT_SMS_NUMBERS` is not set, SMS is skipped.
+If `CELLULAR_STATUS_URL` is not set, server updates are skipped. If `ALERT_SMS_NUMBERS` is not set, or no configured phone-app numbers exist, SMS is skipped.
 
 ## Freshwater alert defaults
 
@@ -242,7 +251,7 @@ These are starter alert thresholds, not legal or scientific certification. Tune 
 | `DAILY_STATUS_AFTER_HOUR` | `4` | daily status waits until the first log at or after this local hour |
 | `ALERT_TIMEZONE` | `Australia/Brisbane` | local timezone used for the daily status cutoff |
 
-Sensor communication failures can generate warning alerts, but only for sensors that were working in the initial baseline. The baseline is built from the first recent rows that report each sensor as `ok`, which avoids nuisance alerts for optional sensors that were never installed.
+Sensor communication failures can generate warning alerts, but only for sensors that were working in the initial baseline. The baseline is built from the first recent rows that report each sensor as `ok`, then finalized and saved so later reports do not repeatedly rebuild it. This avoids nuisance alerts for optional sensors that were never installed.
 
 The alert manager saves the sensor baseline in:
 
