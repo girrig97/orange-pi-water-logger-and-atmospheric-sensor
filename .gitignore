@@ -23,5 +23,6 @@ android-app/build/
 # KiCad local/session and generated report files.
 *.kicad_prl
 *.kicad_pro.lck
+*.kicad_pcb.lck
 *.rpt
 .history/
