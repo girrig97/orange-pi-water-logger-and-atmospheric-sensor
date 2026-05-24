@@ -13,6 +13,8 @@ Commands from a Bluetooth serial terminal:
   stop      - stop live streaming
   sms       - show alert SMS recipient numbers
   setsms numbers - set alert SMS recipients, comma separated
+  clearsms  - clear alert SMS recipients
+  resetbaseline - clear sensor failure baseline after repair/reconfiguration
   signal    - show EC25-AU network generation and signal level
   testsms   - send a test SMS to configured alert recipients
   download  - send newest weekly CSV, remove DOWNLOAD_MODE, sync, and shut down
@@ -24,6 +26,7 @@ from __future__ import annotations
 
 import subprocess
 import csv
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -84,6 +87,14 @@ def set_pairing_window(enabled: bool) -> None:
 def shutdown() -> None:
     subprocess.run(["sync"], check=False)
     subprocess.run(["shutdown", "-h", "now"], check=False)
+
+
+def finish_client_transfer(client) -> None:
+    try:
+        client.shutdown(1)
+    except Exception:
+        pass
+    time.sleep(2)
 
 
 def current_time_text() -> str:
@@ -179,21 +190,25 @@ def send_text(client, text: str) -> None:
 
 def live_reading_text() -> str:
     reading = collect_reading()
+
+    def value_or_dash(value) -> str:
+        return "--" if value is None else str(value)
+
     return (
         "LIVE "
         f"time={reading.timestamp}, "
-        f"water_temp_c={reading.temperature_c}, "
-        f"ph={reading.ph}, "
-        f"tds_ppm={reading.tds_ppm}, "
-        f"ec_ms_cm={reading.ec_ms_cm}, "
-        f"turbidity_ntu={reading.turbidity_ntu}, "
-        f"orp_mv={reading.orp_mv}, "
-        f"do_mg_l={reading.dissolved_oxygen_mg_l}, "
-        f"nh4_mg_l={reading.ammonium_nh4_mg_l}, "
-        f"nh3_mg_l={reading.toxic_ammonia_nh3_mg_l}, "
-        f"air_temp_c={reading.air_temperature_c}, "
-        f"humidity_percent={reading.air_humidity_percent}, "
-        f"pressure_hpa={reading.air_pressure_hpa}, "
+        f"water_temp_c={value_or_dash(reading.temperature_c)}, "
+        f"ph={value_or_dash(reading.ph)}, "
+        f"tds_ppm={value_or_dash(reading.tds_ppm)}, "
+        f"ec_ms_cm={value_or_dash(reading.ec_ms_cm)}, "
+        f"turbidity_ntu={value_or_dash(reading.turbidity_ntu)}, "
+        f"orp_mv={value_or_dash(reading.orp_mv)}, "
+        f"do_mg_l={value_or_dash(reading.dissolved_oxygen_mg_l)}, "
+        f"nh4_mg_l={value_or_dash(reading.ammonium_nh4_mg_l)}, "
+        f"nh3_mg_l={value_or_dash(reading.toxic_ammonia_nh3_mg_l)}, "
+        f"air_temp_c={value_or_dash(reading.air_temperature_c)}, "
+        f"humidity_percent={value_or_dash(reading.air_humidity_percent)}, "
+        f"pressure_hpa={value_or_dash(reading.air_pressure_hpa)}, "
         f"condition={reading.water_condition}"
         "\n"
     )
@@ -264,6 +279,7 @@ def handle_command(client, command: str) -> str:
         send_text(client, "Download complete. Resuming normal timed logging.\n")
         remove_mode_markers()
         set_pairing_window(False)
+        finish_client_transfer(client)
         shutdown()
         return "shutdown"
 
@@ -274,6 +290,7 @@ def handle_command(client, command: str) -> str:
         send_text(client, "Download complete. Resuming normal timed logging.\n")
         remove_mode_markers()
         set_pairing_window(False)
+        finish_client_transfer(client)
         shutdown()
         return "shutdown"
 
@@ -281,6 +298,7 @@ def handle_command(client, command: str) -> str:
         send_text(client, "Download/pairing mode cleared. Resuming normal timed logging.\n")
         remove_mode_markers()
         set_pairing_window(False)
+        finish_client_transfer(client)
         shutdown()
         return "shutdown"
 
@@ -297,6 +315,11 @@ def handle_command(client, command: str) -> str:
         send_text(client, f"Alert SMS numbers: {sms_numbers_text()}\n")
         return "continue"
 
+    if command == "clearsms":
+        set_sms_numbers("")
+        send_text(client, "Alert SMS numbers cleared.\n")
+        return "continue"
+
     if command == "setsms" or command.startswith("setsms "):
         try:
             numbers_text = raw_command.split(" ", 1)[1] if " " in raw_command else ""
@@ -307,6 +330,16 @@ def handle_command(client, command: str) -> str:
                 send_text(client, "Alert SMS numbers cleared.\n")
         except ValueError as exc:
             send_text(client, f"Could not save SMS numbers: {exc}\n")
+        return "continue"
+
+    if command == "resetbaseline":
+        state_path = RECORDS_PATH / "cellular_alert_state.json"
+        try:
+            if state_path.exists():
+                state_path.unlink()
+            send_text(client, "Sensor baseline reset. The next report will rebuild it from recent ok rows.\n")
+        except OSError as exc:
+            send_text(client, f"Could not reset sensor baseline: {exc}\n")
         return "continue"
 
     if command == "signal":
@@ -324,10 +357,10 @@ def handle_command(client, command: str) -> str:
         return "continue"
 
     if command in {"help", "?"}:
-        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, signal, testsms, download, download all, resume\n")
+        send_text(client, "Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, clearsms, resetbaseline, signal, testsms, download, download all, resume\n")
         return "continue"
 
-    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, signal, testsms, download, download all, resume\n")
+    send_text(client, "Unknown command. Try: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, clearsms, resetbaseline, signal, testsms, download, download all, resume\n")
     return "continue"
 
 
@@ -370,7 +403,7 @@ def main() -> int:
     print(f"Bluetooth client connected: {address}")
     if pairing_requested:
         send_text(client, "Pairing mode active. Bluetooth is discoverable and pairable.\n")
-    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, signal, testsms, download, download all, resume\n")
+    send_text(client, "Orange Pi water records ready. Commands: status, summary, times, latest, settime <iso>, log, live, stop, sms, setsms <numbers>, clearsms, resetbaseline, signal, testsms, download, download all, resume\n")
 
     live_mode = False
     client.settimeout(1)

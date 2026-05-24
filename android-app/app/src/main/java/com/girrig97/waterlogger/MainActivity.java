@@ -254,6 +254,9 @@ public class MainActivity extends Activity {
         Button signal = button("Signal Status");
         Button testSms = button("Test SMS");
         addButtonRow(root, signal, testSms);
+        Button clearSms = button("Clear SMS");
+        Button resetBaseline = button("Reset Baseline");
+        addButtonRow(root, clearSms, resetBaseline);
 
         status.setOnClickListener(v -> sendCommandToScreen("status"));
         summary.setOnClickListener(v -> sendCommandToScreen("summary"));
@@ -270,6 +273,11 @@ public class MainActivity extends Activity {
         saveSms.setOnClickListener(v -> saveSmsNumbers());
         signal.setOnClickListener(v -> sendCommandToScreen("signal"));
         testSms.setOnClickListener(v -> sendCommandToScreen("testsms"));
+        clearSms.setOnClickListener(v -> {
+            smsNumbersInput.setText("");
+            sendCommandToScreen("clearsms");
+        });
+        resetBaseline.setOnClickListener(v -> sendCommandToScreen("resetbaseline"));
     }
 
     private Button button(String text) {

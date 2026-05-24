@@ -435,6 +435,7 @@ By default:
 ```text
 pressure >= 1000 hPa -> next recording in 6 hours
 pressure < 1000 hPa  -> next recording in 1 hour
+pressure drop >= 6 hPa over recent 24h -> next recording in 1 hour
 ```
 
 The Orange Pi writes the next interval to:
@@ -463,7 +464,7 @@ Required UART wiring:
 | Orange Pi UART RX | Pico GP0/TX |
 | Orange Pi GND | Pico GND |
 
-The logger will raise an error if this UART link is not available. The code defaults to Orange Pi serial port `/dev/ttyS5`. If your enabled UART appears under another name, set:
+The logger records the row even if this UART link is unavailable, then logs a warning and continues shutdown so the power bank is not drained. The Pico treats a missing `NEXT_INTERVAL` as a fault and retries in 1 hour. The code defaults to Orange Pi serial port `/dev/ttyS5`. If your enabled UART appears under another name, set:
 
 ```bash
 export PICO_SERIAL_PORT=/dev/ttyS1
@@ -542,6 +543,7 @@ Use `pico_power_controller.py` on a Raspberry Pi Pico or Pico W to switch Orange
 | GP1/RX | Orange Pi UART TX |
 | GP4 | DS3231 SDA |
 | GP5 | DS3231 SCL |
+| GP13 | Strongly recommended: Orange Pi ready/shutdown GPIO |
 | 3V3 | DS3231 VCC |
 | GND | DS3231 GND, button `C`, power-switch GND |
 | VSYS or 5V USB input | Pico power from power bank |
@@ -553,6 +555,8 @@ Normal mode:
 - Pico powers the Orange Pi every 6 hours.
 - Orange Pi runs `water_logger.py --once --shutdown-after`.
 - Pico cuts Orange Pi power after the logging window.
+
+Wire the Orange Pi ready/shutdown GPIO to Pico `GP13` if possible. Without it, the Pico uses the full scheduled safety window before cutting power; with it, the Pico can cut power shortly after Linux has finished and shut down cleanly.
 
 Download mode:
 
@@ -636,6 +640,12 @@ Bluetooth commands:
 | `log` | Logs one fresh reading using the current Orange Pi time |
 | `live` | Streams unsaved live readings every 5 seconds |
 | `stop` | Stops live reading stream |
+| `sms` | Shows configured SMS alert recipient numbers |
+| `setsms +61400111222,+61400999888` | Sets SMS alert recipient numbers |
+| `clearsms` | Clears SMS alert recipient numbers |
+| `resetbaseline` | Clears the sensor-failure baseline after sensor repair or reconfiguration |
+| `signal` | Shows EC25 network generation and signal level on the cellular branch |
+| `testsms` | Sends a test SMS to configured recipients on the cellular branch |
 | `download` | Sends the newest weekly CSV, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `download all` | Sends all weekly CSV files, deletes `DOWNLOAD_MODE`, syncs, and shuts down |
 | `resume` | Deletes `DOWNLOAD_MODE`/`PAIRING_MODE` and shuts down without downloading |

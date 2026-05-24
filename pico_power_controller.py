@@ -46,6 +46,7 @@ DOWNLOAD_LED_BLINK_MS = 800
 PAIRING_LED_BLINK_MS = 180
 
 DS3231_ADDRESS = 0x68
+MIN_VALID_YEAR = 2024
 
 
 power_enable = Pin(POWER_ENABLE_PIN, Pin.OUT, value=0)
@@ -70,14 +71,19 @@ def now_seconds():
     This is enough for interval timing and avoids needing full timezone logic on
     the Pico. Set the DS3231 once with set_rtc_time().
     """
-    data = i2c.readfrom_mem(DS3231_ADDRESS, 0x00, 7)
-    second = bcd_to_int(data[0] & 0x7F)
-    minute = bcd_to_int(data[1] & 0x7F)
-    hour = bcd_to_int(data[2] & 0x3F)
-    day = bcd_to_int(data[4] & 0x3F)
-    month = bcd_to_int(data[5] & 0x1F)
-    year = 2000 + bcd_to_int(data[6])
-    return time.mktime((year, month, day, hour, minute, second, 0, 0))
+    try:
+        data = i2c.readfrom_mem(DS3231_ADDRESS, 0x00, 7)
+        second = bcd_to_int(data[0] & 0x7F)
+        minute = bcd_to_int(data[1] & 0x7F)
+        hour = bcd_to_int(data[2] & 0x3F)
+        day = bcd_to_int(data[4] & 0x3F)
+        month = bcd_to_int(data[5] & 0x1F)
+        year = 2000 + bcd_to_int(data[6])
+        if year < MIN_VALID_YEAR:
+            raise ValueError("DS3231 time is not set")
+        return time.mktime((year, month, day, hour, minute, second, 0, 0))
+    except Exception:
+        return time.ticks_ms() // 1000
 
 
 def set_rtc_time(year, month, day, hour, minute, second):
@@ -96,6 +102,14 @@ def set_rtc_time(year, month, day, hour, minute, second):
     i2c.writeto_mem(DS3231_ADDRESS, 0x00, data)
 
 
+def rtc_time_valid():
+    try:
+        data = i2c.readfrom_mem(DS3231_ADDRESS, 0x06, 1)
+        return 2000 + bcd_to_int(data[0]) >= MIN_VALID_YEAR
+    except Exception:
+        return False
+
+
 def orange_pi_on():
     power_enable.value(1)
     led.value(1)
@@ -104,6 +118,14 @@ def orange_pi_on():
 def orange_pi_off():
     power_enable.value(0)
     led.value(0)
+
+
+def error_blink(count=6):
+    for _ in range(count):
+        led.value(1)
+        time.sleep_ms(120)
+        led.value(0)
+        time.sleep_ms(120)
 
 
 def button_pressed():
@@ -193,6 +215,8 @@ def run_scheduled_log():
         if orange_pi_ready.value() == 1:
             time.sleep(10)
             break
+        if button_pressed() and held_button_exit_requested():
+            break
         time.sleep(2)
 
     if next_interval is None:
@@ -200,17 +224,15 @@ def run_scheduled_log():
         # is easier to catch during field checks and low-pressure mode is not
         # missed for a full 6-hour cycle.
         next_interval = MIN_LOG_INTERVAL_SECONDS
-        for _ in range(20):
-            led.value(1)
-            time.sleep_ms(150)
-            led.value(0)
-            time.sleep_ms(150)
+        error_blink(20)
 
     orange_pi_off()
     return next_interval
 
 
 def main():
+    if not rtc_time_valid():
+        error_blink(12)
     next_log_at = now_seconds()
     orange_pi_off()
 

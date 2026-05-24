@@ -16,7 +16,7 @@ import subprocess
 import time
 import argparse
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -34,6 +34,10 @@ NEXT_INTERVAL_FILENAME = "next_interval_seconds.txt"
 LOG_INTERVAL_SECONDS = 6 * 60 * 60
 LOW_PRESSURE_INTERVAL_SECONDS = 60 * 60
 LOW_PRESSURE_HPA = 1000.0
+try:
+    PRESSURE_DROP_HPA_24H = float(os.environ.get("ALERT_PRESSURE_DROP_HPA_24H", "6.0"))
+except ValueError:
+    PRESSURE_DROP_HPA_24H = 6.0
 PICO_SERIAL_PORT = os.environ.get("PICO_SERIAL_PORT", "/dev/ttyS5")
 
 # Taking several quick samples and averaging them reduces random ADC noise.
@@ -244,9 +248,44 @@ def dew_point_c(air_temperature_c: float | None, humidity_percent: float | None)
     return (b * alpha) / (a - alpha)
 
 
-def choose_next_interval_seconds(pressure_hpa: float | None) -> int:
+def parse_timestamp(value: str) -> datetime | None:
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def recent_pressure_values(now: datetime, hours: int = 24) -> list[float]:
+    window_start = now - timedelta(hours=hours)
+    values: list[float] = []
+    for path in weekly_csv_files()[-4:]:
+        try:
+            with path.open("r", newline="", encoding="utf-8") as file:
+                for row in csv.DictReader(file):
+                    timestamp = parse_timestamp(row.get("timestamp", ""))
+                    if timestamp is None or timestamp < window_start:
+                        continue
+                    pressure_text = row.get("air_pressure_hpa", "").strip()
+                    if pressure_text:
+                        values.append(float(pressure_text))
+        except (OSError, ValueError):
+            continue
+    return values
+
+
+def choose_next_interval_seconds(pressure_hpa: float | None, now: datetime | None = None) -> int:
     if pressure_hpa is not None and pressure_hpa < LOW_PRESSURE_HPA:
         return LOW_PRESSURE_INTERVAL_SECONDS
+    if pressure_hpa is not None:
+        now = datetime.now(timezone.utc) if now is None else now
+        prior_pressures = recent_pressure_values(now)
+        if prior_pressures and max(prior_pressures) - pressure_hpa >= PRESSURE_DROP_HPA_24H:
+            return LOW_PRESSURE_INTERVAL_SECONDS
     return LOG_INTERVAL_SECONDS
 
 
@@ -549,7 +588,8 @@ def water_condition(score: float | None) -> str:
 
 
 def collect_reading() -> WaterReading:
-    timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    now = datetime.now(timezone.utc)
+    timestamp = now.isoformat(timespec="seconds")
     temperature_c, temperature_status = read_temperature_c()
     air = read_bme280()
     voltages = read_average_sensor_voltages()
@@ -577,7 +617,7 @@ def collect_reading() -> WaterReading:
         if air["air_temperature_c"] is None or temperature_c is None
         else air["air_temperature_c"] - temperature_c
     )
-    next_interval = choose_next_interval_seconds(air["air_pressure_hpa"])
+    next_interval = choose_next_interval_seconds(air["air_pressure_hpa"], now)
 
     return WaterReading(
         timestamp=timestamp,
@@ -629,6 +669,8 @@ def append_reading(csv_path: Path, reading: WaterReading) -> None:
         if not file_exists:
             writer.writeheader()
         writer.writerow(row)
+        file.flush()
+        os.fsync(file.fileno())
 
 
 def weekly_csv_path(timestamp: datetime | None = None) -> Path:
@@ -657,16 +699,24 @@ def send_next_interval_to_pico(next_interval_seconds: int) -> None:
         ) from exc
 
 
+def write_text_synced(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as file:
+        file.write(text)
+        file.flush()
+        os.fsync(file.fileno())
+
+
 def log_once(csv_path: Path | None = None) -> Path:
     reading = collect_reading()
     if csv_path is None:
         csv_path = weekly_csv_path()
     append_reading(csv_path, reading)
-    (csv_path.parent / NEXT_INTERVAL_FILENAME).write_text(
-        str(reading.next_interval_seconds),
-        encoding="utf-8",
-    )
-    send_next_interval_to_pico(reading.next_interval_seconds)
+    write_text_synced(csv_path.parent / NEXT_INTERVAL_FILENAME, str(reading.next_interval_seconds))
+    try:
+        send_next_interval_to_pico(reading.next_interval_seconds)
+    except RuntimeError as exc:
+        print(f"Warning: could not notify Pico of next interval: {exc}")
     print(f"Logged water reading to {csv_path}")
     return csv_path
 

@@ -118,7 +118,7 @@ def modem_signal_report() -> dict[str, str | int | None]:
     try:
         import serial
     except ImportError:
-        return {"network": "unknown", "signal": "pyserial_missing", "csq": None, "dbm": None, "percent": None, "raw": "pyserial_missing"}
+        return {"network": "unknown", "signal": "pyserial_missing", "csq": None, "dbm": None, "percent": None, "operator": "--", "raw": "pyserial_missing"}
 
     try:
         with serial.Serial(EC25_AT_PORT, EC25_BAUDRATE, timeout=1) as serial_port:
@@ -127,7 +127,7 @@ def modem_signal_report() -> dict[str, str | int | None]:
             qnwinfo_response = at_command(serial_port, "AT+QNWINFO")
             cops_response = at_command(serial_port, "AT+COPS?")
     except OSError as exc:
-        return {"network": "no signal", "signal": f"ec25_at_port_unavailable: {exc}", "csq": None, "dbm": None, "percent": None, "raw": str(exc)}
+        return {"network": "no signal", "signal": f"ec25_at_port_unavailable: {exc}", "csq": None, "dbm": None, "percent": None, "operator": "--", "raw": str(exc)}
 
     csq, dbm, percent = parse_csq(csq_response)
     network = network_generation(qnwinfo_response, csq)

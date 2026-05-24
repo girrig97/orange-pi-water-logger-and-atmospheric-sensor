@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from water_logger import CSV_FILENAME_PREFIX, RECORDS_PATH
 
@@ -61,6 +62,7 @@ class AlertThresholds:
     temp_change_c_24h: float = env_float("ALERT_TEMP_CHANGE_C_24H", 2.0)
     alert_cooldown_seconds: int = env_int("ALERT_COOLDOWN_SECONDS", 6 * 60 * 60)
     daily_status_after_hour: int = env_int("DAILY_STATUS_AFTER_HOUR", 4)
+    timezone_name: str = os.environ.get("ALERT_TIMEZONE", "Australia/Brisbane")
 
 
 def weekly_csv_files() -> list[Path]:
@@ -113,11 +115,19 @@ def alert(key: str, severity: str, message: str) -> dict[str, str]:
     return {"key": key, "severity": severity, "message": message}
 
 
-def sensor_baseline_from_initial_row(row: dict[str, str]) -> dict[str, bool]:
+def alert_timezone(thresholds: AlertThresholds):
+    try:
+        return ZoneInfo(thresholds.timezone_name)
+    except ZoneInfoNotFoundError:
+        if thresholds.timezone_name == "Australia/Brisbane":
+            return timezone(timedelta(hours=10))
+        return timezone.utc
+
+
+def sensor_baseline_from_rows(rows: list[dict[str, str]]) -> dict[str, bool]:
     baseline: dict[str, bool] = {}
     for key in SENSOR_STATUS_COLUMNS:
-        status = row.get(key, "").strip()
-        baseline[key] = status == "ok"
+        baseline[key] = any(row.get(key, "").strip() == "ok" for row in rows[:8])
     return baseline
 
 
@@ -127,7 +137,7 @@ def get_sensor_baseline(rows: list[dict[str, str]], state: dict[str, Any]) -> di
         return {str(key): bool(value) for key, value in baseline.items()}
     if not rows:
         return {}
-    baseline = sensor_baseline_from_initial_row(rows[0])
+    baseline = sensor_baseline_from_rows(rows)
     state["sensor_baseline"] = baseline
     return baseline
 
@@ -169,11 +179,11 @@ def evaluate_latest(rows: list[dict[str, str]], thresholds: AlertThresholds, sen
             alerts.append(alert(f"sensor_{key}", "warning", f"{key} is {value}."))
 
     condition = latest.get("water_condition", "")
-    if condition in {"poor", "critical"}:
+    if condition in {"poor", "bad"}:
         alerts.append(alert("water_condition", "critical", f"Overall water condition is {condition}."))
 
     ammonia_risk = latest.get("ammonia_risk", "")
-    if ammonia_risk in {"high", "very_high"}:
+    if ammonia_risk in {"danger", "critical"}:
         alerts.append(alert("ammonia_risk", "critical", f"Ammonia risk is {ammonia_risk}."))
 
     return alerts
@@ -225,7 +235,7 @@ def summary_text(rows: list[dict[str, str]]) -> str:
 
 
 def should_send_daily_status(state: dict[str, Any], now: datetime, thresholds: AlertThresholds) -> bool:
-    local_now = now.astimezone()
+    local_now = now.astimezone(alert_timezone(thresholds))
     if local_now.hour < thresholds.daily_status_after_hour:
         return False
     today = local_now.date().isoformat()

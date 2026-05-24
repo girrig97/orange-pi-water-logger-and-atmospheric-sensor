@@ -188,6 +188,8 @@ From a Bluetooth terminal:
 ```text
 sms
 setsms +61400111222,+61400999888
+clearsms
+resetbaseline
 signal
 testsms
 ```
@@ -195,7 +197,7 @@ testsms
 To clear saved SMS recipients:
 
 ```text
-setsms
+clearsms
 ```
 
 If `ALERT_SMS_NUMBERS` is set in the environment, it takes priority over the saved phone-app config.
@@ -238,22 +240,29 @@ These are starter alert thresholds, not legal or scientific certification. Tune 
 | `ALERT_TEMP_CHANGE_C_24H` | `2.0` | water temp change versus recent 24h average alerts |
 | `ALERT_COOLDOWN_SECONDS` | `21600` | same alert SMS cooldown, default 6 hours |
 | `DAILY_STATUS_AFTER_HOUR` | `4` | daily status waits until the first log at or after this local hour |
+| `ALERT_TIMEZONE` | `Australia/Brisbane` | local timezone used for the daily status cutoff |
 
-Sensor communication failures can generate warning alerts, but only for sensors that were working in the initial logged record. This avoids nuisance alerts for optional sensors that were never installed.
+Sensor communication failures can generate warning alerts, but only for sensors that were working in the initial baseline. The baseline is built from the first recent rows that report each sensor as `ok`, which avoids nuisance alerts for optional sensors that were never installed.
 
-The first logged row creates a sensor baseline in:
-
-```text
-records/cellular_alert_state.json
-```
-
-If a sensor was not reporting in that initial row, later failures for that sensor will not trigger SMS alerts until the records/state are cleared and a new baseline is created. To reset the baseline, delete the records folder or delete:
+The alert manager saves the sensor baseline in:
 
 ```text
 records/cellular_alert_state.json
 ```
 
-Then let the logger take a new first reading with the sensors you want monitored.
+If a sensor never reports `ok` while the baseline is built, later failures for that sensor will not trigger SMS alerts until the records/state are cleared and a new baseline is created. To reset the baseline from the phone, send:
+
+```text
+resetbaseline
+```
+
+You can also delete:
+
+```text
+records/cellular_alert_state.json
+```
+
+Then let the logger take new readings with the sensors you want monitored.
 
 ## EC25-AU SMS notes
 
