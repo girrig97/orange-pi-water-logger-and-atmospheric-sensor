@@ -325,6 +325,6 @@ The Orange Pi 5 Max uses more power than the Zero 3. Use a larger power bank or 
 
 The EC25-AU can draw burst current during LTE transmit. Use a modem carrier board with stable power and a good antenna. For a compact enclosure, keep the antenna outside or against a non-metallic window in the case; do not bury the antenna behind metal or next to noisy power wiring.
 
-## Branch purpose
+## Main branch status
 
-Keep this branch separate from `main` so the original Orange Pi Zero 3 version remains simple. Merge only the shared improvements you want in both versions.
+These Orange Pi 5 Max and optional EC25-AU changes are now merged into `main`. The same codebase supports the Zero 3 without a cellular modem and skips SMS automatically when no modem/SIM is ready.

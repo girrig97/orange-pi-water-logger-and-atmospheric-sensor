@@ -347,7 +347,7 @@ sudo orangepi-config
 
 Then go to `System`, `Hardware`, enable `ph-i2c3`, save, and reboot.
 
-After reboot, check the ADC boards:
+After reboot, check the ADC boards. For a Zero 3 this is usually bus 3; for a 5 Max use the bus you enabled, or run `ls /dev/i2c-*` and scan the likely buses:
 
 ```bash
 sudo apt update
@@ -362,18 +362,18 @@ You should see:
 0x49
 ```
 
-The code reads ADS1115 #1 at `0x48` and ADS1115 #2 at `0x49` on `/dev/i2c-3`.
+The code reads ADS1115 #1 at `0x48` and ADS1115 #2 at `0x49`. If `I2C_BUS_NUMBER` is unset, it auto-detects likely Orange Pi I2C buses.
 
 ## BME280 ambient sensor
 
-Wire the BME280 to the same Orange Pi I2C3 bus as the ADS1115 boards:
+Wire the BME280 to the same Orange Pi I2C bus as the ADS1115 boards:
 
-| BME280 pin | Orange Pi Zero 3 |
+| BME280 pin | Orange Pi header function |
 | --- | --- |
 | VCC/VIN | Pin 1 `3.3V` |
 | GND | Pin 6 `GND` |
-| SDA | Pin 3 `I2C3 SDA` |
-| SCL | Pin 5 `I2C3 SCL` |
+| SDA | Pin 3 `I2C SDA` |
+| SCL | Pin 5 `I2C SCL` |
 
 The BME280 usually appears at `0x76` or `0x77`. The logger tries both.
 
