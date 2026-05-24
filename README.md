@@ -6,6 +6,44 @@ Variant branch: this branch includes shared logger code for Orange Pi Zero 3 and
 
 On the cellular branch, SMS alert recipients can be changed from the Android app using `Get SMS Numbers` and `Save SMS Numbers`.
 
+## Design brief
+
+Build a field-ready freshwater monitoring recorder that can run unattended from a USB power bank, store week-by-week CSV logs on microSD, and remain usable even when individual probes or optional hardware are disconnected.
+
+Core requirements:
+
+- Support both Orange Pi Zero 3 and Orange Pi 5 Max as the main logger.
+- Use a Raspberry Pi Pico or Pico W as the always-on low-power time and power controller.
+- Power the Orange Pi only when needed for scheduled logging, download mode, pairing mode, or manual checks.
+- Record freshwater sensor data every 6 hours by default.
+- Switch to hourly recording when barometric pressure is low or dropping quickly.
+- Store records on the Orange Pi microSD card as weekly CSV files.
+- Keep logging partial records if a sensor is damaged, disconnected, or not installed.
+- Tag failed sensor reads with clear status values instead of stopping the logger.
+- Build a sensor baseline from early successful readings so missing optional sensors do not create repeated fault alerts.
+- Allow field access from an Android phone over Bluetooth for status, time sync, live readings, CSV downloads, SMS number settings, signal checks, and test SMS.
+- Make cellular reporting optional. If no EC25-AU modem or usable SIM is detected, skip SMS work and continue normal logging.
+- Send optional daily SMS status, server updates, and unsafe-water alerts when the EC25-AU modem is installed and ready.
+
+Field-use behavior:
+
+- Power-on should automatically start the correct mode without terminal access.
+- Normal wake: Pico powers the Orange Pi, the logger writes one row, sends the next interval to the Pico, syncs data, and shuts down.
+- Short button press: Pico starts download mode and keeps the Orange Pi awake for Bluetooth access.
+- Long button hold: Pico starts pairing mode.
+- 10-second hold while awake: manual power-off fallback.
+- After Bluetooth download or resume, mode markers are cleared so the next wake returns to unattended logging.
+
+Reliability considerations:
+
+- CSV writes are flushed and fsynced.
+- Weekly CSV files reduce the impact of single-file corruption.
+- The UART link between Orange Pi and Pico is required for adaptive wake timing, but logger shutdown still continues if the UART notification fails.
+- All grounds must be common.
+- Orange Pi GPIO and ADS1115 inputs must stay within 3.3V logic/input limits.
+- Probe modules need calibration before readings should be treated as meaningful.
+- The enclosure, cable glands, connectors, and sensor electronics must be protected against water ingress and condensation.
+
 ## Sensors included
 
 - pH
