@@ -37,6 +37,7 @@
 
   <rect x="400" y="105" width="270" height="245" class="box"/>
   <text x="440" y="140" class="title">Raspberry Pi Pico / W</text>
+  <text x="430" y="158" class="label">3V3 to DS3231 VCC</text>
   <text x="430" y="176" class="label">VSYS/USB 5V</text>
   <text x="430" y="202" class="label">GND</text>
   <text x="430" y="228" class="label">GP15 power switch trigger</text>
@@ -115,6 +116,7 @@
 
   <!-- Pin dots -->
   <circle cx="270" cy="180" r="5" class="pin"/><circle cx="270" cy="214" r="5" class="pin"/>
+  <circle cx="670" cy="158" r="5" class="pin"/>
   <circle cx="400" cy="176" r="5" class="pin"/><circle cx="400" cy="202" r="5" class="pin"/>
   <circle cx="670" cy="228" r="5" class="pin"/><circle cx="670" cy="254" r="5" class="pin"/>
   <circle cx="670" cy="280" r="5" class="pin"/><circle cx="670" cy="306" r="5" class="pin"/>
@@ -154,8 +156,8 @@
   <path d="M660 586 H1108 V455 H1120" class="wire wsda"/>
   <path d="M660 586 H1118 V795 H1120" class="wire wsda"/>
   <path d="M660 586 H445 V839 H420" class="wire wsda"/>
-  <path d="M660 613 H1130 V455 H1120" class="wire wscl"/>
-  <path d="M660 613 H1142 V795 H1120" class="wire wscl"/>
+  <path d="M660 613 H1075 V455 H1120" class="wire wscl"/>
+  <path d="M660 613 H1075 V795 H1120" class="wire wscl"/>
   <path d="M660 613 H435 V839 H420" class="wire wscl"/>
   <path d="M660 640 H430 V599 H420" class="wire wdata"/>
   <path d="M1400 520 H1490 V418" class="wire wanalog"/>
@@ -190,7 +192,7 @@
   <g><circle cx="635" cy="721" r="15" class="num"/><text x="635" y="721" class="numText">25</text></g>
 
   <!-- Number 7, 20, 21 are local short connections/spares. -->
-  <line x1="1120" y1="178" x2="1088" y2="178" class="wire w33"/>
+  <path d="M670 158 V90 H1102 V178 H1120" class="wire w33"/>
   <g><circle cx="1102" cy="178" r="15" class="num"/><text x="1102" y="178" class="numText">7</text></g>
   <line x1="1400" y1="905" x2="1490" y2="905" class="wire wanalog"/>
   <g><circle cx="1445" cy="905" r="15" class="num"/><text x="1445" y="905" class="numText">20</text></g>

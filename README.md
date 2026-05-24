@@ -130,19 +130,19 @@ Use two ADS1115 ADC boards on the Orange Pi I2C header. The code auto-detects li
 
 ## Wiring diagram
 
-![Corrected wiring diagram](docs/wiring-diagram.svg)
+![Wiring diagram](docs/wiring-diagram.svg)
 
-The supplied visual diagram is mostly accurate, with these corrections:
+Key things to double-check before powering on:
 
-- The 5V power-switch module input must connect to the USB power bank 5V, not to a Pico GPIO pin.
-- The 5V power-switch module GND must connect to the common ground bus.
-- Pico `GP15` must connect only to the power-switch trigger, enable, signal, or `IN` pin.
-- Pico `GP14` must connect to the download button only, not to the power switch.
-- ADS1115 #1 must have `ADDR -> GND` for address `0x48`.
-- ADS1115 #2 must have `ADDR -> 3.3V` for address `0x49`.
+- The 5V power-switch module input connects to the USB power bank 5V, not to a Pico GPIO pin.
+- The 5V power-switch module GND is on the common ground bus.
+- Pico `GP15` drives only the power-switch trigger / enable / signal / `IN` pin.
+- Pico `GP14` connects only to the download button, not to the power switch.
+- ADS1115 #1 has `ADDR -> GND` for address `0x48`.
+- ADS1115 #2 has `ADDR -> 3.3V` for address `0x49`.
 - Any sensor analog output above 3.3V needs level scaling before the ADS1115 input.
 
-In the numbered image, the ADC, DS18B20, I2C, RTC, and button sections are broadly right. Recheck the power-switch section carefully before building, because relay and MOS boards use different terminal names.
+The numbered badges in the image match the legend table below. Recheck the power-switch section carefully before building, because relay and MOS boards use different terminal names.
 
 Corrected numbered wiring:
 
