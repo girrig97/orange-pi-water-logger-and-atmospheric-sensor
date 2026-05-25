@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import datetime
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -11,7 +13,36 @@ import generate_schematic
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "zero3-water-logger-carrier.kicad_pcb"
-FP_ROOT = Path(r"C:\Program Files\KiCad\10.0\share\kicad\footprints")
+
+
+def resolve_footprint_root() -> Path:
+    """Find the KiCad system footprints directory.
+
+    Honours $KICAD_FOOTPRINT_DIR if set, then falls back to the common install
+    locations on Windows, macOS, and Linux. Fails with a clear error if none of
+    them exist instead of silently producing an unrouted board.
+    """
+    env = os.environ.get("KICAD_FOOTPRINT_DIR")
+    if env:
+        return Path(env)
+    candidates = [
+        Path(r"C:\Program Files\KiCad\10.0\share\kicad\footprints"),
+        Path(r"C:\Program Files\KiCad\9.0\share\kicad\footprints"),
+        Path("/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints"),
+        Path("/usr/share/kicad/footprints"),
+        Path("/usr/local/share/kicad/footprints"),
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise RuntimeError(
+        "Could not locate the KiCad footprint library. Set KICAD_FOOTPRINT_DIR "
+        "to your KiCad installation's `share/kicad/footprints` directory."
+    )
+
+
+FP_ROOT = resolve_footprint_root()
+TODAY = datetime.date.today().isoformat()
 
 BOARD_W_MM = 360
 BOARD_H_MM = 330
@@ -160,53 +191,6 @@ def bbox_mm(fp: pcbnew.FOOTPRINT) -> tuple[float, float, float, float]:
     )
 
 
-def route_to_backbone(board: pcbnew.BOARD) -> None:
-    pads_by_net: dict[str, list[pcbnew.PAD]] = {}
-    for fp in board.GetFootprints():
-        for pad in fp.Pads():
-            net = pad.GetNetname()
-            if not net:
-                continue
-            pads_by_net.setdefault(net, []).append(pad)
-
-    multi_pin_nets = sorted((name, pads) for name, pads in pads_by_net.items() if len(pads) > 1)
-    bus_start_y = 240.0
-    bus_pitch = 2.2
-
-    for net_index, (net_name, pads) in enumerate(multi_pin_nets):
-        net = make_net(board, net_name)
-        bus_y = bus_start_y + net_index * bus_pitch
-        bus_points: list[pcbnew.VECTOR2I] = []
-
-        for pad_index, pad in enumerate(pads):
-            fp = pad.GetParentFootprint()
-            left, top, right, bottom = bbox_mm(fp)
-            center_x = (left + right) / 2
-            center_y = (top + bottom) / 2
-            pos = pad.GetPosition()
-            px = pcbnew.ToMM(pos.x)
-            py = pcbnew.ToMM(pos.y)
-
-            route_left = px < center_x
-            channel_x = (left - 3.0 - pad_index * 0.18) if route_left else (right + 3.0 + pad_index * 0.18)
-            escape_y = (top - 3.0) if py < center_y else (bottom + 3.0)
-
-            p0 = pos
-            p1 = v(px, escape_y)
-            p2 = v(channel_x, escape_y)
-            p3 = v(channel_x, bus_y)
-
-            add_track(board, net, p0, p1, pcbnew.F_Cu)
-            add_track(board, net, p1, p2, pcbnew.F_Cu)
-            add_track(board, net, p2, p3, pcbnew.F_Cu)
-            add_via(board, net, p3)
-            bus_points.append(p3)
-
-        bus_points.sort(key=lambda point: point.x)
-        for a, b in zip(bus_points, bus_points[1:]):
-            add_track(board, net, a, b, pcbnew.B_Cu)
-
-
 def add_outline(board: pcbnew.BOARD) -> None:
     points = [
         (MARGIN_MM, MARGIN_MM, BOARD_W_MM - MARGIN_MM, MARGIN_MM),
@@ -225,6 +209,7 @@ def add_outline(board: pcbnew.BOARD) -> None:
 
 
 def add_mounting_holes(board: pcbnew.BOARD) -> None:
+    missing = False
     for ref, x, y in [
         ("H1", 16, 16),
         ("H2", BOARD_W_MM - 16, 16),
@@ -233,10 +218,16 @@ def add_mounting_holes(board: pcbnew.BOARD) -> None:
     ]:
         hole = pcbnew.FootprintLoad(str(FP_ROOT / "MountingHole.pretty"), "MountingHole_3.2mm_M3")
         if hole is None:
+            missing = True
             continue
         hole.SetReference(ref)
         hole.SetPosition(v(x, y))
         board.Add(hole)
+    if missing:
+        print(
+            "warning: MountingHole_3.2mm_M3 footprint not found; some holes were skipped.",
+            file=sys.stderr,
+        )
 
 
 def main() -> None:
@@ -244,17 +235,17 @@ def main() -> None:
     board.SetTitleBlock(pcbnew.TITLE_BLOCK())
     title = board.GetTitleBlock()
     title.SetTitle("Orange Pi Zero 3 Water Logger Carrier")
-    title.SetDate("2026-05-25")
-    title.SetRevision("R1 generated routed draft")
+    title.SetDate(TODAY)
+    title.SetRevision("R1 generated placement")
     title.SetCompany("Water Logger")
 
     add_outline(board)
     add_mounting_holes(board)
     place_components(board)
     # The PCB is generated with real footprints and schematic nets assigned.
-    # Do not auto-route here. A simple generated backbone can create unsafe
-    # shorts around dense headers and IC pads; routing must be completed and
-    # reviewed in KiCad before fabrication.
+    # Auto-routing happens outside this script via the bundled Freerouting
+    # workflow (route_with_freerouting.py). Switching power supply nets must
+    # still be reviewed against the TPS54531 reference layout before order.
 
     pcbnew.SaveBoard(str(OUT), board)
 

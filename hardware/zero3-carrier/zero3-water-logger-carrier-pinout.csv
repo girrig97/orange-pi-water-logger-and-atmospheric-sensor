@@ -1,165 +1,165 @@
-Ref,Pin,Net,Function,Notes
-J1,1,OPI_3V3,Orange Pi 3.3V logic rail,Feeds ADC logic and sensor pullups if current budget allows
-J1,2,OPI_5V_SW,Orange Pi switched 5V input,From high-side switch output
-J1,3,OPI_SDA,Orange Pi I2C SDA,ADS1115/BME280 SDA
-J1,4,OPI_5V_SW,Orange Pi switched 5V input,Parallel 5V pin
-J1,5,OPI_SCL,Orange Pi I2C SCL,ADS1115/BME280 SCL
-J1,6,GND,Common ground,Power and logic reference
-J1,7,OPI_1WIRE,DS18B20 data,4.7k pull-up to 3.3V
-J1,8,UART_OPI_TX_PICO_RX,Orange Pi TX to Pico RX,Adaptive interval data to Pico GP1
-J1,9,GND,Common ground,
-J1,10,UART_PICO_TX_OPI_RX,Orange Pi RX from Pico TX,Download/pairing request from Pico GP0
-J1,11,OPI_READY,Optional ready GPIO to Pico GP13,Set high before shutdown if used
-J1,12,NC,Unused/reserved,
-J1,13,NC,Unused/reserved,
-J1,14,GND,Common ground,
-J1,15,NC,Unused/reserved,
-J1,16,NC,Unused/reserved,
-J1,17,OPI_3V3,Orange Pi 3.3V logic rail,
-J1,18,NC,Unused/reserved,
-J1,19,NC,Unused/reserved,
-J1,20,GND,Common ground,
-J1,21,NC,Unused/reserved,
-J1,22,NC,Unused/reserved,
-J1,23,NC,Unused/reserved,
-J1,24,NC,Unused/reserved,
-J1,25,GND,Common ground,
-J1,26,NC,Unused/reserved,
-J2,1,PICO_5V_IN,Pico VSYS/USB 5V input,Always-on from power bank
-J2,2,GND,Pico ground,Common ground
-J2,3,PICO_GP15,Power switch enable,Controls high-side switch
-J2,4,PICO_GP14,Button input,Button NO to GP14 and C to GND
-J2,5,PICO_GP4,Pico I2C SDA,DS3231 SDA
-J2,6,PICO_GP5,Pico I2C SCL,DS3231 SCL
-J2,7,UART_PICO_TX_OPI_RX,Pico UART TX,To Orange Pi RX
-J2,8,UART_OPI_TX_PICO_RX,Pico UART RX,From Orange Pi TX
-J2,9,OPI_READY,Optional Orange Pi ready input,From OPI_READY
-J2,10,PICO_LED_GP16,Optional button LED output,Use resistor/transistor as needed
-J3,1,OPI_3V3,ADS1115 #1 VDD,Address 0x48
-J3,2,GND,ADS1115 #1 GND,
-J3,3,OPI_SDA,ADS1115 #1 SDA,
-J3,4,OPI_SCL,ADS1115 #1 SCL,
-J3,5,GND,ADS1115 #1 ADDR,ADDR to GND for 0x48
-J3,6,PH_AIN,pH analog input,To ADS1115 #1 A0
-J3,7,TDS_AIN,TDS analog input,To ADS1115 #1 A1
-J3,8,TURB_AIN,Turbidity analog input,To ADS1115 #1 A2
-J3,9,ORP_AIN,ORP analog input,To ADS1115 #1 A3
-J4,1,OPI_3V3,ADS1115 #2 VDD,Address 0x49
-J4,2,GND,ADS1115 #2 GND,
-J4,3,OPI_SDA,ADS1115 #2 SDA,
-J4,4,OPI_SCL,ADS1115 #2 SCL,
-J4,5,OPI_3V3,ADS1115 #2 ADDR,ADDR to VDD for 0x49
-J4,6,DO_AIN,Dissolved oxygen analog input,To ADS1115 #2 A0
-J4,7,NH4_AIN,Ammonium ISE amp analog input,To ADS1115 #2 A1
-J4,8,SPARE_AIN2,Spare analog input,To ADS1115 #2 A2
-J4,9,SPARE_AIN3,Spare analog input,To ADS1115 #2 A3
-R1,1,OPI_3V3,DS18B20 pull-up,4.7k to 3.3V
-R1,2,OPI_1WIRE,DS18B20 data pull-up,
-J5,1,OPI_3V3,DS18B20 VCC,
-J5,2,OPI_1WIRE,DS18B20 DATA,
-J5,3,GND,DS18B20 GND,
-J6,1,OPI_3V3,BME280 VCC,
-J6,2,GND,BME280 GND,
-J6,3,OPI_SDA,BME280 SDA,
-J6,4,OPI_SCL,BME280 SCL,
-J7,1,PICO_3V3,DS3231 VCC,From Pico 3V3
-J7,2,GND,DS3231 GND,
-J7,3,PICO_GP4,DS3231 SDA,
-J7,4,PICO_GP5,DS3231 SCL,
-J15,1,PICO_GP14,Download button NO,Button C goes to GND
-J15,2,GND,Download button C,Common ground
-J15,3,BUTTON_LED_A,Download button LED positive,Through R5 if using a bare 3.3V LED
-J15,4,GND,Download button LED negative,Common ground
-R5,1,PICO_LED_GP16,Optional button LED drive,Only use if firmware is changed from onboard LED to GP16
-R5,2,BUTTON_LED_A,Optional button LED resistor output,Use correct resistor for the installed LED
-J16,1,OPI_3V3,Spare analog header 3.3V,For low-power analog add-on only
-J16,2,GND,Spare analog header ground,
-J16,3,SPARE_AIN2,Spare ADS1115 #2 A2 input,
-J16,4,SPARE_AIN3,Spare ADS1115 #2 A3 input,
-J8,1,SENSOR_5V,Sensor/module 5V output,Use only for modules needing 5V
-J8,2,GND,Sensor ground,
-J8,3,PH_AIN,pH analog output,
-J9,1,SENSOR_5V,Sensor/module 5V output,
-J9,2,GND,Sensor ground,
-J9,3,TDS_AIN,TDS analog output,
-J10,1,SENSOR_5V,Sensor/module 5V output,
-J10,2,GND,Sensor ground,
-J10,3,TURB_AIN,Turbidity analog output,
-J11,1,SENSOR_5V,Sensor/module 5V output,
-J11,2,GND,Sensor ground,
-J11,3,ORP_AIN,ORP analog output,
-J12,1,SENSOR_5V,Sensor/module 5V output,
-J12,2,GND,Sensor ground,
-J12,3,DO_AIN,Dissolved oxygen analog output,
-J13,1,SENSOR_5V,Sensor/module 5V output,
-J13,2,GND,Sensor ground,
-J13,3,NH4_AIN,Ammonium ISE amp analog output,
-J14,VBUS,USB_VBUS,USB-C input VBUS,Feeds PD sink controller and input protection
-J14,GND,GND,USB-C input ground,Common ground
-J14,CC1,USB_CC1,USB-C configuration channel,To PD sink controller CC1
-J14,CC2,USB_CC2,USB-C configuration channel,To PD sink controller CC2
-D1,1,USB_VBUS,USB VBUS TVS protection,Place close to USB-C connector
-D1,2,GND,USB VBUS TVS ground,Low impedance return to ground
-U1,VBUS,USB_VBUS,USB-C PD sink VBUS input,PD controller supply/sense
-U1,CC1,USB_CC1,USB-C CC1,PD negotiation
-U1,CC2,USB_CC2,USB-C CC2,PD negotiation
-U1,GND,GND,PD controller ground,
-U1,VOUT,PD_NEGOTIATED_VBUS,Negotiated PD output,Target 9V fixed PDO for revision 1
-U1,CFG,PD_CFG,PD voltage configuration,Strap for 9V or connect per controller datasheet
-F1,1,PD_NEGOTIATED_VBUS,Fused input source,From PD sink negotiated output
-F1,2,PD_FUSED,Protected PD rail,Feeds buck regulator
-U2,VIN,PD_FUSED,Buck regulator input,Accepts negotiated PD rail
-U2,GND,GND,Buck regulator ground,High-current return
-U2,SW,BUCK_SW,Buck switch node,Keep copper small and away from analog inputs
-U2,FB,BUCK_FB,Buck feedback input,Feedback divider sets 5.1V
-U2,EN,BUCK_EN,Buck enable input,Driven by UVLO divider REN1/REN2
-U2,COMP,BUCK_COMP,Buck compensation input,Use datasheet compensation network
-U2,SS,BUCK_SS,Buck slow-start input,Soft-start capacitor to GND
-U2,BOOT,BUCK_BOOT,Buck bootstrap input,Bootstrap capacitor to switch node
-U2,VOUT,FUSED_5V1,Regulated protected 5.1V rail,Feeds Pico always-on and Q1 source
-L1,1,BUCK_SW,Buck inductor switch side,Current rating per U2 datasheet
-L1,2,FUSED_5V1,Buck inductor output side,Regulated 5.1V rail
-D2,K,BUCK_SW,Buck catch diode cathode,Only for non-synchronous buck
-D2,A,GND,Buck catch diode anode,Only for non-synchronous buck
-CIN1,1,PD_FUSED,Buck input capacitor positive,Voltage rating above PD rail
-CIN1,2,GND,Buck input capacitor negative,
-CIN2,1,PD_FUSED,Buck input capacitor positive,Voltage rating above PD rail
-CIN2,2,GND,Buck input capacitor negative,
-CIN3,1,PD_FUSED,Buck high-frequency bypass positive,Place close to U2
-CIN3,2,GND,Buck high-frequency bypass ground,Place close to U2
-CBOOT,1,BUCK_BOOT,Buck bootstrap capacitor BOOT side,Place close to U2
-CBOOT,2,BUCK_SW,Buck bootstrap capacitor switch side,Place close to U2
-CSS,1,BUCK_SS,Buck slow-start capacitor SS side,
-CSS,2,GND,Buck slow-start capacitor ground,
-COUT1,1,FUSED_5V1,Buck output capacitor positive,Low ESR
-COUT1,2,GND,Buck output capacitor negative,
-COUT2,1,FUSED_5V1,Buck output capacitor positive,Low ESR
-COUT2,2,GND,Buck output capacitor negative,
-RFB1,1,FUSED_5V1,Buck feedback upper resistor,Set U2 output to about 5.1V
-RFB1,2,BUCK_FB,Buck feedback tap,
-RFB2,1,BUCK_FB,Buck feedback lower resistor,
-RFB2,2,GND,Buck feedback ground,
-REN1,1,PD_FUSED,Buck enable divider upper input,TPS54531 8V minimum input example
-REN1,2,BUCK_EN,Buck enable divider tap,
-REN2,1,BUCK_EN,Buck enable divider lower input,
-REN2,2,GND,Buck enable divider ground,
-RCOMP1,1,BUCK_COMP,Buck compensation resistor input,
-RCOMP1,2,BUCK_COMP_RC,Buck compensation RC node,
-CCOMP1,1,BUCK_COMP_RC,Buck compensation capacitor,
-CCOMP1,2,GND,Buck compensation ground,
-CCOMP2,1,BUCK_COMP,Buck high-frequency compensation capacitor,
-CCOMP2,2,GND,Buck compensation ground,
-Q1,S,FUSED_5V1,High-side P-channel MOSFET source,Protected 5.1V in
-Q1,D,OPI_5V_SW,High-side P-channel MOSFET drain,Switched 5V to Orange Pi and switched sensors
-Q1,G,PWR_GATE,High-side P-channel MOSFET gate,Pulled high off and pulled low on
-Q2,D,PWR_GATE,Gate driver drain/collector,Pulls Q1 gate low when enabled
-Q2,S,GND,Gate driver source/emitter,Common ground
-Q2,G,Q2_GATE,Gate driver gate/base,Driven from Pico GP15 through R3
-R2,1,FUSED_5V1,Q1 gate pull-up source,100k
-R2,2,PWR_GATE,Q1 gate pull-up gate,Default off
-R3,1,PICO_GP15,Pico power-enable signal,From Pico GP15
-R3,2,Q2_GATE,Gate driver input,1k recommended
-R4,1,Q2_GATE,Gate driver pulldown,100k
-R4,2,GND,Gate driver pulldown ground,
-C1,1,OPI_5V_SW,Switched 5V bulk capacitor positive,470uF-1000uF at 10V or higher
-C1,2,GND,Switched 5V bulk capacitor negative,
+Ref,Pin,Pin name,Net,Notes
+J14,A4/B4/A9/B9,VBUS,USB_VBUS,USB-C PD input receptacle
+J14,A1/B1/A12/B12,GND,GND,USB-C PD input receptacle
+J14,A5,CC1,USB_CC1,USB-C PD input receptacle
+J14,B5,CC2,USB_CC2,USB-C PD input receptacle
+J14,SH,SHIELD,GND,USB-C PD input receptacle
+D1,1,K,USB_VBUS,VBUS TVS
+D1,2,A,GND,VBUS TVS
+U1,VBUS,VBUS,USB_VBUS,CH224K PD sink 9V
+U1,CC1,CC1,USB_CC1,CH224K PD sink 9V
+U1,CC2,CC2,USB_CC2,CH224K PD sink 9V
+U1,GND,GND,GND,CH224K PD sink 9V
+U1,VOUT,VOUT,PD_NEGOTIATED_VBUS,CH224K PD sink 9V
+U1,CFG1,CFG1,PD_CFG,CH224K PD sink 9V
+U1,CFG2,CFG2,PD_CFG,CH224K PD sink 9V
+U1,CFG3,CFG3,PD_CFG,CH224K PD sink 9V
+F1,1,IN,PD_NEGOTIATED_VBUS,3A-5A polyfuse
+F1,2,OUT,PD_FUSED,3A-5A polyfuse
+U2,VIN,VIN,PD_FUSED,TPS54531DDA 5A buck
+U2,GND,GND,GND,TPS54531DDA 5A buck
+U2,PH,PH/SW,BUCK_SW,TPS54531DDA 5A buck
+U2,BOOT,BOOT,BUCK_BOOT,TPS54531DDA 5A buck
+U2,VSENSE,FB,BUCK_FB,TPS54531DDA 5A buck
+U2,COMP,COMP,BUCK_COMP,TPS54531DDA 5A buck
+U2,SS,SS,BUCK_SS,TPS54531DDA 5A buck
+U2,EN,EN,BUCK_EN,TPS54531DDA 5A buck
+U2,PAD,EP,GND,TPS54531DDA 5A buck
+L1,1,SW,BUCK_SW,4.7uH >=6A
+L1,2,OUT,FUSED_5V1,4.7uH >=6A
+D2,K,K,BUCK_SW,5A 40V Schottky
+D2,A,A,GND,5A 40V Schottky
+CIN1,1,+,PD_FUSED,4.7uF 50V
+CIN1,2,-,GND,4.7uF 50V
+CIN2,1,+,PD_FUSED,4.7uF 50V
+CIN2,2,-,GND,4.7uF 50V
+CBOOT,1,BOOT,BUCK_BOOT,100nF
+CBOOT,2,SW,BUCK_SW,100nF
+CSS,1,SS,BUCK_SS,10nF
+CSS,2,GND,GND,10nF
+REN1,1,VIN,PD_FUSED,665k
+REN1,2,EN,BUCK_EN,665k
+REN2,1,EN,BUCK_EN,130k
+REN2,2,GND,GND,130k
+RCOMP1,1,COMP,BUCK_COMP,37.4k
+RCOMP1,2,NODE,BUCK_COMP_RC,37.4k
+CCOMP1,1,NODE,BUCK_COMP_RC,2200pF
+CCOMP1,2,GND,GND,2200pF
+CCOMP2,1,COMP,BUCK_COMP,22pF
+CCOMP2,2,GND,GND,22pF
+CIN3,1,+,PD_FUSED,10nF 50V
+CIN3,2,-,GND,10nF 50V
+COUT1,1,+,FUSED_5V1,47uF 10V
+COUT1,2,-,GND,47uF 10V
+COUT2,1,+,FUSED_5V1,47uF 10V
+COUT2,2,-,GND,47uF 10V
+RFB1,1,TOP,FUSED_5V1,10.2k 1%
+RFB1,2,FB,BUCK_FB,10.2k 1%
+RFB2,1,FB,BUCK_FB,1.96k 1%
+RFB2,2,GND,GND,1.96k 1%
+Q1,S,SOURCE,FUSED_5V1,AO4407A P-MOS high-side
+Q1,D,DRAIN,OPI_5V_SW,AO4407A P-MOS high-side
+Q1,G,GATE,PWR_GATE,AO4407A P-MOS high-side
+Q2,D,DRAIN,PWR_GATE,2N7002
+Q2,S,SOURCE,GND,2N7002
+Q2,G,GATE,Q2_GATE,2N7002
+R2,1,5V1,FUSED_5V1,100k
+R2,2,GATE,PWR_GATE,100k
+R3,1,PICO,PICO_GP15,1k
+R3,2,Q2G,Q2_GATE,1k
+R4,1,Q2G,Q2_GATE,100k
+R4,2,GND,GND,100k
+C1,1,+,OPI_5V_SW,470uF-1000uF 10V
+C1,2,-,GND,470uF-1000uF 10V
+J1,1,3V3,OPI_3V3,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,2,5V,OPI_5V_SW,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,3,SDA,OPI_SDA,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,4,5V,OPI_5V_SW,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,5,SCL,OPI_SCL,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,6,GND,GND,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,7,1WIRE,OPI_1WIRE,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,8,TX,UART_OPI_TX_PICO_RX,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,9,GND,GND,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,10,RX,UART_PICO_TX_OPI_RX,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,11,READY,OPI_READY,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,14,GND,GND,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,17,3V3,OPI_3V3,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,20,GND,GND,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J1,25,GND,GND,Orange Pi Zero 3 26-pin header (physical pin numbering)
+J2,1,GP0/TX,UART_PICO_TX_OPI_RX,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,2,GP1/RX,UART_OPI_TX_PICO_RX,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,3,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,6,GP4,PICO_GP4,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,7,GP5,PICO_GP5,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,8,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,13,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,17,GP13,OPI_READY,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,18,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,19,GP14,PICO_GP14,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,20,GP15,PICO_GP15,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,21,GP16/LED,PICO_LED_GP16,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,23,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,28,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,33,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,36,3V3,PICO_3V3,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,38,GND,GND,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J2,39,VSYS,FUSED_5V1,Raspberry Pi Pico 2x20 header (physical pin numbering)
+J3,1,VDD,OPI_3V3,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,2,GND,GND,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,3,SDA,OPI_SDA,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,4,SCL,OPI_SCL,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,5,ADDR,GND,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,6,A0,PH_AIN,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,7,A1,TDS_AIN,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,8,A2,TURB_AIN,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J3,9,A3,ORP_AIN,ADS1115 #1 module header, address 0x48 (ADDR -> GND)
+J4,1,VDD,OPI_3V3,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,2,GND,GND,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,3,SDA,OPI_SDA,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,4,SCL,OPI_SCL,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,5,ADDR,OPI_3V3,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,6,A0,DO_AIN,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,7,A1,NH4_AIN,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,8,A2,SPARE_AIN2,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J4,9,A3,SPARE_AIN3,ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)
+J5,1,VCC,OPI_3V3,DS18B20 waterproof temperature probe
+J5,2,DATA,OPI_1WIRE,DS18B20 waterproof temperature probe
+J5,3,GND,GND,DS18B20 waterproof temperature probe
+R1,1,3V3,OPI_3V3,4.7k
+R1,2,DATA,OPI_1WIRE,4.7k
+J6,1,VCC,OPI_3V3,BME280 ambient air sensor (I2C)
+J6,2,GND,GND,BME280 ambient air sensor (I2C)
+J6,3,SDA,OPI_SDA,BME280 ambient air sensor (I2C)
+J6,4,SCL,OPI_SCL,BME280 ambient air sensor (I2C)
+J7,1,VCC,PICO_3V3,DS3231 RTC (Pico I2C bus, separate from Orange Pi)
+J7,2,GND,GND,DS3231 RTC (Pico I2C bus, separate from Orange Pi)
+J7,3,SDA,PICO_GP4,DS3231 RTC (Pico I2C bus, separate from Orange Pi)
+J7,4,SCL,PICO_GP5,DS3231 RTC (Pico I2C bus, separate from Orange Pi)
+J15,1,NO,PICO_GP14,Download/pairing button (NO/C) and optional LED
+J15,2,C,GND,Download/pairing button (NO/C) and optional LED
+J15,3,LED+,BUTTON_LED_A,Download/pairing button (NO/C) and optional LED
+J15,4,LED-,GND,Download/pairing button (NO/C) and optional LED
+R5,1,PICO,PICO_LED_GP16,330R if 3.3V LED
+R5,2,LED+,BUTTON_LED_A,330R if 3.3V LED
+J16,1,3V3,OPI_3V3,Spare ADS1115 #2 A2/A3 analog header
+J16,2,GND,GND,Spare ADS1115 #2 A2/A3 analog header
+J16,3,AIN2,SPARE_AIN2,Spare ADS1115 #2 A2/A3 analog header
+J16,4,AIN3,SPARE_AIN3,Spare ADS1115 #2 A2/A3 analog header
+J8,1,5V,OPI_5V_SW,pH sensor module terminal
+J8,2,GND,GND,pH sensor module terminal
+J8,3,AO,PH_AIN,pH sensor module terminal
+J9,1,5V,OPI_5V_SW,TDS sensor module terminal
+J9,2,GND,GND,TDS sensor module terminal
+J9,3,AO,TDS_AIN,TDS sensor module terminal
+J10,1,5V,OPI_5V_SW,Turbidity sensor module terminal
+J10,2,GND,GND,Turbidity sensor module terminal
+J10,3,AO,TURB_AIN,Turbidity sensor module terminal
+J11,1,5V,OPI_5V_SW,ORP sensor module terminal
+J11,2,GND,GND,ORP sensor module terminal
+J11,3,AO,ORP_AIN,ORP sensor module terminal
+J12,1,5V,OPI_5V_SW,Dissolved oxygen sensor module terminal
+J12,2,GND,GND,Dissolved oxygen sensor module terminal
+J12,3,AO,DO_AIN,Dissolved oxygen sensor module terminal
+J13,1,5V,OPI_5V_SW,Ammonium ISE amplifier terminal
+J13,2,GND,GND,Ammonium ISE amplifier terminal
+J13,3,AO,NH4_AIN,Ammonium ISE amplifier terminal

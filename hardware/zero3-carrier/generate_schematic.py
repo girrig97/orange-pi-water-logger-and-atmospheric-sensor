@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import uuid
 from pathlib import Path
 
@@ -7,6 +8,8 @@ from pathlib import Path
 OUT = Path(__file__).with_name("zero3-water-logger-carrier.kicad_sch")
 SYM_OUT = Path(__file__).with_name("water_logger_generated.kicad_sym")
 SYM_TABLE_OUT = Path(__file__).with_name("sym-lib-table")
+PINOUT_CSV_OUT = Path(__file__).with_name("zero3-water-logger-carrier-pinout.csv")
+TODAY = datetime.date.today().isoformat()
 GRID = 2.54
 PIN_SPACING = 2.54
 
@@ -374,6 +377,40 @@ def text_note(txt: str, x: float, y: float) -> str:
 	)'''
 
 
+PIN_NOTES = {
+    "J1": "Orange Pi Zero 3 26-pin header (physical pin numbering)",
+    "J2": "Raspberry Pi Pico 2x20 header (physical pin numbering)",
+    "J3": "ADS1115 #1 module header, address 0x48 (ADDR -> GND)",
+    "J4": "ADS1115 #2 module header, address 0x49 (ADDR -> 3.3V)",
+    "J5": "DS18B20 waterproof temperature probe",
+    "J6": "BME280 ambient air sensor (I2C)",
+    "J7": "DS3231 RTC (Pico I2C bus, separate from Orange Pi)",
+    "J8": "pH sensor module terminal",
+    "J9": "TDS sensor module terminal",
+    "J10": "Turbidity sensor module terminal",
+    "J11": "ORP sensor module terminal",
+    "J12": "Dissolved oxygen sensor module terminal",
+    "J13": "Ammonium ISE amplifier terminal",
+    "J14": "USB-C PD input receptacle",
+    "J15": "Download/pairing button (NO/C) and optional LED",
+    "J16": "Spare ADS1115 #2 A2/A3 analog header",
+}
+
+
+def write_pinout_csv() -> None:
+    """Emit the pinout CSV from the same COMPONENTS list the schematic uses.
+
+    This guarantees the published pinout document cannot drift from the actual
+    schematic net assignments.
+    """
+    lines = ["Ref,Pin,Pin name,Net,Notes"]
+    for comp in COMPONENTS:
+        note = PIN_NOTES.get(comp["ref"], comp["value"])
+        for pin_num, pin_name, net in comp["pins"]:
+            lines.append(f'{comp["ref"]},{pin_num},{pin_name},{net},{note}')
+    PINOUT_CSV_OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> None:
     lib = "\n".join(lib_symbol(c) for c in COMPONENTS)
     syms = "\n".join(placed_symbol(c) for c in COMPONENTS)
@@ -392,7 +429,7 @@ def main() -> None:
 	(paper "A3")
 	(title_block
 		(title "Orange Pi Zero 3 Water Logger Carrier")
-		(date "2026-05-25")
+		(date "{TODAY}")
 		(rev "R1 schematic draft")
 		(company "Water Logger")
 		(comment 1 "USB-C PD, buck regulator, Pico controller, Orange Pi header, ADCs, sensors, and RTC.")
@@ -424,6 +461,7 @@ def main() -> None:
 ''',
         encoding="utf-8",
     )
+    write_pinout_csv()
 
 
 if __name__ == "__main__":
