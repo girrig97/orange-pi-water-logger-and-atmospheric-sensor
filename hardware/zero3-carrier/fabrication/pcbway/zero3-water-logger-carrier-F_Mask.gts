@@ -1,12 +1,12 @@
 %TF.GenerationSoftware,KiCad,Pcbnew,10.0.3*%
-%TF.CreationDate,2026-05-25T16:53:10+10:00*%
+%TF.CreationDate,2026-05-25T16:59:41+10:00*%
 %TF.ProjectId,zero3-water-logger-carrier,7a65726f-332d-4776-9174-65722d6c6f67,R1 generated placement*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Soldermask,Top*%
 %TF.FilePolarity,Negative*%
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 10.0.3) date 2026-05-25 16:53:10*
+G04 Created by KiCad (PCBNEW 10.0.3) date 2026-05-25 16:59:41*
 %MOMM*%
 %LPD*%
 G01*
