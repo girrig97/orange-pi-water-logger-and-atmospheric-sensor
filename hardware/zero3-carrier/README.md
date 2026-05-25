@@ -3,7 +3,7 @@
 This KiCad project is the first-pass PCB carrier for the Orange Pi Zero 3
 version of the water logger.
 
-Status: **ERC-clean schematic and schematic-synced PCB placement draft, not ready to order yet**.
+Status: **ERC + DRC clean, fully routed by Freerouting, Gerbers exported under `fabrication/pcbway/`. Do not order without first reviewing the switching power supply layout against the TPS54531 reference design** — see `fabrication/pcbway/REVIEW-BEFORE-ORDER.md`.
 
 The board is intended to act as a shield/carrier/interface board:
 
@@ -33,11 +33,10 @@ The board is intended to act as a shield/carrier/interface board:
 | `manual-routing-guide.md` | Step-by-step hand-routing instructions, including the required TPS54531 and high-side MOSFET datasheet routes |
 
 Current schematic check: `kicad-cli sch erc` reports **0 violations**. Current
-PCB DRC reports **0 violations** and **83 unconnected items** (down from 136
-before the GND pours). That means the board has no detected clearance/short
-errors, but the signal nets are still unrouted and the board is not orderable.
-Use `route_with_freerouting.py` or `manual-routing-guide.md` to finish the
-remaining 83 connections, then re-run `python validate_design.py`.
+PCB DRC reports **0 violations** and **0 unconnected items** after
+Freerouting routed all 83 signal/power nets. The full PCBWay upload package
+(Gerbers, drill, schematic PDF, review checklist) is in
+`fabrication/pcbway/`, also zipped as `fabrication/zero3-water-logger-carrier-R1.zip`.
 
 ## Current Placement
 

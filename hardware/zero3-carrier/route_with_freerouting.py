@@ -2,11 +2,12 @@
 """Drive Freerouting against the carrier PCB.
 
 Workflow:
-  1. Export the current PCB to a Specctra DSN file via `kicad-cli pcb export specctra`.
+  1. Export the current PCB to a Specctra DSN file via the pcbnew Python API
+     (KiCad 10's `kicad-cli` no longer ships a `pcb export specctra` subcommand).
   2. Download `freerouting.jar` (release pinned below) if it is not already cached.
   3. Run Freerouting headlessly to produce an SES routing session file.
-  4. Import the SES back into the PCB and save.
-  5. Re-fill zones and run DRC.
+  4. Import the SES back into the PCB and save (also via pcbnew Python API).
+  5. Re-fill zones and run DRC via `kicad-cli`.
 
 Usage:
     python route_with_freerouting.py [--effort fast|medium|thorough]
@@ -31,13 +32,15 @@ import sys
 import urllib.request
 from pathlib import Path
 
+import pcbnew
+
 
 ROOT = Path(__file__).resolve().parent
 PCB = ROOT / "zero3-water-logger-carrier.kicad_pcb"
 DSN = ROOT / "zero3-water-logger-carrier.dsn"
 SES = ROOT / "zero3-water-logger-carrier.ses"
 
-FREEROUTING_VERSION = "2.2.4"
+FREEROUTING_VERSION = "2.1.0"  # 2.2.x needs Java 25; 2.1.0 runs on Java 17+/21.
 FREEROUTING_URL = (
     f"https://github.com/freerouting/freerouting/releases/download/"
     f"v{FREEROUTING_VERSION}/freerouting-{FREEROUTING_VERSION}.jar"
@@ -106,9 +109,9 @@ def main() -> int:
     jar = ensure_freerouting_jar()
 
     print(f"Exporting Specctra DSN from {PCB.name} ...")
-    subprocess.check_call(
-        [kicad_cli, "pcb", "export", "specctra", "--output", str(DSN), str(PCB)]
-    )
+    board = pcbnew.LoadBoard(str(PCB))
+    if not pcbnew.ExportSpecctraDSN(board, str(DSN)):
+        sys.exit("error: ExportSpecctraDSN failed.")
 
     passes = {"fast": "5", "medium": "20", "thorough": "100"}[args.effort]
     print(f"Running Freerouting (effort={args.effort}, max {passes} passes) ...")
@@ -120,14 +123,13 @@ def main() -> int:
             "-de", str(DSN),
             "-do", str(SES),
             "-mp", passes,
-            "-im",  # idle mode = exit after routing
         ]
     )
 
     print(f"Importing {SES.name} back into {PCB.name} ...")
-    subprocess.check_call(
-        [kicad_cli, "pcb", "import", "specctra", "--input", str(SES), str(PCB)]
-    )
+    if not pcbnew.ImportSpecctraSES(board, str(SES)):
+        sys.exit("error: ImportSpecctraSES failed.")
+    pcbnew.SaveBoard(str(PCB), board)
 
     print("Refilling zones and running DRC ...")
     subprocess.check_call(

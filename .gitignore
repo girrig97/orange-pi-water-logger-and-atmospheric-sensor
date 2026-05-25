@@ -26,3 +26,9 @@ android-app/build/
 *.kicad_pcb.lck
 *.rpt
 .history/
+
+# Freerouting intermediate files (regenerable via route_with_freerouting.py).
+hardware/zero3-carrier/*.dsn
+hardware/zero3-carrier/*.ses
+hardware/zero3-carrier/freerouting-run.log
+hardware/zero3-carrier/freerouting.json

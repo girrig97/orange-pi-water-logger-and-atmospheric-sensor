@@ -1,11 +1,13 @@
 # Fabrication Readiness
 
-Status: **not ready to upload to PCBWay yet**.
+Status: **Gerbers exported and ready to inspect; do not order until the
+switching power supply layout has been reviewed.**
 
-The current KiCad schematic passes ERC, and the PCB has been updated to a
-schematic-synced placement/net-assignment draft. It is not an orderable
-electrical design yet. Do not upload Gerbers for manufacture until the items
-below are complete.
+ERC and DRC are clean. All 83 signal/power nets have been routed by
+Freerouting on top of the schematic-synced placement. The Gerber upload
+package is in `fabrication/pcbway/` and zipped as
+`fabrication/zero3-water-logger-carrier-R1.zip`. The review checklist that
+must be cleared before ordering is in `fabrication/pcbway/REVIEW-BEFORE-ORDER.md`.
 
 ## Current State
 
@@ -112,9 +114,18 @@ exporting Gerbers — see `manual-routing-guide.md` for the export commands.
    The buck regulator and high-side switch are routed first per their
    datasheets, then digital signals, then ground stitching vias.
 
-## Why No Gerber ZIP Is Committed Yet
+## Gerber ZIP Available
 
-An upload ZIP would currently manufacture an unrouted placement draft. The
-PD/buck/MOSFET schematic exists and the PCB has been updated from that net plan,
-but the copper routing is not complete. Uploading the current board would waste
-money and create false confidence.
+The current Gerber upload package is committed at
+`fabrication/zero3-water-logger-carrier-R1.zip` (~170 KB). Contents:
+
+- F.Cu, B.Cu, F.Mask, B.Mask, F.Silkscreen, B.Silkscreen, Edge.Cuts gerbers
+- Excellon drill file + drill map PDF + drill report
+- Gerber job file (.gbrjob)
+- Schematic PDF
+- `REVIEW-BEFORE-ORDER.md` listing the manual review items
+
+Auto-router output is electrically correct (DRC clean) but does not respect
+switching-supply layout rules. Re-route the TPS54531 buck regulator and the
+high-side MOSFET switch by hand in KiCad before ordering. See
+`REVIEW-BEFORE-ORDER.md` and `manual-routing-guide.md`.
