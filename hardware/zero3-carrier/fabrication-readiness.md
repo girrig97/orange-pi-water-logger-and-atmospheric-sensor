@@ -10,17 +10,25 @@ below are complete.
 ## Current State
 
 - Board outline, assigned footprints, and schematic nets exist.
-- KiCad PCB DRC reports zero violations, but 136 unconnected items remain
-  (no copper traces yet).
+- GND copper pour on both layers, solid pad connection (no thermal-relief
+  starvation against tight USB-C SMD pads). The pour brings the pre-routing
+  unconnected-pad count down from 136 to **83**.
+- KiCad PCB DRC reports **zero violations**.
 - KiCad schematic ERC passes.
 - USB-C PD, buck regulator, and MOSFET switch parts are captured in the R1
   schematic draft.
-- Pinout CSV is now generated from the same `COMPONENTS` table the schematic
+- Pinout CSV is generated from the same `COMPONENTS` table the schematic
   uses, so the published pinout cannot drift from actual net assignments.
 - `generate_pcb.py` can regenerate the current PCB placement/net-assignment
   draft from the same component plan as the schematic and resolves the KiCad
   footprint library on Windows, macOS, and Linux (honours
   `KICAD_FOOTPRINT_DIR`).
+- `validate_design.py` bundles ERC + DRC + CSV format checks behind a single
+  pre-commit gate.
+- `route_with_freerouting.py` is a one-command auto-router workflow (exports
+  DSN, fetches and runs Freerouting, imports SES, refills zones, re-runs DRC).
+- `manual-routing-guide.md` walks the per-section routing if you prefer to
+  route by hand in KiCad GUI.
 
 ## Required Before Gerber Upload
 
@@ -84,22 +92,25 @@ Gerber inspection.
 
 ## Routing Workflow
 
-The PCB is intentionally left unrouted by `generate_pcb.py`. Two safe paths
-finish the copper:
+The PCB is intentionally left unrouted by `generate_pcb.py` (apart from the
+GND pour). Two safe paths finish the copper. Either way, run
+`python validate_design.py` until zero unconnected items remain before
+exporting Gerbers — see `manual-routing-guide.md` for the export commands.
 
-1. **Route by hand in KiCad GUI.** Open the project, manually route the buck
-   regulator section per the TPS54531 reference layout (short SW loop, tight
-   input caps, large GND polygon, thermal copper for the PowerPAD), then route
-   signal and remaining power nets.
-2. **Auto-route the signal nets, hand-route the power section.** Export the
-   board to Specctra DSN, feed it to an external auto-router such as
-   [Freerouting](https://github.com/freerouting/freerouting), import the
-   resulting SES, then **manually re-do the buck and high-side switch traces**
-   against the TI datasheet. Auto-routers do not respect switching power supply
-   layout rules.
+1. **Auto-route signal nets, hand-route the power section.** Run
 
-Either way, run `kicad-cli pcb drc` until zero violations and zero unconnected
-items are reported before exporting Gerbers.
+       python route_with_freerouting.py --effort medium
+
+   This exports the DSN, fetches a pinned Freerouting JAR, routes the signal
+   nets, imports the SES, refills the GND pour, and re-runs DRC. After it
+   finishes, open the PCB in KiCad and **manually re-route the TPS54531 buck
+   regulator section and the high-side MOSFET switch** against the TI
+   reference layout. Auto-routers do not respect switching-supply layout
+   rules.
+
+2. **Route entirely by hand in KiCad GUI.** Follow `manual-routing-guide.md`.
+   The buck regulator and high-side switch are routed first per their
+   datasheets, then digital signals, then ground stitching vias.
 
 ## Why No Gerber ZIP Is Committed Yet
 

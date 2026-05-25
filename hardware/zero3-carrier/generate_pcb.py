@@ -242,12 +242,59 @@ def main() -> None:
     add_outline(board)
     add_mounting_holes(board)
     place_components(board)
+    add_ground_pours(board)
     # The PCB is generated with real footprints and schematic nets assigned.
-    # Auto-routing happens outside this script via the bundled Freerouting
-    # workflow (route_with_freerouting.py). Switching power supply nets must
-    # still be reviewed against the TPS54531 reference layout before order.
+    # Signal/power copper traces are NOT auto-generated here. Auto-routing
+    # happens outside this script via the bundled Freerouting workflow
+    # (route_with_freerouting.py). Switching power supply nets must still be
+    # reviewed against the TPS54531 reference layout before order.
 
     pcbnew.SaveBoard(str(OUT), board)
+
+
+def add_ground_pours(board: pcbnew.BOARD) -> None:
+    """Add filled GND copper zones on both layers.
+
+    Almost every PCB benefits from ground pours over both copper layers: it
+    shortens the return path for every signal, gives the buck regulator's
+    PowerPAD thermal copper to spread into, and reduces EMI. Pours are safe
+    to generate from a script because they are net-aware (only fill in GND
+    regions) and they are clipped automatically by KiCad against other nets'
+    pads/tracks.
+    """
+    gnd_net = make_net(board, "GND")
+    outline_clearance = 0.5  # mm inset from board edge for the pour boundary
+    for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
+        zone = pcbnew.ZONE(board)
+        zone.SetNet(gnd_net)
+        zone.SetLayer(layer)
+        zone.SetIsRuleArea(False)
+        zone.SetAssignedPriority(0)
+        zone.SetLocalClearance(mm(0.2))
+        zone.SetMinThickness(mm(0.25))
+        # Solid connection (full copper to GND pads) instead of thermal relief.
+        # Thermal reliefs help hand-soldering through-hole pads, but several SMD
+        # pads on the USB-C and IC packages are too close to the board edge for
+        # the required two thermal spokes to fit, which produced starved-thermal
+        # DRC violations. Solid copper also gives the buck regulator a stronger
+        # ground return.
+        zone.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+        outline = pcbnew.SHAPE_POLY_SET()
+        outline.NewOutline()
+        margin = MARGIN_MM + outline_clearance
+        for x, y in [
+            (margin, margin),
+            (BOARD_W_MM - margin, margin),
+            (BOARD_W_MM - margin, BOARD_H_MM - margin),
+            (margin, BOARD_H_MM - margin),
+        ]:
+            outline.Append(mm(x), mm(y))
+        zone.AddPolygon(outline.Outline(0))
+        board.Add(zone)
+    # Zones are added unfilled; KiCad fills them when the board is opened or
+    # when `kicad-cli pcb drc --refill-zones` runs. Calling ZONE_FILLER from a
+    # freshly built BOARD that has not been saved/reloaded can segfault on
+    # KiCad 10.0, so we skip the in-process fill here.
 
 
 if __name__ == "__main__":

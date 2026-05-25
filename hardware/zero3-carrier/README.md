@@ -26,13 +26,18 @@ The board is intended to act as a shield/carrier/interface board:
 | `zero3-water-logger-carrier-pinout.csv` | Pin/net planning table |
 | `selected-parts-bom.csv` | Selected revision-1 PD/buck/MOSFET parts and values |
 | `fabrication-readiness.md` | PCBWay/Gerber readiness checklist |
-| `generate_schematic.py` | Regenerates the KiCad schematic draft from the selected net plan |
-| `generate_pcb.py` | Regenerates the KiCad PCB placement/net-assignment draft from the selected net plan |
+| `generate_schematic.py` | Regenerates the KiCad schematic + symbol library + pinout CSV from the selected net plan |
+| `generate_pcb.py` | Regenerates the KiCad PCB placement, net assignments, and dual-layer GND pours from the selected net plan |
+| `route_with_freerouting.py` | One-command auto-routing: exports DSN, runs Freerouting, imports SES, refills zones, re-runs DRC |
+| `validate_design.py` | ERC + DRC + pinout-CSV format gate; runs before committing PCB changes |
+| `manual-routing-guide.md` | Step-by-step hand-routing instructions, including the required TPS54531 and high-side MOSFET datasheet routes |
 
 Current schematic check: `kicad-cli sch erc` reports **0 violations**. Current
-PCB DRC reports **0 violations** and **136 unconnected items**. That means the
-board has no detected clearance/short errors in its placement state, but it is
-still unrouted and is not orderable.
+PCB DRC reports **0 violations** and **83 unconnected items** (down from 136
+before the GND pours). That means the board has no detected clearance/short
+errors, but the signal nets are still unrouted and the board is not orderable.
+Use `route_with_freerouting.py` or `manual-routing-guide.md` to finish the
+remaining 83 connections, then re-run `python validate_design.py`.
 
 ## Current Placement
 
