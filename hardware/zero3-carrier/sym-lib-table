@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "WL")(type "KiCad")(uri "${KIPRJMOD}/water_logger_generated.kicad_sym")(options "")(descr "Generated water logger schematic symbols"))
+)

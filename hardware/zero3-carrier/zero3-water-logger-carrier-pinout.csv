@@ -6,9 +6,9 @@ J1,4,OPI_5V_SW,Orange Pi switched 5V input,Parallel 5V pin
 J1,5,OPI_SCL,Orange Pi I2C SCL,ADS1115/BME280 SCL
 J1,6,GND,Common ground,Power and logic reference
 J1,7,OPI_1WIRE,DS18B20 data,4.7k pull-up to 3.3V
-J1,8,OPI_UART_TX,Orange Pi TX to Pico RX,Adaptive interval data to Pico GP1
+J1,8,UART_OPI_TX_PICO_RX,Orange Pi TX to Pico RX,Adaptive interval data to Pico GP1
 J1,9,GND,Common ground,
-J1,10,OPI_UART_RX,Orange Pi RX from Pico TX,Download/pairing request from Pico GP0
+J1,10,UART_PICO_TX_OPI_RX,Orange Pi RX from Pico TX,Download/pairing request from Pico GP0
 J1,11,OPI_READY,Optional ready GPIO to Pico GP13,Set high before shutdown if used
 J1,12,NC,Unused/reserved,
 J1,13,NC,Unused/reserved,
@@ -31,10 +31,10 @@ J2,3,PICO_GP15,Power switch enable,Controls high-side switch
 J2,4,PICO_GP14,Button input,Button NO to GP14 and C to GND
 J2,5,PICO_GP4,Pico I2C SDA,DS3231 SDA
 J2,6,PICO_GP5,Pico I2C SCL,DS3231 SCL
-J2,7,PICO_GP0_TX,Pico UART TX,To Orange Pi RX
-J2,8,PICO_GP1_RX,Pico UART RX,From Orange Pi TX
-J2,9,PICO_GP13,Optional Orange Pi ready input,From OPI_READY
-J2,10,PICO_LED,Optional button LED output,Use resistor/transistor as needed
+J2,7,UART_PICO_TX_OPI_RX,Pico UART TX,To Orange Pi RX
+J2,8,UART_OPI_TX_PICO_RX,Pico UART RX,From Orange Pi TX
+J2,9,OPI_READY,Optional Orange Pi ready input,From OPI_READY
+J2,10,PICO_LED_GP16,Optional button LED output,Use resistor/transistor as needed
 J3,1,OPI_3V3,ADS1115 #1 VDD,Address 0x48
 J3,2,GND,ADS1115 #1 GND,
 J3,3,OPI_SDA,ADS1115 #1 SDA,
@@ -66,6 +66,16 @@ J7,1,PICO_3V3,DS3231 VCC,From Pico 3V3
 J7,2,GND,DS3231 GND,
 J7,3,PICO_GP4,DS3231 SDA,
 J7,4,PICO_GP5,DS3231 SCL,
+J15,1,PICO_GP14,Download button NO,Button C goes to GND
+J15,2,GND,Download button C,Common ground
+J15,3,BUTTON_LED_A,Download button LED positive,Through R5 if using a bare 3.3V LED
+J15,4,GND,Download button LED negative,Common ground
+R5,1,PICO_LED_GP16,Optional button LED drive,Only use if firmware is changed from onboard LED to GP16
+R5,2,BUTTON_LED_A,Optional button LED resistor output,Use correct resistor for the installed LED
+J16,1,OPI_3V3,Spare analog header 3.3V,For low-power analog add-on only
+J16,2,GND,Spare analog header ground,
+J16,3,SPARE_AIN2,Spare ADS1115 #2 A2 input,
+J16,4,SPARE_AIN3,Spare ADS1115 #2 A3 input,
 J8,1,SENSOR_5V,Sensor/module 5V output,Use only for modules needing 5V
 J8,2,GND,Sensor ground,
 J8,3,PH_AIN,pH analog output,
@@ -84,3 +94,72 @@ J12,3,DO_AIN,Dissolved oxygen analog output,
 J13,1,SENSOR_5V,Sensor/module 5V output,
 J13,2,GND,Sensor ground,
 J13,3,NH4_AIN,Ammonium ISE amp analog output,
+J14,VBUS,USB_VBUS,USB-C input VBUS,Feeds PD sink controller and input protection
+J14,GND,GND,USB-C input ground,Common ground
+J14,CC1,USB_CC1,USB-C configuration channel,To PD sink controller CC1
+J14,CC2,USB_CC2,USB-C configuration channel,To PD sink controller CC2
+D1,1,USB_VBUS,USB VBUS TVS protection,Place close to USB-C connector
+D1,2,GND,USB VBUS TVS ground,Low impedance return to ground
+U1,VBUS,USB_VBUS,USB-C PD sink VBUS input,PD controller supply/sense
+U1,CC1,USB_CC1,USB-C CC1,PD negotiation
+U1,CC2,USB_CC2,USB-C CC2,PD negotiation
+U1,GND,GND,PD controller ground,
+U1,VOUT,PD_NEGOTIATED_VBUS,Negotiated PD output,Target 9V fixed PDO for revision 1
+U1,CFG,PD_CFG,PD voltage configuration,Strap for 9V or connect per controller datasheet
+F1,1,PD_NEGOTIATED_VBUS,Fused input source,From PD sink negotiated output
+F1,2,PD_FUSED,Protected PD rail,Feeds buck regulator
+U2,VIN,PD_FUSED,Buck regulator input,Accepts negotiated PD rail
+U2,GND,GND,Buck regulator ground,High-current return
+U2,SW,BUCK_SW,Buck switch node,Keep copper small and away from analog inputs
+U2,FB,BUCK_FB,Buck feedback input,Feedback divider sets 5.1V
+U2,EN,BUCK_EN,Buck enable input,Driven by UVLO divider REN1/REN2
+U2,COMP,BUCK_COMP,Buck compensation input,Use datasheet compensation network
+U2,SS,BUCK_SS,Buck slow-start input,Soft-start capacitor to GND
+U2,BOOT,BUCK_BOOT,Buck bootstrap input,Bootstrap capacitor to switch node
+U2,VOUT,FUSED_5V1,Regulated protected 5.1V rail,Feeds Pico always-on and Q1 source
+L1,1,BUCK_SW,Buck inductor switch side,Current rating per U2 datasheet
+L1,2,FUSED_5V1,Buck inductor output side,Regulated 5.1V rail
+D2,K,BUCK_SW,Buck catch diode cathode,Only for non-synchronous buck
+D2,A,GND,Buck catch diode anode,Only for non-synchronous buck
+CIN1,1,PD_FUSED,Buck input capacitor positive,Voltage rating above PD rail
+CIN1,2,GND,Buck input capacitor negative,
+CIN2,1,PD_FUSED,Buck input capacitor positive,Voltage rating above PD rail
+CIN2,2,GND,Buck input capacitor negative,
+CIN3,1,PD_FUSED,Buck high-frequency bypass positive,Place close to U2
+CIN3,2,GND,Buck high-frequency bypass ground,Place close to U2
+CBOOT,1,BUCK_BOOT,Buck bootstrap capacitor BOOT side,Place close to U2
+CBOOT,2,BUCK_SW,Buck bootstrap capacitor switch side,Place close to U2
+CSS,1,BUCK_SS,Buck slow-start capacitor SS side,
+CSS,2,GND,Buck slow-start capacitor ground,
+COUT1,1,FUSED_5V1,Buck output capacitor positive,Low ESR
+COUT1,2,GND,Buck output capacitor negative,
+COUT2,1,FUSED_5V1,Buck output capacitor positive,Low ESR
+COUT2,2,GND,Buck output capacitor negative,
+RFB1,1,FUSED_5V1,Buck feedback upper resistor,Set U2 output to about 5.1V
+RFB1,2,BUCK_FB,Buck feedback tap,
+RFB2,1,BUCK_FB,Buck feedback lower resistor,
+RFB2,2,GND,Buck feedback ground,
+REN1,1,PD_FUSED,Buck enable divider upper input,TPS54531 8V minimum input example
+REN1,2,BUCK_EN,Buck enable divider tap,
+REN2,1,BUCK_EN,Buck enable divider lower input,
+REN2,2,GND,Buck enable divider ground,
+RCOMP1,1,BUCK_COMP,Buck compensation resistor input,
+RCOMP1,2,BUCK_COMP_RC,Buck compensation RC node,
+CCOMP1,1,BUCK_COMP_RC,Buck compensation capacitor,
+CCOMP1,2,GND,Buck compensation ground,
+CCOMP2,1,BUCK_COMP,Buck high-frequency compensation capacitor,
+CCOMP2,2,GND,Buck compensation ground,
+Q1,S,FUSED_5V1,High-side P-channel MOSFET source,Protected 5.1V in
+Q1,D,OPI_5V_SW,High-side P-channel MOSFET drain,Switched 5V to Orange Pi and switched sensors
+Q1,G,PWR_GATE,High-side P-channel MOSFET gate,Pulled high off and pulled low on
+Q2,D,PWR_GATE,Gate driver drain/collector,Pulls Q1 gate low when enabled
+Q2,S,GND,Gate driver source/emitter,Common ground
+Q2,G,Q2_GATE,Gate driver gate/base,Driven from Pico GP15 through R3
+R2,1,FUSED_5V1,Q1 gate pull-up source,100k
+R2,2,PWR_GATE,Q1 gate pull-up gate,Default off
+R3,1,PICO_GP15,Pico power-enable signal,From Pico GP15
+R3,2,Q2_GATE,Gate driver input,1k recommended
+R4,1,Q2_GATE,Gate driver pulldown,100k
+R4,2,GND,Gate driver pulldown ground,
+C1,1,OPI_5V_SW,Switched 5V bulk capacitor positive,470uF-1000uF at 10V or higher
+C1,2,GND,Switched 5V bulk capacitor negative,

@@ -1,0 +1,36 @@
+Ref,Qty,Selected part / value,Footprint target,Purpose,Notes
+J14,1,USB-C 16-pin receptacle such as HRO TYPE-C-31-M-12,USB_C_Receptacle_USB2.0_16P,USB-C PD input,Use a mechanically reinforced connector footprint and verify shell pad geometry
+U1,1,CH224K,ESSOP-10 / SOP-10,USB-C PD sink controller,Strap for fixed 9V request for revision 1
+D1,1,USB VBUS TVS diode rated for PD voltage,SMA/SMB or compact TVS footprint,Input surge/ESD protection,Choose standoff voltage suitable for negotiated PD rail
+F1,1,Resettable fuse 3A-5A hold,SMD polyfuse,Input protection,Size from expected total current and enclosure temperature
+U2,1,TPS54531DDA,SO-PowerPAD-8,5A buck regulator,Use TI datasheet/reference layout closely
+L1,1,4.7uH shielded inductor rated >=6A,Power inductor footprint,Buck output inductor,Start from TI typical 5V/5A application value
+D2,1,CDBC540-G or 5A/40V Schottky,SMA/SMB power diode,Buck catch diode,Required for TPS54531 non-synchronous buck
+CIN1,1,4.7uF 50V X7R,1206/1210,Buck input capacitor,Place close to U2 VIN/GND
+CIN2,1,4.7uF 50V X7R,1206/1210,Buck input capacitor,Place close to U2 VIN/GND
+CIN3,1,10nF 50V X7R,0603/0805,High-frequency VIN bypass,Place close to U2
+CBOOT,1,100nF 25V X7R,0603/0805,Bootstrap capacitor,Between TPS54531 BOOT and PH/SW pins
+CSS,1,10nF,0603/0805,Slow-start capacitor,TPS54531 SS pin
+COUT1,1,47uF 10V low-ESR,1210 or polymer,Buck output capacitor,Place near L1 output/GND
+COUT2,1,47uF 10V low-ESR,1210 or polymer,Buck output capacitor,Place near L1 output/GND
+C1,1,470uF-1000uF 10V low-ESR electrolytic/polymer,Radial or SMD bulk,Switched 5V bulk storage,Near Orange Pi switched 5V output
+RFB1,1,10.2k 1%,0603/0805,TPS54531 feedback upper resistor,TI typical example for about 5V output
+RFB2,1,1.96k 1%,0603/0805,TPS54531 feedback lower resistor,TI typical example for about 5V output
+RCOMP1,1,37.4k 1%,0603/0805,TPS54531 compensation resistor,TI typical example
+CCOMP1,1,2200pF,0603/0805,TPS54531 compensation capacitor,TI typical example
+CCOMP2,1,22pF,0603/0805,TPS54531 compensation capacitor,TI typical example
+REN1,1,665k 1%,0603/0805,TPS54531 UVLO upper resistor,TI typical example for 8V minimum design
+REN2,1,130k 1%,0603/0805,TPS54531 UVLO lower resistor,TI typical example for 8V minimum design
+Q1,1,AO4407A,SOIC-8 / SOP-8,High-side P-channel MOSFET,30V P-channel MOSFET suitable for 5V rail switching
+Q2,1,2N7002,SOT-23,Gate-driver N-MOSFET,Pulls Q1 gate low when Pico GP15 is high
+R2,1,100k,0603/0805,Q1 gate pull-up,Pulls P-channel gate to 5.1V so Orange Pi defaults off
+R3,1,1k,0603/0805,Q2 gate resistor,Between Pico GP15 and Q2 gate
+R4,1,100k,0603/0805,Q2 gate pulldown,Keeps Q2 off while Pico boots
+J15,1,1x04 2.54mm header or screw terminal,Connector header/button terminal,Download button contacts and optional LED,Wire NO/C for button and LED+/LED- only if LED voltage is compatible
+R5,1,330 ohm if using bare 3.3V LED,0603/0805,Optional button LED current limit,Only fit if firmware drives a spare Pico GPIO for the button LED
+J16,1,1x04 2.54mm header,Connector header,Spare ADS1115 #2 A2/A3 analog input breakout,Optional field expansion
+TP1,1,Test pad,1.5mm test pad,USB VBUS test,
+TP2,1,Test pad,1.5mm test pad,PD negotiated rail test,
+TP3,1,Test pad,1.5mm test pad,Regulated 5.1V test,
+TP4,1,Test pad,1.5mm test pad,Switched 5V test,
+TP5,1,Test pad,1.5mm test pad,GND test,

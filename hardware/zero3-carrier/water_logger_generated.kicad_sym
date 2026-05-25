@@ -1,0 +1,2429 @@
+(kicad_symbol_lib
+	(version 20241209)
+	(generator "generate_schematic.py")
+	(generator_version "1")
+
+		(symbol "WL:J14"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -12.70 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "USB-C PD input"
+				(at -7.62 12.70 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 17.78 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -10.16)
+				(end 10.16 10.16)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -5.08 180)
+				(length 2.54)
+				(name "VBUS" (effects (font (size 1 1))))
+				(number "A4/B4/A9/B9" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "A1/B1/A12/B12" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "CC1" (effects (font (size 1 1))))
+				(number "A5" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "CC2" (effects (font (size 1 1))))
+				(number "B5" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 5.08 180)
+				(length 2.54)
+				(name "SHIELD" (effects (font (size 1 1))))
+				(number "SH" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:D1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "VBUS TVS"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Diode_SMD:D_SMA"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "K" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "A" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:U1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.62 -16.51 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "CH224K PD sink 9V"
+				(at -7.62 16.51 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Package_SO:SSOP-10_3.9x4.9mm_P1.00mm"
+				(at 0 19.05 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 21.59 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -13.97)
+				(end 10.16 13.97)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -8.89 180)
+				(length 2.54)
+				(name "VBUS" (effects (font (size 1 1))))
+				(number "VBUS" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -6.35 180)
+				(length 2.54)
+				(name "CC1" (effects (font (size 1 1))))
+				(number "CC1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -3.81 180)
+				(length 2.54)
+				(name "CC2" (effects (font (size 1 1))))
+				(number "CC2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "GND" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "VOUT" (effects (font (size 1 1))))
+				(number "VOUT" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 3.81 180)
+				(length 2.54)
+				(name "CFG1" (effects (font (size 1 1))))
+				(number "CFG1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 6.35 180)
+				(length 2.54)
+				(name "CFG2" (effects (font (size 1 1))))
+				(number "CFG2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 8.89 180)
+				(length 2.54)
+				(name "CFG3" (effects (font (size 1 1))))
+				(number "CFG3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:F1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "F"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "3A-5A polyfuse"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Fuse:Fuse_1206_3216Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "IN" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "OUT" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:U2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.62 -17.78 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "TPS54531DDA 5A buck"
+				(at -7.62 17.78 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Package_SO:TI_SO-PowerPAD-8"
+				(at 0 20.32 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 22.86 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -15.24)
+				(end 10.16 15.24)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -10.16 180)
+				(length 2.54)
+				(name "VIN" (effects (font (size 1 1))))
+				(number "VIN" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -7.62 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "GND" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -5.08 180)
+				(length 2.54)
+				(name "PH/SW" (effects (font (size 1 1))))
+				(number "PH" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "BOOT" (effects (font (size 1 1))))
+				(number "BOOT" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "FB" (effects (font (size 1 1))))
+				(number "VSENSE" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "COMP" (effects (font (size 1 1))))
+				(number "COMP" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 5.08 180)
+				(length 2.54)
+				(name "SS" (effects (font (size 1 1))))
+				(number "SS" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 7.62 180)
+				(length 2.54)
+				(name "EN" (effects (font (size 1 1))))
+				(number "EN" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 10.16 180)
+				(length 2.54)
+				(name "EP" (effects (font (size 1 1))))
+				(number "PAD" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:L1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "L"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "4.7uH >=6A"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Inductor_SMD:L_10.4x10.4_H4.8"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "SW" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "OUT" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:D2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "5A 40V Schottky"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Diode_SMD:D_SMA"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "K" (effects (font (size 1 1))))
+				(number "K" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "A" (effects (font (size 1 1))))
+				(number "A" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CIN1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "4.7uF 50V"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "+" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "-" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CIN2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "4.7uF 50V"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "+" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "-" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CBOOT"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "100nF"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "BOOT" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "SW" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CSS"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "10nF"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "SS" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:REN1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "665k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "VIN" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "EN" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:REN2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "130k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "EN" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:RCOMP1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "37.4k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "COMP" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "NODE" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CCOMP1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "2200pF"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "NODE" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CCOMP2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "22pF"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "COMP" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:CIN3"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "10nF 50V"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "+" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "-" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:COUT1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "47uF 10V"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "+" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "-" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:COUT2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "47uF 10V"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "+" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "-" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:RFB1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "10.2k 1%"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "TOP" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "FB" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:RFB2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "1.96k 1%"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "FB" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:Q1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "Q"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "AO4407A P-MOS high-side"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "SOURCE" (effects (font (size 1 1))))
+				(number "S" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "DRAIN" (effects (font (size 1 1))))
+				(number "D" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "GATE" (effects (font (size 1 1))))
+				(number "G" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:Q2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "Q"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "2N7002"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "DRAIN" (effects (font (size 1 1))))
+				(number "D" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "SOURCE" (effects (font (size 1 1))))
+				(number "S" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "GATE" (effects (font (size 1 1))))
+				(number "G" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:R2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "100k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "5V1" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GATE" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:R3"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "1k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "PICO" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "Q2G" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:R4"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "100k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "Q2G" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:C1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "470uF-1000uF 10V"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "+" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "-" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -25.40 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "Orange Pi Zero 3 26-pin"
+				(at -7.62 25.40 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x13_P2.54mm_Vertical"
+				(at 0 27.94 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 30.48 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -22.86)
+				(end 10.16 22.86)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -17.78 180)
+				(length 2.54)
+				(name "3V3" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -15.24 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -12.70 180)
+				(length 2.54)
+				(name "SDA" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -10.16 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -7.62 180)
+				(length 2.54)
+				(name "SCL" (effects (font (size 1 1))))
+				(number "5" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -5.08 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "6" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "1WIRE" (effects (font (size 1 1))))
+				(number "7" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "TX" (effects (font (size 1 1))))
+				(number "8" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "9" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 5.08 180)
+				(length 2.54)
+				(name "RX" (effects (font (size 1 1))))
+				(number "10" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 7.62 180)
+				(length 2.54)
+				(name "READY" (effects (font (size 1 1))))
+				(number "11" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 10.16 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "14" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 12.70 180)
+				(length 2.54)
+				(name "3V3" (effects (font (size 1 1))))
+				(number "17" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 15.24 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "20" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 17.78 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "25" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J2"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -29.21 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "Raspberry Pi Pico socket"
+				(at -7.62 29.21 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Module:RaspberryPi_Pico_Common_THT"
+				(at 0 31.75 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 34.29 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -26.67)
+				(end 10.16 26.67)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -21.59 180)
+				(length 2.54)
+				(name "GP0/TX" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -19.05 180)
+				(length 2.54)
+				(name "GP1/RX" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -16.51 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -13.97 180)
+				(length 2.54)
+				(name "GP4" (effects (font (size 1 1))))
+				(number "6" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -11.43 180)
+				(length 2.54)
+				(name "GP5" (effects (font (size 1 1))))
+				(number "7" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -8.89 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "8" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -6.35 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "13" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -3.81 180)
+				(length 2.54)
+				(name "GP13" (effects (font (size 1 1))))
+				(number "17" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "18" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "GP14" (effects (font (size 1 1))))
+				(number "19" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 3.81 180)
+				(length 2.54)
+				(name "GP15" (effects (font (size 1 1))))
+				(number "20" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 6.35 180)
+				(length 2.54)
+				(name "GP16/LED" (effects (font (size 1 1))))
+				(number "21" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 8.89 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "23" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 11.43 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "28" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 13.97 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "33" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 16.51 180)
+				(length 2.54)
+				(name "3V3" (effects (font (size 1 1))))
+				(number "36" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 19.05 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "38" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 21.59 180)
+				(length 2.54)
+				(name "VSYS" (effects (font (size 1 1))))
+				(number "39" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J3"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -17.78 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "ADS1115 #1 0x48"
+				(at -7.62 17.78 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x09_P2.54mm_Vertical"
+				(at 0 20.32 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 22.86 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -15.24)
+				(end 10.16 15.24)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -10.16 180)
+				(length 2.54)
+				(name "VDD" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -7.62 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -5.08 180)
+				(length 2.54)
+				(name "SDA" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "SCL" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "ADDR" (effects (font (size 1 1))))
+				(number "5" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "A0" (effects (font (size 1 1))))
+				(number "6" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 5.08 180)
+				(length 2.54)
+				(name "A1" (effects (font (size 1 1))))
+				(number "7" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 7.62 180)
+				(length 2.54)
+				(name "A2" (effects (font (size 1 1))))
+				(number "8" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 10.16 180)
+				(length 2.54)
+				(name "A3" (effects (font (size 1 1))))
+				(number "9" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J4"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -17.78 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "ADS1115 #2 0x49"
+				(at -7.62 17.78 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x09_P2.54mm_Vertical"
+				(at 0 20.32 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 22.86 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -15.24)
+				(end 10.16 15.24)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -10.16 180)
+				(length 2.54)
+				(name "VDD" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -7.62 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -5.08 180)
+				(length 2.54)
+				(name "SDA" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "SCL" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "ADDR" (effects (font (size 1 1))))
+				(number "5" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "A0" (effects (font (size 1 1))))
+				(number "6" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 5.08 180)
+				(length 2.54)
+				(name "A1" (effects (font (size 1 1))))
+				(number "7" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 7.62 180)
+				(length 2.54)
+				(name "A2" (effects (font (size 1 1))))
+				(number "8" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 10.16 180)
+				(length 2.54)
+				(name "A3" (effects (font (size 1 1))))
+				(number "9" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J5"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "DS18B20 water temp"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "VCC" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "DATA" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:R1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "4.7k"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "3V3" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "DATA" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J6"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "BME280 air sensor"
+				(at -7.62 11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 16.51 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -8.89)
+				(end 10.16 8.89)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -3.81 180)
+				(length 2.54)
+				(name "VCC" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "SDA" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 3.81 180)
+				(length 2.54)
+				(name "SCL" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J7"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "DS3231 RTC"
+				(at -7.62 11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 16.51 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -8.89)
+				(end 10.16 8.89)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -3.81 180)
+				(length 2.54)
+				(name "VCC" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "SDA" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 3.81 180)
+				(length 2.54)
+				(name "SCL" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J15"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "Download button"
+				(at -7.62 11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 16.51 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -8.89)
+				(end 10.16 8.89)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -3.81 180)
+				(length 2.54)
+				(name "NO" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "C" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "LED+" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 3.81 180)
+				(length 2.54)
+				(name "LED-" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:R5"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at -7.62 -8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "330R if 3.3V LED"
+				(at -7.62 8.89 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+				(at 0 11.43 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -6.35)
+				(end 10.16 6.35)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "PICO" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "LED+" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J16"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "Spare analog header"
+				(at -7.62 11.43 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+				(at 0 13.97 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 16.51 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -8.89)
+				(end 10.16 8.89)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -3.81 180)
+				(length 2.54)
+				(name "3V3" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 -1.27 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 1.27 180)
+				(length 2.54)
+				(name "AIN2" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 3.81 180)
+				(length 2.54)
+				(name "AIN3" (effects (font (size 1 1))))
+				(number "4" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J8"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "pH sensor"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "AO" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J9"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "TDS sensor"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "AO" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J10"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "Turbidity sensor"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "AO" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J11"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "ORP sensor"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "AO" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J12"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "Dissolved oxygen"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "AO" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+
+		(symbol "WL:J13"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -7.62 -10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Value" "NH4 ISE amp"
+				(at -7.62 10.16 0)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal"
+				(at 0 12.70 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(property "Datasheet" ""
+				(at 0 15.24 0)
+				(hide yes)
+				(effects (font (size 1.27 1.27)))
+			)
+			(rectangle
+				(start -10.16 -7.62)
+				(end 10.16 7.62)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
+			)
+			(pin passive line
+				(at -10.16 -2.54 180)
+				(length 2.54)
+				(name "5V" (effects (font (size 1 1))))
+				(number "1" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 0.00 180)
+				(length 2.54)
+				(name "GND" (effects (font (size 1 1))))
+				(number "2" (effects (font (size 1 1))))
+			)
+
+			(pin passive line
+				(at -10.16 2.54 180)
+				(length 2.54)
+				(name "AO" (effects (font (size 1 1))))
+				(number "3" (effects (font (size 1 1))))
+			)
+		)
+)

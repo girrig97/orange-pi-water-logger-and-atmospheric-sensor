@@ -151,14 +151,14 @@ Corrected numbered wiring:
 
 | Number | Correct connection |
 | --- | --- |
-| 1 | Power bank 5V to Pico USB/VSYS and power-switch module 5V input |
+| 1 | USB-C/power-bank 5V to the PCB input; protected 5V feeds Pico VSYS and the MOSFET switch input |
 | 2 | Common GND bus to Pico GND, power-switch GND, Orange Pi GND, ADC GND, sensor GND |
 | 3 | Pico `GP15` to power-switch trigger/enable input |
 | 4 | Pico `GP14` to button `NO`; button `C` to common GND |
 | 5 | Pico `GP4` to DS3231 SDA |
 | 6 | Pico `GP5` to DS3231 SCL |
 | 7 | Pico `3V3` to DS3231 VCC |
-| 8 | Power-switch switched 5V output to Orange Pi 5V input, pin 2 or 4 |
+| 8 | MOSFET switched 5V output to Orange Pi 5V input, pin 2 or 4 |
 | 9 | Power-switch output/common GND to Orange Pi GND, pin 6 |
 | 10 | Orange Pi pin 1 `3.3V` to ADS1115 VDD and DS18B20 VCC |
 | 11 | Orange Pi pin 3 SDA to both ADS1115 SDA pins |
@@ -585,7 +585,7 @@ Use `pico_power_controller.py` on a Raspberry Pi Pico or Pico W to switch Orange
 
 | Pico pin | Connect to |
 | --- | --- |
-| GP15 | 5V relay/MOS power-switch trigger input |
+| GP15 | On-board MOSFET/load-switch gate-driver input |
 | GP14 | Momentary button `NO`; button `C` to GND |
 | GP0/TX | Orange Pi UART RX |
 | GP1/RX | Orange Pi UART TX |
@@ -593,10 +593,22 @@ Use `pico_power_controller.py` on a Raspberry Pi Pico or Pico W to switch Orange
 | GP5 | DS3231 SCL |
 | GP13 | Strongly recommended: Orange Pi ready/shutdown GPIO |
 | 3V3 | DS3231 VCC |
-| GND | DS3231 GND, button `C`, power-switch GND |
-| VSYS or 5V USB input | Pico power from power bank |
+| GND | DS3231 GND, button `C`, MOSFET gate-driver GND |
+| VSYS or 5V USB input | Always-on protected 5V from the board USB-C input |
 
-The Orange Pi 5V input should be powered through the relay/MOS power switch. Use a 5V switch rated for at least 3A, preferably 5A.
+One USB-C PD input can power both the Pico and Orange Pi Zero 3. Wire it as:
+
+```text
+USB-C PD input -> PD sink controller -> negotiated 9V rail
+USB-C PD input -> PD sink controller -> buck regulator -> Pico always-on 5.1V/VSYS
+USB-C PD input -> PD sink controller -> buck regulator -> high-side MOSFET -> Orange Pi 5V input
+```
+
+The Pico stays powered all the time. The Orange Pi 5V input is powered only
+through the MOSFET/load-switch path. For the PCB version, use a USB-C PD sink
+controller and a 5A buck regulator so the board can request 9V from the power
+bank and generate its own stable 5.1V rail. A 30W or larger USB-C PD power bank
+is the sensible minimum for the Zero 3 build.
 
 Normal mode:
 

@@ -65,22 +65,34 @@ confirmed, but it is easier to get wrong before bench testing.
 Recommended power path:
 
 ```text
-USB power bank / 5V source
--> PCB 5V input fuse
--> Pico always-on 5V/VSYS
--> high-side MOSFET/load switch
--> switched 5V to Orange Pi
+USB-C PD power bank / charger
+-> USB-C receptacle
+-> USB-C PD sink controller, fixed 9V request preferred
+-> input protection and fuse
+-> 9V PD rail
+-> 5.1V buck regulator
+-> protected 5.1V rail
+   -> Pico always-on VSYS/5V
+   -> high-side MOSFET/load switch
+      -> switched 5V to Orange Pi
 ```
 
 Requirements:
 
-- 5V input rated at least 3A for Zero 3.
-- 5V input rated 5A preferred for Orange Pi 5 Max.
+- USB-C PD source rated at least 30W for Zero 3.
+- Use a fixed 9V PD request for revision 1. 9V is common and keeps cable input
+  current lower than a raw 5V design.
+- Feed all electronics from a local 5.1V buck regulator after PD negotiation.
+- Select a buck regulator design target of 5A output so the Orange Pi, Pico,
+  sensors, and startup peaks have margin.
 - Use a high-side switch if possible. Avoid low-side switching for the final PCB.
 - Use wide copper pours for 5V and GND.
-- Add test pads for 5V input, switched 5V, 3.3V, GND, SDA, SCL, UART TX/RX.
-- Add a fuse or resettable polyfuse at the 5V input.
-- Add reverse-polarity protection if using screw terminals instead of USB.
+- Add test pads for USB VBUS, negotiated PD rail, regulated 5.1V, switched 5V,
+  3.3V, GND, SDA, SCL, UART TX/RX.
+- Add a fuse or resettable polyfuse on the PD input rail.
+- Add a TVS diode at USB VBUS.
+- Add buck input/output capacitors, inductor, feedback resistors, and catch
+  diode if the selected regulator is non-synchronous.
 
 Suggested switch parts/classes:
 
@@ -90,6 +102,34 @@ Suggested switch parts/classes:
 
 Do not use a relay coil on the PCB unless power use is acceptable. A relay can
 work, but a MOSFET/load switch is quieter and more efficient.
+
+The preferred revision 1 board should use one USB-C input for both boards:
+
+- USB-C PD controller negotiates the input rail, preferably 9V.
+- Buck regulator converts the negotiated PD rail to protected 5.1V.
+- Pico receives protected always-on 5.1V before the MOSFET.
+- Orange Pi receives switched 5V after the MOSFET.
+- The MOSFET source connects to protected 5.1V.
+- The MOSFET drain connects to `OPI_5V_SW`.
+- Pico `GP15` drives a small transistor/MOSFET that pulls the high-side
+  MOSFET gate low to turn Orange Pi power on.
+- A gate pull-up keeps the Orange Pi off while the Pico boots or is unpowered.
+
+Recommended PD front-end classes:
+
+| Function | Practical part class |
+| --- | --- |
+| USB-C receptacle | HRO TYPE-C-31-M-12 class reinforced USB-C receptacle |
+| PD sink controller | CH224K fixed-voltage controller strapped for 9V |
+| Buck regulator | TPS54531DDA 28V input 5A buck, with layout copied closely from datasheet/reference design |
+| High-side MOSFET | AO4407A P-channel MOSFET, SOIC-8 |
+| Gate driver | 2N7002 N-MOSFET, SOT-23 |
+| Input protection | VBUS TVS diode and resettable fuse |
+| Output protection | Bulk capacitance on switched 5V rail and test pads for measurement |
+
+Do not route the buck regulator casually. Use the selected regulator datasheet
+layout exactly: short switch loop, solid ground return, thermal copper, and
+correct inductor/capacitor current ratings.
 
 ## Pico Connections
 
@@ -245,19 +285,23 @@ own USB/Mini PCIe/M.2 carrier and power it from the Orange Pi side. Cellular
 modems have burst current, RF layout, antenna, SIM, and certification concerns
 that are better handled by an existing modem carrier.
 
-## Open Decisions Before KiCad Layout
+## Open Decisions Before Final PCB Routing
 
-Confirm these before drawing the final schematic:
+Confirm these before ordering the board:
 
-- Exact Orange Pi board for the first physical footprint: Zero 3, 5 Max, or
-  universal terminals only.
-- Exact MOSFET/load-switch part or module.
+- Exact Orange Pi board for the first physical footprint. The current PCB draft
+  targets the Zero 3 header.
+- Exact CH224K package and pin mapping from the supplier datasheet.
+- Exact TPS54531DDA layout values and footprint against the TI datasheet.
+- Exact MOSFET/load-switch part.
 - Exact connector type: screw terminal, JST-XH, JST-PH, Dupont header, or mixed.
 - Whether sensor modules are powered by switched 5V, always-on 5V, or Orange Pi 3.3V.
 - Whether the button LED is 3.3V compatible.
 - Enclosure size and mounting-hole locations.
 - Whether PCB should carry high-current 5V directly or only control an external
   load-switch module.
+- KiCad PCB routing. Current DRC has zero violations but still reports
+  unconnected items because the PCB is a placement/net-assignment draft.
 
 ## Deliverables Needed for PCBWay
 
